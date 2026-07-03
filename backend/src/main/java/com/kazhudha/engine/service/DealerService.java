@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class DealerService {
 
     public List<Card> createDeck() {

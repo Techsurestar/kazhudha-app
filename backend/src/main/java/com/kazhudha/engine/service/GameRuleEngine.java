@@ -1,5 +1,4 @@
 package com.kazhudha.engine.service;
-
 import com.kazhudha.engine.domain.Card;
 import com.kazhudha.engine.domain.GameState;
 import com.kazhudha.engine.domain.PlayedCard;
@@ -9,7 +8,12 @@ import com.kazhudha.engine.exception.BusinessException;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class GameRuleEngine {
 
     public void validateAndPlayCard(GameState state, String playerId, Card card) {
@@ -77,9 +81,26 @@ public class GameRuleEngine {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Penalized player not found in players list: " + penalizedPlayerId));
 
+        // Mark the player who cut as VOID of that specific lead suit
+        state.getPlayerSuitVoids().get(currentTurnPlayer.getId()).add(activeSuit);
+
+        // Inspect all cards in the pile before they enter the penalized player's hand
+        Set<Suit> suitsInPile = state.getTablePile().stream()
+                .map(pc -> pc.card().suit())
+                .collect(Collectors.toSet());
+
+        // Remove those suits from the penalized player's void list since they absorb them
+        for (Suit suit : suitsInPile) {
+            state.getPlayerSuitVoids().get(penalizedPlayer.getId()).remove(suit);
+        }
+
+        // Penalized player receives all cards from the table pile
         for (PlayedCard pc : state.getTablePile()) {
             penalizedPlayer.addCard(pc.card());
         }
+
+        // Reset the gotten-away status of the penalized player
+        penalizedPlayer.setHasGottenAway(false);
 
         state.clearTablePile();
         state.setActiveRoundSuit(null);
