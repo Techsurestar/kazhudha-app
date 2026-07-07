@@ -1,0 +1,287 @@
+<div class="min-h-screen w-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 flex flex-col justify-between p-3 sm:p-4 overflow-hidden select-none font-sans relative">
+  
+  <!-- Central Soft Ambient Light Glow -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+  <!-- Header Bar -->
+  <header class="w-full max-w-5xl mx-auto flex justify-between items-center py-2.5 px-4 bg-slate-900/60 backdrop-blur-md border border-slate-800/80 rounded-2xl shadow-lg z-30">
+    <div class="flex items-center space-x-2">
+      <span class="text-indigo-400 font-black text-lg tracking-wider">KAZHUDHA</span>
+      <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Board</span>
+    </div>
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-1.5 bg-slate-950/60 px-3 py-1 rounded-xl border border-slate-800/80 text-xs font-semibold">
+        <span class="text-slate-400">Lead Suit:</span>
+        <span class="text-indigo-400 flex items-center space-x-1">
+          <span>{{ activeRoundSuit() }}</span>
+          <svg class="w-3.5 h-3.5 fill-current text-indigo-400 inline" viewBox="0 0 24 24"><path d="M12 2C9 6.5 4 8.5 4 12c0 3 2 5 5 5 1.5 0 2.5-.5 3-1.5.5 1 1.5 1.5 3 1.5 3 0 5-2 5-5 0-3.5-5-5.5-8-10zm0 18h-2v2h4v-2h-2z"/></svg>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Responsive Virtual Card Table Arena -->
+  <main class="flex-grow w-full max-w-5xl mx-auto flex flex-col justify-between py-6 relative z-10">
+
+    <!-- 1. TOP SIDE: Opponent 2 (Bot) -->
+    <div class="w-full flex flex-col items-center justify-center z-20">
+      @if (getPlayerById('bot2'); as player) {
+        <div class="flex flex-col items-center space-y-2">
+          <!-- Player Info Bubble -->
+          <div class="flex items-center space-x-2.5 bg-slate-900/80 backdrop-blur-md border rounded-2xl px-3.5 py-1.5 shadow-xl transition-all duration-300"
+               [ngClass]="player.isCurrentTurn ? 'border-amber-500 ring-2 ring-amber-500/30' : 'border-slate-800/85'">
+            
+            <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative"
+                 [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 animate-pulse' : 'bg-slate-800 text-slate-300'">
+              {{ player.avatar }}
+            </div>
+            
+            <div class="flex flex-col text-left">
+              <span class="font-extrabold text-xs text-slate-200 leading-none">{{ player.name }}</span>
+              <span class="text-[10px] text-slate-400 mt-0.5">{{ player.cardCount }} cards</span>
+            </div>
+          </div>
+
+          <!-- Mini Hand (Desktop only) -->
+          <div class="hidden md:flex justify-center -space-x-3 overflow-hidden p-1">
+            @for (card of [].constructor(player.cardCount); track $index) {
+              <div class="w-6 h-9 bg-gradient-to-b from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-md transform rotate-180"></div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- 2. MIDDLE AREA (Left Bot, Play Pile, Right Bot in a flexible row) -->
+    <div class="w-full flex items-center justify-between my-auto px-2 md:px-8 gap-4">
+
+      <!-- LEFT SIDE: Opponent 1 (Bot) -->
+      <div class="flex-shrink-0 w-16 md:w-44 flex justify-start z-20">
+        @if (getPlayerById('bot1'); as player) {
+          <div class="flex flex-col md:flex-row items-center gap-3">
+            <div class="flex flex-col items-center space-y-2">
+              <!-- Player Bubble -->
+              <div class="flex flex-col md:flex-row items-center gap-2 bg-slate-900/80 backdrop-blur-md border rounded-2xl p-2 md:p-3 shadow-xl transition-all duration-300 w-full"
+                   [ngClass]="player.isCurrentTurn ? 'border-amber-500 ring-2 ring-amber-500/30 scale-105' : 'border-slate-800/85'">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative flex-shrink-0"
+                     [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 animate-pulse' : 'bg-slate-800 text-slate-300'">
+                  {{ player.avatar }}
+                </div>
+                <div class="hidden md:flex flex-col text-left">
+                  <span class="font-extrabold text-xs text-slate-200 leading-none">{{ player.name }}</span>
+                  <span class="text-[10px] text-slate-400 mt-1">{{ player.cardCount }} cards</span>
+                </div>
+                <div class="flex md:hidden bg-slate-950/80 px-1.5 py-0.5 rounded-md text-[10px] font-bold text-slate-400">
+                  {{ player.cardCount }}
+                </div>
+              </div>
+
+              <!-- Hand placeholder (Desktop only) -->
+              <div class="hidden md:flex flex-col -space-y-5 overflow-hidden justify-center items-center py-1">
+                @for (card of [].constructor(Math.min(player.cardCount, 5)); track $index) {
+                  <div class="w-9 h-6 bg-gradient-to-r from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-sm rotate-90"></div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- CENTER: Active Table Pile Slot -->
+      <div class="flex-grow flex items-center justify-center z-10">
+        <!-- Felt Board Table -->
+        <div class="relative w-40 h-40 sm:w-52 sm:h-52 md:w-60 md:h-60 bg-gradient-to-tr from-emerald-950 to-emerald-900 rounded-3xl border border-emerald-800/50 shadow-inner flex items-center justify-center">
+          
+          <!-- Inner felt border line -->
+          <div class="absolute inset-3 rounded-2xl border border-emerald-500/10 pointer-events-none"></div>
+
+          <!-- Central Active Suit Translucent Symbol -->
+          <div class="absolute text-emerald-500/5 select-none pointer-events-none font-bold text-7xl md:text-8xl">
+            @if (activeRoundSuit() === 'SPADES') { ♠ }
+            @else if (activeRoundSuit() === 'HEARTS') { ♥ }
+            @else if (activeRoundSuit() === 'DIAMONDS') { ♦ }
+            @else { ♣ }
+          </div>
+
+          <!-- Table Cards Slot mapping spatially -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            
+            <!-- Top Played Card (Bot 2) -->
+            @if (getPlayedCardByPlayer('bot2'); as played) {
+              <div class="absolute -translate-y-7 sm:-translate-y-9 md:-translate-y-11 z-25">
+                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+              </div>
+            }
+
+            <!-- Left Played Card (Bot 1) -->
+            @if (getPlayedCardByPlayer('bot1'); as played) {
+              <div class="absolute -translate-x-7 sm:-translate-x-9 md:-translate-x-11 -rotate-12 z-20">
+                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+              </div>
+            }
+
+            <!-- Right Played Card (Bot 3) -->
+            @if (getPlayedCardByPlayer('bot3'); as played) {
+              <div class="absolute translate-x-7 sm:translate-x-9 md:translate-x-11 rotate-12 z-20">
+                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+              </div>
+            }
+
+            <!-- Bottom Played Card (Human) -->
+            @if (getPlayedCardByPlayer('human'); as played) {
+              <div class="absolute translate-y-7 sm:translate-y-9 md:translate-y-11 z-30">
+                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+              </div>
+            }
+            
+            @if (tablePile().length === 0) {
+              <div class="text-emerald-500/20 text-[9px] uppercase tracking-widest font-black text-center select-none">
+                Play Pile Empty
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE: Opponent 3 (Bot) -->
+      <div class="flex-shrink-0 w-16 md:w-44 flex justify-end z-20">
+        @if (getPlayerById('bot3'); as player) {
+          <div class="flex flex-col md:flex-row items-center gap-3">
+            <div class="flex flex-col items-center space-y-2">
+              <!-- Player Bubble -->
+              <div class="flex flex-col md:flex-row items-center gap-2 bg-slate-900/80 backdrop-blur-md border rounded-2xl p-2 md:p-3 shadow-xl transition-all duration-300 w-full"
+                   [ngClass]="player.isCurrentTurn ? 'border-amber-500 ring-2 ring-amber-500/30 scale-105' : 'border-slate-800/85'">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative flex-shrink-0"
+                     [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 animate-pulse' : 'bg-slate-800 text-slate-300'">
+                  {{ player.avatar }}
+                </div>
+                <div class="hidden md:flex flex-col text-left">
+                  <span class="font-extrabold text-xs text-slate-200 leading-none">{{ player.name }}</span>
+                  <span class="text-[10px] text-slate-400 mt-1">{{ player.cardCount }} cards</span>
+                </div>
+                <div class="flex md:hidden bg-slate-950/80 px-1.5 py-0.5 rounded-md text-[10px] font-bold text-slate-400">
+                  {{ player.cardCount }}
+                </div>
+              </div>
+
+              <!-- Hand placeholder (Desktop only) -->
+              <div class="hidden md:flex flex-col -space-y-5 overflow-hidden justify-center items-center py-1">
+                @for (card of [].constructor(Math.min(player.cardCount, 5)); track $index) {
+                  <div class="w-9 h-6 bg-gradient-to-l from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-sm -rotate-90"></div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- 3. BOTTOM SIDE: Human Player Hand (Scrollable Deck Panel) -->
+    <div class="w-full max-w-3xl mx-auto bg-slate-900/70 backdrop-blur-lg border border-slate-800/85 rounded-3xl p-3 sm:p-4 shadow-2xl relative z-20">
+      @if (getPlayerById('human'); as player) {
+        
+        <!-- Deck Info Header -->
+        <div class="flex justify-between items-center mb-2 px-2">
+          <div class="flex items-center space-x-2">
+            <div class="w-6 h-6 rounded-full bg-indigo-600/35 text-indigo-400 flex items-center justify-center font-black text-[10px]">
+              {{ player.avatar }}
+            </div>
+            <span class="font-bold text-xs text-slate-200">{{ player.name }}</span>
+            <span class="text-[10px] text-slate-500">({{ sortedHumanHand().length }} cards)</span>
+          </div>
+
+          <div class="text-[9px] sm:text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border tracking-wide uppercase"
+               [ngClass]="player.isCurrentTurn ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse' : 'bg-slate-950/50 text-slate-450 border-slate-850'">
+            {{ player.isCurrentTurn ? 'Your Turn' : 'Waiting' }}
+          </div>
+        </div>
+
+        <!-- Human Card Fan / Scroll Container -->
+        <div class="w-full overflow-x-auto scrollbar-none py-1 flex justify-start sm:justify-center">
+          <div class="flex items-center space-x-[-12px] sm:space-x-[-16px] hover:space-x-1 transition-all duration-300 px-4 py-2">
+            @for (card of sortedHumanHand(); track card.display; let idx = $index) {
+              <button class="relative flex-shrink-0 w-14 h-22 sm:w-18 sm:h-28 bg-slate-850 border rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-6 hover:!z-50 hover:scale-105 active:scale-95 cursor-pointer flex flex-col justify-between p-1.5 group select-none focus:outline-none"
+                      [style.z-index]="idx"
+                      [ngStyle]="{ 'transform': 'rotate(' + (idx - sortedHumanHand().length / 2) * 1.5 + 'deg)' }"
+                      [ngClass]="[
+                        card.suit === 'HEARTS' || card.suit === 'DIAMONDS' ? 'text-rose-450 border-rose-500/30 hover:border-rose-500/80 hover:shadow-rose-500/15' : 'text-sky-450 border-sky-500/30 hover:border-sky-500/80 hover:shadow-sky-500/15'
+                      ]">
+                <!-- Top Corner -->
+                <div class="flex flex-col items-start leading-none">
+                  <span class="text-xs font-black tracking-tight">{{ card.rank }}</span>
+                  <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-3 h-3' }"></ng-container>
+                </div>
+                
+                <!-- Watermark -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-5 group-hover:opacity-15 transition-opacity pointer-events-none">
+                  <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-8 h-8' }"></ng-container>
+                </div>
+                
+                <!-- Bottom Corner -->
+                <div class="flex flex-col items-end leading-none self-end rotate-180">
+                  <span class="text-xs font-black tracking-tight">{{ card.rank }}</span>
+                  <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-3 h-3' }"></ng-container>
+                </div>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+  </main>
+
+  <!-- Footer Info -->
+  <footer class="w-full text-center text-[9px] text-slate-600 mt-2 select-none">
+    Kazhudha Card Game Simulation
+  </footer>
+</div>
+
+<!-- ==============================================
+     REUSABLE TEMPLATES FOR CARDS & SUITS
+     ============================================== -->
+
+<!-- Card Template used in Table Pile -->
+<ng-template #cardTemplate let-card="card">
+  <div class="w-10 h-15 sm:w-12 sm:h-18 md:w-14 md:h-21 bg-slate-850 border rounded-xl shadow-2xl flex flex-col justify-between p-1 select-none animate-fade-in"
+       [ngClass]="card.suit === 'HEARTS' || card.suit === 'DIAMONDS' ? 'text-rose-450 border-rose-500/40 shadow-rose-950/20' : 'text-sky-450 border-sky-500/40 shadow-sky-950/20'">
+    <!-- Top info -->
+    <div class="flex flex-col items-start leading-none">
+      <span class="text-[9px] sm:text-xs font-extrabold leading-none">{{ card.rank }}</span>
+      <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-2.5 h-2.5' }"></ng-container>
+    </div>
+    <!-- Central Icon -->
+    <div class="flex justify-center items-center opacity-20">
+      <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-5 h-5' }"></ng-container>
+    </div>
+    <!-- Bottom info -->
+    <div class="flex flex-col items-end leading-none self-end rotate-180">
+      <span class="text-[9px] sm:text-xs font-extrabold leading-none">{{ card.rank }}</span>
+      <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-2.5 h-2.5' }"></ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Suit Icon Template -->
+<ng-template #suitIconTemplate let-suit="suit" let-sizeClass="sizeClass">
+  <div [ngClass]="sizeClass || 'w-3 h-3'">
+    @if (suit === 'HEARTS') {
+      <svg class="w-full h-full fill-current" viewBox="0 0 24 24">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+    } @else if (suit === 'SPADES') {
+      <svg class="w-full h-full fill-current" viewBox="0 0 24 24">
+        <path d="M12 2C10.5 5 6 9.5 6 12.5a6 6 0 0 0 12 0C18 9.5 13.5 5 12 2Zm1 13.25V19.5c0 1.25.75 1.75 1.5 1.75h.5v1h-6v-1h.5c.75 0 1.5-.5 1.5-1.75v-4.25h2Z"/>
+      </svg>
+    } @else if (suit === 'DIAMONDS') {
+      <svg class="w-full h-full fill-current" viewBox="0 0 24 24">
+        <path d="M12 2L2 12l10 10 10-10L12 2z"/>
+      </svg>
+    } @else {
+      <svg class="w-full h-full fill-current" viewBox="0 0 24 24">
+        <path d="M12 9.5a3.5 3.5 0 1 1 3.5-3.5A3.5 3.5 0 0 1 12 9.5Zm-2.75 6a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7Zm5.5 0a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7ZM13 15v4.25c0 1.25.75 1.75 1.5 1.75h.5v1h-6v-1h.5c.75 0 1.5-.5 1.5-1.75V15h2Z"/>
+      </svg>
+    }
+  </div>
+</ng-template>
