@@ -13,5 +13,6 @@ public record GameViewDTO(
     List<Card> humanHand,
     List<PlayerHandSizeDTO> otherPlayers,
     boolean gameOver,
+    String kazhudhaPlayerId,
     List<GameEvent> events
 ) {}

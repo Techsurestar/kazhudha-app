@@ -35,6 +35,7 @@ export interface GameViewDTO {
   humanHand: Card[];
   otherPlayers: PlayerHandSizeDTO[];
   gameOver: boolean;
+  kazhudhaPlayerId: string | null;
   events: GameEvent[];
 }
 
@@ -77,6 +78,7 @@ function normalizeGameViewDTO(dto: any): GameViewDTO {
       card: normalizeCard(pc.card)
     })),
     humanHand: (dto.humanHand || []).map((c: any) => normalizeCard(c)),
+    kazhudhaPlayerId: dto.kazhudhaPlayerId || null,
     events: (dto.events || []).map((e: any) => ({
       ...e,
       card: e.card ? normalizeCard(e.card) : null

@@ -221,13 +221,21 @@ public class GameController {
                 .map(p -> new PlayerHandSizeDTO(p.getId(), p.getName(), p.getHand().size(), p.isBot(), p.hasGottenAway()))
                 .toList();
 
+        boolean gameOver = isGameOver(state);
+        String kazhudhaPlayerId = gameOver ? state.getPlayers().stream()
+                .filter(p -> !p.hasGottenAway())
+                .map(Player::getId)
+                .findFirst()
+                .orElse(null) : null;
+
         return new GameViewDTO(
                 state.getTablePile(),
                 state.getActiveRoundSuit(),
                 state.getCurrentTurnPlayerId(),
                 human.getHand(),
                 otherPlayers,
-                isGameOver(state),
+                gameOver,
+                kazhudhaPlayerId,
                 events
         );
     }

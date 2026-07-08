@@ -25,8 +25,10 @@ export class GameTableComponent implements OnInit {
 
   // Local signals for tracking visual animations and overlays
   visualTablePile = signal<PlayedCard[]>([]);
+  visualCardCounts = signal<Record<string, number>>({});
   vettuAlertMessage = signal<string | null>(null);
   isVettuFlashing = signal<boolean>(false);
+  showGameOverModal = signal<boolean>(false);
   
   private lastProcessedState: GameViewDTO | null = null;
   private eventQueue: GameEvent[] = [];
@@ -47,6 +49,12 @@ export class GameTableComponent implements OnInit {
       }
       return (RANK_ORDER[a.rank] || 0) - (RANK_ORDER[b.rank] || 0);
     });
+  });
+
+  kazhudhaPlayer = computed(() => {
+    const id = this.gameState()?.kazhudhaPlayerId;
+    if (!id) return null;
+    return this.getPlayerById(id);
   });
 
   constructor(private gameStateService: GameStateService) {
@@ -82,6 +90,25 @@ export class GameTableComponent implements OnInit {
   }
 
   /**
+   * Restarts the game session
+   */
+  restartGame() {
+    this.gameStateService.startGame('default');
+  }
+
+  /**
+   * Helper to extract player hand size map from GameViewDTO
+   */
+  private getHandSizes(state: GameViewDTO): Record<string, number> {
+    const counts: Record<string, number> = {};
+    counts['human'] = state.humanHand.length;
+    for (const bot of state.otherPlayers) {
+      counts[bot.id] = bot.handSize;
+    }
+    return counts;
+  }
+
+  /**
    * Replays actions and handles Vettu animations before updating local visual states
    * @param state New GameViewDTO from server
    */
@@ -89,7 +116,19 @@ export class GameTableComponent implements OnInit {
     if (this.lastProcessedState === state) {
       return;
     }
+
+    // Set dynamic initial counts for playback based on previous state
+    const initialCounts = this.lastProcessedState 
+      ? this.getHandSizes(this.lastProcessedState)
+      : this.getHandSizes(state);
+
+    this.visualCardCounts.set(initialCounts);
     this.lastProcessedState = state;
+
+    // Reset game over modal visibility if starting a new game
+    if (!state.gameOver) {
+      this.showGameOverModal.set(false);
+    }
 
     // Queue up the new events to replay sequentially
     this.eventQueue = [...state.events];
@@ -111,6 +150,12 @@ export class GameTableComponent implements OnInit {
       this.visualTablePile.set(finalState.tablePile);
       this.vettuAlertMessage.set(null);
       this.isVettuFlashing.set(false);
+      this.visualCardCounts.set(this.getHandSizes(finalState));
+
+      // Trigger Game Over modal only after the final card play / Vettu animation finishes
+      if (finalState.gameOver) {
+        this.showGameOverModal.set(true);
+      }
       return;
     }
 
@@ -128,15 +173,51 @@ export class GameTableComponent implements OnInit {
       nextPile.push({ playerId: event.playerId, card: event.card });
       this.visualTablePile.set(nextPile);
 
+      // Decrement cards count for player
+      const counts = { ...this.visualCardCounts() };
+      if (counts[event.playerId] > 0) {
+        counts[event.playerId]--;
+      }
+      this.visualCardCounts.set(counts);
+
       setTimeout(() => {
         this.runNextEvent(finalState);
       }, 600); // 600ms per normal card play animation
 
     } else if (event.eventType === 'VETTU' && event.card) {
       const currentPile = this.visualTablePile();
+      const nextPile = [...currentPile, { playerId: event.playerId, card: event.card }];
       
       // Show the Vettu cutting card on the table pile
-      this.visualTablePile.set([...currentPile, { playerId: event.playerId, card: event.card }]);
+      this.visualTablePile.set(nextPile);
+
+      // Decrement cutting player's cards
+      const counts = { ...this.visualCardCounts() };
+      if (counts[event.playerId] > 0) {
+        counts[event.playerId]--;
+      }
+
+      // Calculate which player gets penalized (played highest card matching lead round suit)
+      const firstCard = currentPile[0]?.card;
+      if (firstCard) {
+        const leadSuit = firstCard.suit;
+        let penalizedPlayerId: string | null = null;
+        let maxRankValue = -1;
+        for (const pc of currentPile) {
+          if (pc.card.suit === leadSuit) {
+            const rankVal = RANK_ORDER[pc.card.rank] || 0;
+            if (rankVal > maxRankValue) {
+              maxRankValue = rankVal;
+              penalizedPlayerId = pc.playerId;
+            }
+          }
+        }
+        if (penalizedPlayerId) {
+          // Penalized player absorbs all cards currently played on the table
+          counts[penalizedPlayerId] += nextPile.length;
+        }
+      }
+      this.visualCardCounts.set(counts);
 
       // Trigger the warning glow and alert message banner
       this.vettuAlertMessage.set(event.description);
@@ -150,8 +231,15 @@ export class GameTableComponent implements OnInit {
         this.runNextEvent(finalState);
       }, 2000);
 
+    } else if (event.eventType === 'ESCAPE') {
+      // Escaping player sets card count to 0
+      const counts = { ...this.visualCardCounts() };
+      counts[event.playerId] = 0;
+      this.visualCardCounts.set(counts);
+      this.runNextEvent(finalState);
+
     } else {
-      // Handle other events like ESCAPE by skipping or running immediately
+      // Handle other events by skipping
       this.runNextEvent(finalState);
     }
   }
@@ -163,12 +251,17 @@ export class GameTableComponent implements OnInit {
     const state = this.gameState();
     if (!state) return null;
 
+    const visualCounts = this.visualCardCounts();
+    const count = (visualCounts && visualCounts[id] !== undefined)
+      ? visualCounts[id]
+      : (id === 'human' ? state.humanHand.length : (state.otherPlayers.find(p => p.id === id)?.handSize || 0));
+
     if (id === 'human') {
       return {
         id: 'human',
         name: 'Player 1 (You)',
         avatar: 'P1',
-        cardCount: state.humanHand.length,
+        cardCount: count,
         isBot: false,
         isCurrentTurn: state.currentTurnPlayerId === 'human'
       };
@@ -181,7 +274,7 @@ export class GameTableComponent implements OnInit {
       id: bot.id,
       name: bot.name,
       avatar: id === 'bot1' ? 'B1' : id === 'bot2' ? 'B2' : 'B3',
-      cardCount: bot.handSize,
+      cardCount: count,
       isBot: true,
       isCurrentTurn: state.currentTurnPlayerId === bot.id,
       hasGottenAway: bot.hasGottenAway
