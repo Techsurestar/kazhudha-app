@@ -182,7 +182,7 @@ export class GameTableComponent implements OnInit {
 
       setTimeout(() => {
         this.runNextEvent(finalState);
-      }, 600); // 600ms per normal card play animation
+      }, 2000); // 2000ms (2 seconds) per bot card play animation
 
     } else if (event.eventType === 'VETTU' && event.card) {
       const currentPile = this.visualTablePile();

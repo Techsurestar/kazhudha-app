@@ -193,7 +193,13 @@ public class GameController {
                 .max(Comparator.comparingInt(pc -> pc.card().rank().getValue()))
                 .orElseThrow(() -> new IllegalStateException("No card of active suit in completed trick"));
 
-        state.setCurrentTurnPlayerId(highestPlayed.playerId());
+        Player highestPlayedPlayer = state.getPlayer(highestPlayed.playerId());
+        if (highestPlayedPlayer.hasGottenAway()) {
+            state.setCurrentTurnPlayerId(highestPlayed.playerId());
+            gameRuleEngine.advanceTurn(state, state.getPlayers());
+        } else {
+            state.setCurrentTurnPlayerId(highestPlayed.playerId());
+        }
 
         for (PlayedCard pc : state.getTablePile()) {
             discardedHistory.add(pc.card());

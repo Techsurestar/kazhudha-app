@@ -40,7 +40,7 @@
         <div class="flex flex-col items-center space-y-2">
           <!-- Player Info Bubble -->
           <div class="flex items-center space-x-2.5 bg-slate-900/80 backdrop-blur-md border rounded-2xl px-3.5 py-1.5 shadow-xl transition-all duration-300"
-               [ngClass]="player.isCurrentTurn ? 'border-amber-500 ring-2 ring-amber-500/30' : 'border-slate-800/85'">
+               [ngClass]="player.isCurrentTurn ? 'border-amber-450 ring-2 ring-amber-450/40 shadow-[0_0_20px_rgba(245,158,11,0.25)] scale-105 bg-slate-900/90' : 'border-slate-800/85'">
             
             <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative"
                  [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 animate-pulse' : 'bg-slate-800 text-slate-300'">
@@ -73,7 +73,7 @@
             <div class="flex flex-col items-center space-y-2">
               <!-- Player Bubble -->
               <div class="flex flex-col md:flex-row items-center gap-2 bg-slate-900/80 backdrop-blur-md border rounded-2xl p-2 md:p-3 shadow-xl transition-all duration-300 w-full"
-                   [ngClass]="player.isCurrentTurn ? 'border-amber-500 ring-2 ring-amber-500/30 scale-105' : 'border-slate-800/85'">
+                   [ngClass]="player.isCurrentTurn ? 'border-amber-450 ring-2 ring-amber-450/40 shadow-[0_0_20px_rgba(245,158,11,0.25)] scale-105 bg-slate-900/90' : 'border-slate-800/85'">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative flex-shrink-0"
                      [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 animate-pulse' : 'bg-slate-800 text-slate-300'">
                   {{ player.avatar }}
@@ -121,28 +121,36 @@
             <!-- Top Played Card (Bot 2) -->
             @if (getPlayedCardByPlayer('bot2'); as played) {
               <div class="absolute -translate-y-7 sm:-translate-y-9 md:-translate-y-11 z-25">
-                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                <div class="animate-slide-from-top">
+                  <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                </div>
               </div>
             }
 
             <!-- Left Played Card (Bot 1) -->
             @if (getPlayedCardByPlayer('bot1'); as played) {
               <div class="absolute -translate-x-7 sm:-translate-x-9 md:-translate-x-11 -rotate-12 z-20">
-                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                <div class="animate-slide-from-left">
+                  <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                </div>
               </div>
             }
 
             <!-- Right Played Card (Bot 3) -->
             @if (getPlayedCardByPlayer('bot3'); as played) {
               <div class="absolute translate-x-7 sm:translate-x-9 md:translate-x-11 rotate-12 z-20">
-                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                <div class="animate-slide-from-right">
+                  <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                </div>
               </div>
             }
 
             <!-- Bottom Played Card (Human) -->
             @if (getPlayedCardByPlayer('human'); as played) {
               <div class="absolute translate-y-7 sm:translate-y-9 md:translate-y-11 z-30">
-                <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                <div class="animate-slide-from-bottom">
+                  <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
+                </div>
               </div>
             }
             
@@ -162,7 +170,7 @@
             <div class="flex flex-col items-center space-y-2">
               <!-- Player Bubble -->
               <div class="flex flex-col md:flex-row items-center gap-2 bg-slate-900/80 backdrop-blur-md border rounded-2xl p-2 md:p-3 shadow-xl transition-all duration-300 w-full"
-                   [ngClass]="player.isCurrentTurn ? 'border-amber-500 ring-2 ring-amber-500/30 scale-105' : 'border-slate-800/85'">
+                   [ngClass]="player.isCurrentTurn ? 'border-amber-450 ring-2 ring-amber-450/40 shadow-[0_0_20px_rgba(245,158,11,0.25)] scale-105 bg-slate-900/90' : 'border-slate-800/85'">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs relative flex-shrink-0"
                      [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-amber-500 to-yellow-400 text-slate-950 animate-pulse' : 'bg-slate-800 text-slate-300'">
                   {{ player.avatar }}
@@ -190,7 +198,8 @@
     </div>
 
     <!-- 3. BOTTOM SIDE: Human Player Hand (Scrollable Deck Panel) -->
-    <div class="w-full max-w-3xl mx-auto bg-slate-900/70 backdrop-blur-lg border border-slate-800/85 rounded-3xl p-3 sm:p-4 shadow-2xl relative z-20">
+    <div class="w-full max-w-3xl mx-auto bg-slate-900/70 backdrop-blur-lg border rounded-3xl p-3 sm:p-4 shadow-2xl relative z-20 transition-all duration-300"
+         [ngClass]="gameState()?.currentTurnPlayerId === 'human' ? 'border-amber-500/80 shadow-[0_0_30px_rgba(245,158,11,0.18)] ring-1 ring-amber-500/30' : 'border-slate-800/85'">
       @if (getPlayerById('human'); as player) {
         
         <!-- Deck Info Header -->

@@ -1,1 +1,61 @@
 @import "tailwindcss";
+
+@keyframes slideFromTop {
+  0% {
+    transform: translateY(-200px) scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideFromLeft {
+  0% {
+    transform: translateX(-200px) scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideFromRight {
+  0% {
+    transform: translateX(200px) scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideFromBottom {
+  0% {
+    transform: translateY(200px) scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-slide-from-top {
+  animation: slideFromTop 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-slide-from-left {
+  animation: slideFromLeft 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-slide-from-right {
+  animation: slideFromRight 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-slide-from-bottom {
+  animation: slideFromBottom 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
