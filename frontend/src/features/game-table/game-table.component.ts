@@ -26,6 +26,7 @@ export class GameTableComponent implements OnInit {
   // Local signals for tracking visual animations and overlays
   visualTablePile = signal<PlayedCard[]>([]);
   visualCardCounts = signal<Record<string, number>>({});
+  visualCurrentTurnPlayerId = signal<string | null>(null);
   vettuAlertMessage = signal<string | null>(null);
   isVettuFlashing = signal<boolean>(false);
   showGameOverModal = signal<boolean>(false);
@@ -117,12 +118,17 @@ export class GameTableComponent implements OnInit {
       return;
     }
 
-    // Set dynamic initial counts for playback based on previous state
+    // Set dynamic initial counts and turn for playback based on previous state
     const initialCounts = this.lastProcessedState 
       ? this.getHandSizes(this.lastProcessedState)
       : this.getHandSizes(state);
 
+    const initialTurn = this.lastProcessedState
+      ? this.lastProcessedState.currentTurnPlayerId
+      : state.currentTurnPlayerId;
+
     this.visualCardCounts.set(initialCounts);
+    this.visualCurrentTurnPlayerId.set(initialTurn);
     this.lastProcessedState = state;
 
     // Reset game over modal visibility if starting a new game
@@ -151,6 +157,7 @@ export class GameTableComponent implements OnInit {
       this.vettuAlertMessage.set(null);
       this.isVettuFlashing.set(false);
       this.visualCardCounts.set(this.getHandSizes(finalState));
+      this.visualCurrentTurnPlayerId.set(finalState.currentTurnPlayerId);
 
       // Trigger Game Over modal only after the final card play / Vettu animation finishes
       if (finalState.gameOver) {
@@ -163,73 +170,103 @@ export class GameTableComponent implements OnInit {
     const event = this.eventQueue.shift()!;
 
     if (event.eventType === 'PLAY' && event.card) {
-      const currentPile = this.visualTablePile();
-      
-      // If the player playing has already contributed a card to the current visual pile,
-      // it implies a new round has started, so we clear the old round's pile.
-      const alreadyPlayed = currentPile.some(c => c.playerId === event.playerId);
-      const nextPile = alreadyPlayed ? [] : [...currentPile];
+      // 1. Highlight the active player immediately
+      this.visualCurrentTurnPlayerId.set(event.playerId);
 
-      nextPile.push({ playerId: event.playerId, card: event.card });
-      this.visualTablePile.set(nextPile);
+      // Instantly throw card for human, wait 1.5s thinking time for bots
+      const thinkDelay = event.playerId === 'human' ? 0 : 1500;
 
-      // Decrement cards count for player
-      const counts = { ...this.visualCardCounts() };
-      if (counts[event.playerId] > 0) {
-        counts[event.playerId]--;
-      }
-      this.visualCardCounts.set(counts);
-
+      // 2. Wait thinkDelay before sliding the card
       setTimeout(() => {
-        this.runNextEvent(finalState);
-      }, 2000); // 2000ms (2 seconds) per bot card play animation
+        const currentPile = this.visualTablePile();
+        
+        // If the player playing has already contributed a card to the current visual pile,
+        // it implies a new round has started, so we clear the old round's pile.
+        const alreadyPlayed = currentPile.some(c => c.playerId === event.playerId);
+        const nextPile = alreadyPlayed ? [] : [...currentPile];
+
+        nextPile.push({ playerId: event.playerId, card: event.card! });
+        this.visualTablePile.set(nextPile);
+
+        // Decrement cards count for player
+        const counts = { ...this.visualCardCounts() };
+        if (counts[event.playerId] > 0) {
+          counts[event.playerId]--;
+        }
+        this.visualCardCounts.set(counts);
+
+        // 3. Wait 500ms (card flight animation time) before moving to the next player's turn
+        setTimeout(() => {
+          this.runNextEvent(finalState);
+        }, 500);
+
+      }, thinkDelay);
 
     } else if (event.eventType === 'VETTU' && event.card) {
-      const currentPile = this.visualTablePile();
-      const nextPile = [...currentPile, { playerId: event.playerId, card: event.card }];
-      
-      // Show the Vettu cutting card on the table pile
-      this.visualTablePile.set(nextPile);
+      // 1. Highlight the cutting active player immediately
+      this.visualCurrentTurnPlayerId.set(event.playerId);
 
-      // Decrement cutting player's cards
-      const counts = { ...this.visualCardCounts() };
-      if (counts[event.playerId] > 0) {
-        counts[event.playerId]--;
-      }
+      // Instantly throw card for human, wait 1.5s thinking time for bots
+      const thinkDelay = event.playerId === 'human' ? 0 : 1500;
 
-      // Calculate which player gets penalized (played highest card matching lead round suit)
-      const firstCard = currentPile[0]?.card;
-      if (firstCard) {
-        const leadSuit = firstCard.suit;
+      // 2. Wait thinkDelay before sliding the Vettu card
+      setTimeout(() => {
+        const currentPile = this.visualTablePile();
+        const nextPile = [...currentPile, { playerId: event.playerId, card: event.card! }];
+        
+        // Show the Vettu cutting card on the table pile
+        this.visualTablePile.set(nextPile);
+
+        // Decrement cutting player's cards
+        const counts = { ...this.visualCardCounts() };
+        if (counts[event.playerId] > 0) {
+          counts[event.playerId]--;
+        }
+
+        // Calculate which player gets penalized (played highest card matching lead round suit)
+        const firstCard = currentPile[0]?.card;
         let penalizedPlayerId: string | null = null;
-        let maxRankValue = -1;
-        for (const pc of currentPile) {
-          if (pc.card.suit === leadSuit) {
-            const rankVal = RANK_ORDER[pc.card.rank] || 0;
-            if (rankVal > maxRankValue) {
-              maxRankValue = rankVal;
-              penalizedPlayerId = pc.playerId;
+        if (firstCard) {
+          const leadSuit = firstCard.suit;
+          let maxRankValue = -1;
+          for (const pc of currentPile) {
+            if (pc.card.suit === leadSuit) {
+              const rankVal = RANK_ORDER[pc.card.rank] || 0;
+              if (rankVal > maxRankValue) {
+                maxRankValue = rankVal;
+                penalizedPlayerId = pc.playerId;
+              }
             }
           }
+          if (penalizedPlayerId) {
+            // Penalized player absorbs all cards currently played on the table
+            counts[penalizedPlayerId] += nextPile.length;
+          }
         }
-        if (penalizedPlayerId) {
-          // Penalized player absorbs all cards currently played on the table
-          counts[penalizedPlayerId] += nextPile.length;
-        }
-      }
-      this.visualCardCounts.set(counts);
+        this.visualCardCounts.set(counts);
 
-      // Trigger the warning glow and alert message banner
-      this.vettuAlertMessage.set(event.description);
-      this.isVettuFlashing.set(true);
+        // 3. Wait 500ms (card flight animation time) before initiating the Vettu flash/banner
+        setTimeout(() => {
+          if (penalizedPlayerId) {
+            // Highlight the penalized player who now inherits the lead turn for the next round
+            this.visualCurrentTurnPlayerId.set(penalizedPlayerId);
+          }
+          
+          // Trigger the warning glow and alert message banner
+          this.vettuAlertMessage.set(event.description);
+          this.isVettuFlashing.set(true);
 
-      // Abruptly clear table pile after 2 seconds to simulate penalized player picking it up
-      setTimeout(() => {
-        this.visualTablePile.set([]);
-        this.vettuAlertMessage.set(null);
-        this.isVettuFlashing.set(false);
-        this.runNextEvent(finalState);
-      }, 2000);
+          // 4. Wait 2 seconds of warning flash before clearing pile and advancing to next event
+          setTimeout(() => {
+            this.visualTablePile.set([]);
+            this.vettuAlertMessage.set(null);
+            this.isVettuFlashing.set(false);
+            this.runNextEvent(finalState);
+          }, 2000);
+
+        }, 500);
+
+      }, thinkDelay);
 
     } else if (event.eventType === 'ESCAPE') {
       // Escaping player sets card count to 0
@@ -256,6 +293,9 @@ export class GameTableComponent implements OnInit {
       ? visualCounts[id]
       : (id === 'human' ? state.humanHand.length : (state.otherPlayers.find(p => p.id === id)?.handSize || 0));
 
+    const turnId = this.visualCurrentTurnPlayerId() || state.currentTurnPlayerId;
+    const isTurn = turnId === id;
+
     if (id === 'human') {
       return {
         id: 'human',
@@ -263,7 +303,7 @@ export class GameTableComponent implements OnInit {
         avatar: 'P1',
         cardCount: count,
         isBot: false,
-        isCurrentTurn: state.currentTurnPlayerId === 'human'
+        isCurrentTurn: isTurn
       };
     }
 
@@ -276,7 +316,7 @@ export class GameTableComponent implements OnInit {
       avatar: id === 'bot1' ? 'B1' : id === 'bot2' ? 'B2' : 'B3',
       cardCount: count,
       isBot: true,
-      isCurrentTurn: state.currentTurnPlayerId === bot.id,
+      isCurrentTurn: isTurn,
       hasGottenAway: bot.hasGottenAway
     };
   }
