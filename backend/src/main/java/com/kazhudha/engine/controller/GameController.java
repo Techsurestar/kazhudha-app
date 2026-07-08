@@ -22,6 +22,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/game")
+@CrossOrigin
 public class GameController {
 
     private final DealerService dealerService;
@@ -158,7 +159,11 @@ public class GameController {
             return;
         }
 
-        if (state.getTablePile().size() == 4) {
+        long activePlayersCount = state.getPlayers().stream()
+                .filter(p -> !p.hasGottenAway())
+                .count();
+
+        if (state.getTablePile().size() == activePlayersCount) {
             resolveCompletedTrick(state, discardedHistory);
         } else {
             gameRuleEngine.advanceTurn(state, state.getPlayers());
