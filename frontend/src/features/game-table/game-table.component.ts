@@ -30,6 +30,7 @@ export class GameTableComponent implements OnInit {
   vettuAlertMessage = signal<string | null>(null);
   isVettuFlashing = signal<boolean>(false);
   showGameOverModal = signal<boolean>(false);
+  escapedOrder = signal<string[]>([]);
   
   private lastProcessedState: GameViewDTO | null = null;
   private eventQueue: GameEvent[] = [];
@@ -129,6 +130,13 @@ export class GameTableComponent implements OnInit {
 
     this.visualCardCounts.set(initialCounts);
     this.visualCurrentTurnPlayerId.set(initialTurn);
+    
+    // Reset escape sequence only if starting a fresh round (no one has gotten away)
+    const isRestart = !state.gameOver && state.otherPlayers.every(p => !p.hasGottenAway) && state.humanHand.length > 0;
+    if (isRestart) {
+      this.escapedOrder.set([]);
+    }
+
     this.lastProcessedState = state;
 
     // Reset game over modal visibility if starting a new game
@@ -158,6 +166,33 @@ export class GameTableComponent implements OnInit {
       this.isVettuFlashing.set(false);
       this.visualCardCounts.set(this.getHandSizes(finalState));
       this.visualCurrentTurnPlayerId.set(finalState.currentTurnPlayerId);
+
+      // Re-evaluate escaped order based on final state in case any escaped players are not recorded
+      const finalEscaped: string[] = [];
+      for (const bot of finalState.otherPlayers) {
+        if (bot.hasGottenAway) {
+          finalEscaped.push(bot.id);
+        }
+      }
+      if (finalState.humanHand.length === 0 && finalState.kazhudhaPlayerId !== 'human') {
+        finalEscaped.push('human');
+      }
+
+      const currentOrder = [...this.escapedOrder()];
+      for (const id of finalEscaped) {
+        if (!currentOrder.includes(id)) {
+          currentOrder.push(id);
+        }
+      }
+      
+      // Filter out any players who are NOT escaped in the final state (e.g. they inherited cards)
+      const validEscaped = currentOrder.filter(id => {
+        if (id === 'human') {
+          return finalState.humanHand.length === 0;
+        }
+        return finalState.otherPlayers.find(p => p.id === id)?.hasGottenAway || false;
+      });
+      this.escapedOrder.set(validEscaped);
 
       // Trigger Game Over modal only after the final card play / Vettu animation finishes
       if (finalState.gameOver) {
@@ -241,6 +276,12 @@ export class GameTableComponent implements OnInit {
           if (penalizedPlayerId) {
             // Penalized player absorbs all cards currently played on the table
             counts[penalizedPlayerId] += nextPile.length;
+
+            // Remove penalized player from escapedOrder since they are back in the game!
+            const currentOrder = this.escapedOrder();
+            if (currentOrder.includes(penalizedPlayerId)) {
+              this.escapedOrder.set(currentOrder.filter(id => id !== penalizedPlayerId));
+            }
           }
         }
         this.visualCardCounts.set(counts);
@@ -273,12 +314,34 @@ export class GameTableComponent implements OnInit {
       const counts = { ...this.visualCardCounts() };
       counts[event.playerId] = 0;
       this.visualCardCounts.set(counts);
+
+      // Track the escape order sequence dynamically
+      const currentOrder = this.escapedOrder();
+      if (!currentOrder.includes(event.playerId)) {
+        this.escapedOrder.set([...currentOrder, event.playerId]);
+      }
+
       this.runNextEvent(finalState);
 
     } else {
       // Handle other events by skipping
       this.runNextEvent(finalState);
     }
+  }
+
+  /**
+   * Helper to retrieve chip level (gold, silver, bronze) for escaped players
+   */
+  getPlayerChip(playerId: string): { type: 'gold' | 'silver' | 'bronze', value: number, label: string } | null {
+    const idx = this.escapedOrder().indexOf(playerId);
+    if (idx === 0) {
+      return { type: 'gold', value: 20, label: '20' };
+    } else if (idx === 1) {
+      return { type: 'silver', value: 15, label: '15' };
+    } else if (idx === 2) {
+      return { type: 'bronze', value: 10, label: '10' };
+    }
+    return null;
   }
 
   /**

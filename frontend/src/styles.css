@@ -59,3 +59,36 @@
 .animate-slide-from-bottom {
   animation: slideFromBottom 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
+
+@keyframes chipPop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.3); }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
+.animate-chip-pop {
+  animation: chipPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.casino-outer-felt {
+  background-color: #042411;
+  background-image: 
+      radial-gradient(circle at 50% 50%, rgba(10, 61, 29, 0.25) 0%, rgba(3, 20, 9, 1) 100%),
+      url("https://www.transparenttextures.com/patterns/royal-feather.png");
+  background-attachment: fixed;
+}
+
+.casino-table-felt {
+  background-color: #24425a;
+  background-image: 
+      radial-gradient(circle at 50% 50%, rgba(36, 66, 90, 0.3) 0%, rgba(15, 29, 41, 1) 100%),
+      url("https://www.transparenttextures.com/patterns/felt.png");
+}
+
+.casino-gold-rail {
+  background: linear-gradient(135deg, #fceabb 0%, #f8b500 25%, #fceabb 50%, #f8b500 75%, #fceabb 100%);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4);
+}
+
