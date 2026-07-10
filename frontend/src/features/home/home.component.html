@@ -1,0 +1,174 @@
+<div class="felt-texture text-on-surface min-h-screen relative flex flex-col justify-between">
+  <!-- Header Nav -->
+  <header class="fixed top-0 w-full z-50 glass-header">
+    <nav class="flex justify-between items-center px-6 md:px-12 h-20 w-full max-w-7xl mx-auto">
+      <div class="text-2xl md:text-4xl text-[#e9c349] font-bold gold-text-glow tracking-tight cursor-default">
+        Kazhudha Club
+      </div>
+      <div class="hidden md:flex gap-10 items-center">
+        <a class="text-sm text-slate-100 hover:text-[#e9c349] transition-all uppercase tracking-widest font-bold" href="#about">About</a>
+        <a class="text-sm text-slate-100 hover:text-[#e9c349] transition-all uppercase tracking-widest font-bold" href="#how-to-play">How to Play</a>
+        <a class="text-sm text-slate-100 hover:text-[#e9c349] transition-all uppercase tracking-widest font-bold" href="#tips">Tips</a>
+      </div>
+      <button routerLink="/game" class="gold-button text-slate-950 px-8 py-3 rounded-lg text-sm font-semibold tracking-wider transition-all duration-300 transform active:scale-95 cursor-pointer focus:outline-none">
+        Play Now
+      </button>
+    </nav>
+  </header>
+
+  <main class="flex-grow">
+    <!-- Hero Section -->
+    <section class="relative min-h-[100vh] flex items-center justify-center overflow-hidden px-4">
+      <canvas #heroCanvas id="hero-canvas"></canvas>
+      <div class="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
+      
+      <div class="relative z-10 text-center max-w-5xl mx-auto space-y-12 py-32 animate-float">
+        <div class="inline-block px-8 py-2 rounded-full border-2 border-[#e9c349]/40 bg-black/30 backdrop-blur-md text-[#e9c349] text-xs font-semibold tracking-[0.3em] mb-4 shadow-2xl">
+          THE ULTIMATE CARD EXPERIENCE
+        </div>
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-[#e9c349] gold-text-glow leading-[1.1] mb-8 font-serif">
+          Welcome to <br/> Kazhudha Club!
+        </h1>
+        <p class="text-lg md:text-2xl text-slate-200 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md">
+          Enter the high-stakes world of South India's beloved classic. Strategic depth meets premium multiplayer action in our digital lounge.
+        </p>
+        <div class="flex flex-col md:flex-row gap-8 justify-center items-center pt-12">
+          <button routerLink="/game" class="bg-slate-100 text-slate-950 px-14 py-6 rounded-full font-bold text-lg flex items-center gap-4 hover:bg-slate-200 transition-all shadow-[0_20px_50px_rgba(255,255,255,0.15)] hover:-translate-y-2 group cursor-pointer focus:outline-none">
+            <span class="material-symbols-outlined text-slate-950 transition-transform group-hover:scale-125">bolt</span>
+            QUICK PLAY
+          </button>
+          <button routerLink="/game" class="gold-metallic-border text-[#e9c349] px-14 py-6 rounded-full font-bold text-lg hover:bg-[#e9c349]/10 transition-all shadow-2xl hover:-translate-y-2 backdrop-blur-sm cursor-pointer focus:outline-none">
+            CREATE PRIVATE ROOM
+          </button>
+        </div>
+      </div>
+      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer opacity-50 hover:opacity-100 transition-opacity" (click)="scrollToAbout()">
+        <span class="material-symbols-outlined text-[#e9c349] text-4xl">keyboard_double_arrow_down</span>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-32 px-6 md:px-12 bg-black/40 border-y border-[#e9c349]/30 relative" id="about">
+      <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+        <div class="space-y-8">
+          <h2 class="text-3xl md:text-5xl font-extrabold text-[#e9c349] gold-text-glow font-serif">A Heritage of Strategy</h2>
+          <p class="text-base md:text-lg text-slate-200/90 leading-relaxed">
+            Kazhudha is more than just a game; it's a battle of wits. In this fierce trick-taking experience, shedding your cards is your only survival. Don't be the one crowned the 'Kazhudha'.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="p-8 playing-card-style rounded-xl group hover:border-[#e9c349] transition-colors duration-300">
+              <span class="material-symbols-outlined text-[#e9c349] mb-6 block text-4xl">diversity_3</span>
+              <h3 class="text-xl font-bold text-[#e9c349] mb-3">Social Play</h3>
+              <p class="text-sm text-slate-400 leading-relaxed">Real-time simulation with high-fidelity animations and immersive visual alerts.</p>
+            </div>
+            <div class="p-8 playing-card-style rounded-xl group hover:border-[#e9c349] transition-colors duration-300">
+              <span class="material-symbols-outlined text-[#e9c349] mb-6 block text-4xl">military_tech</span>
+              <h3 class="text-xl font-bold text-[#e9c349] mb-3">Ranked Tiers</h3>
+              <p class="text-sm text-slate-400 leading-relaxed">Climb the leaderboard from Donkey to Champion and claim table skins.</p>
+            </div>
+          </div>
+        </div>
+        <div class="relative group">
+          <div class="absolute -inset-4 bg-[#e9c349]/20 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity"></div>
+          <div class="gold-metallic-border p-1 rounded-2xl overflow-hidden shadow-2xl">
+            <img alt="High stakes poker table render" class="relative rounded-xl w-full h-[500px] object-cover contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANceP0VVFQSarLarOUrNyXDp82H4W56biX2Y1IxAlfvFcB4sMHmNpTL0sWL7tYfwEMT_ehiP1xwVtEB4wOQktYUsguIDa2MckTK0KqD-pDP0FKb8e8rb0WGM8QKVZs-vdvSe6H-HrDYzFvUNoiL4XNWKGXEKDOmbEq7mtHF1sYgoWAEyzNqiEpB65vKffFUe710EQXw_FosssNR3CR0nIp7oFjHE1y-QxuBJrZMVmDeh98MQvM3jpHJ0LpR126L5nnJGhkJHcN-Js"/>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to Play Section -->
+    <section class="py-32 px-6 md:px-12 max-w-7xl mx-auto text-center" id="how-to-play">
+      <h2 class="text-3xl md:text-5xl font-extrabold text-[#e9c349] gold-text-glow mb-6 font-serif">Master the Game</h2>
+      <p class="text-slate-455 font-bold mb-20 uppercase tracking-[0.3em] text-xs">Three steps to dominance</p>
+      
+      <div class="grid md:grid-cols-3 gap-10">
+        <!-- Step 1 -->
+        <div class="playing-card-style p-10 rounded-2xl flex flex-col items-center group transition-transform hover:-translate-y-2 duration-300">
+          <div class="w-16 h-16 rounded-full gold-button text-slate-950 flex items-center justify-center font-bold text-2xl mb-8 border-2 border-white/20">1</div>
+          <h3 class="text-2xl font-bold text-[#e9c349] mb-4">The Deal</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">The table is set. Cards are distributed in equal share, and the first trick begins to identify the initial lead suit.</p>
+          <span class="material-symbols-outlined text-[#e9c349]/10 text-8xl absolute bottom-4 right-4 group-hover:text-[#e9c349]/20 transition-colors">playing_cards</span>
+        </div>
+        <!-- Step 2 -->
+        <div class="playing-card-style p-10 rounded-2xl flex flex-col items-center group transition-transform hover:-translate-y-2 duration-300">
+          <div class="w-16 h-16 rounded-full gold-button text-slate-950 flex items-center justify-center font-bold text-2xl mb-8 border-2 border-white/20">2</div>
+          <h3 class="text-2xl font-bold text-[#e9c349] mb-4">Following Suit</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Match the lead suit or dump a card. Highest lead card takes the pile—but break suit (Vettu) to dump cards on others!</p>
+          <span class="material-symbols-outlined text-[#e9c349]/10 text-8xl absolute bottom-4 right-4 group-hover:text-[#e9c349]/20 transition-colors">layers</span>
+        </div>
+        <!-- Step 3 -->
+        <div class="playing-card-style p-10 rounded-2xl flex flex-col items-center group transition-transform hover:-translate-y-2 duration-300">
+          <div class="w-16 h-16 rounded-full gold-button text-slate-950 flex items-center justify-center font-bold text-2xl mb-8 border-2 border-white/20">3</div>
+          <h3 class="text-2xl font-bold text-[#e9c349] mb-4">The Escape</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Empty your hand strategically. The last player standing with cards bears the title of Kazhudha.</p>
+          <span class="material-symbols-outlined text-[#e9c349]/10 text-8xl absolute bottom-4 right-4 group-hover:text-[#e9c349]/20 transition-colors">exit_to_app</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="py-32 px-6 md:px-12 bg-black/25 relative" id="tips">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-20">
+          <h2 class="text-3xl md:text-5xl font-extrabold text-[#e9c349] gold-text-glow font-serif">Pro Strategy</h2>
+          <div class="w-32 h-0.5 bg-gradient-to-r from-transparent via-[#e9c349] to-transparent mx-auto mt-6"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="md:col-span-2 p-12 playing-card-style rounded-2xl border-l-4 border-l-[#e9c349] overflow-hidden">
+            <span class="material-symbols-outlined text-[#e9c349] text-6xl mb-8">shield</span>
+            <h3 class="text-2xl font-bold text-[#e9c349] mb-6">Preserve Your Aces</h3>
+            <p class="text-slate-300 text-base md:text-lg leading-relaxed">
+              High cards are your insurance. Saving them for late-game maneuvers prevents you from taking massive piles when suits run dry.
+            </p>
+          </div>
+          <div class="p-10 playing-card-style rounded-2xl border-t-4 border-t-[#e9c349]/50">
+            <span class="material-symbols-outlined text-[#e9c349] text-5xl mb-6">water_drop</span>
+            <h3 class="text-xl font-bold text-[#e9c349] mb-4">Suit Bleeding</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">Exhaust your opponents' suits systematically to force them into disadvantageous dumps early.</p>
+          </div>
+          <div class="p-10 playing-card-style rounded-2xl border-b-4 border-b-[#e9c349]/50">
+            <span class="material-symbols-outlined text-[#e9c349] text-5xl mb-6">delete_sweep</span>
+            <h3 class="text-xl font-bold text-[#e9c349] mb-4">Strategic Dump</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">If you can't follow, discard your highest non-spade cards immediately. Minimize your late-game exposure.</p>
+          </div>
+          
+          <div class="md:col-span-4 playing-card-style p-16 rounded-3xl flex items-center justify-between overflow-hidden relative group mt-8">
+            <div class="relative z-10 max-w-2xl">
+              <h3 class="text-4xl font-extrabold text-[#e9c349] gold-text-glow mb-6 font-serif">The Club Awaits Your Play</h3>
+              <p class="text-slate-200 text-lg mb-10">Join active players from across the globe. Immersive game tables, dynamic bots service, and the ultimate bragging rights.</p>
+              <button routerLink="/game" class="gold-button text-slate-950 px-12 py-5 rounded-lg font-bold text-sm tracking-widest hover:scale-105 transition-transform duration-300 cursor-pointer focus:outline-none">
+                START YOUR FIRST MATCH
+              </button>
+            </div>
+            <div class="absolute right-[-5%] top-[-20%] rotate-12 opacity-5 group-hover:rotate-0 transition-transform duration-1000">
+              <span class="material-symbols-outlined text-[400px] text-[#e9c349]">military_tech</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-black/80 w-full py-20 border-t border-[#e9c349]/30 relative overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#e9c349]/50 to-transparent"></div>
+    <div class="flex flex-col items-center gap-12 px-12 max-w-7xl mx-auto text-center relative z-10">
+      <div class="text-3xl text-[#e9c349] font-bold gold-text-glow tracking-tighter cursor-default">
+        Kazhudha Club
+      </div>
+      <div class="flex flex-wrap justify-center gap-10">
+        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Terms</a>
+        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Privacy</a>
+        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Fair Play</a>
+        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Contact</a>
+      </div>
+      <div class="text-[#e2e2e2]/40 max-w-md text-xs leading-loose">
+        Kazhudha Club is intended for entertainment purposes only. Experience the thrill of the cards responsibly.
+      </div>
+      <div class="text-[#e9c349]/60 text-[10px] font-bold tracking-[0.4em] uppercase">
+        © 2024 KAZHUDHA CLUB • ALL RIGHTS RESERVED
+      </div>
+    </div>
+  </footer>
+</div>

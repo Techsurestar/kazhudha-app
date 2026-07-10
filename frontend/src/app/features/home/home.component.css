@@ -1,0 +1,87 @@
+:host {
+  display: block;
+  background-color: #042411;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+}
+
+.felt-texture {
+  background-color: #0a3d1d;
+  background-image: 
+      radial-gradient(circle at 50% 50%, rgba(10, 61, 29, 0.2) 0%, rgba(4, 36, 17, 1) 90%),
+      url("https://www.transparenttextures.com/patterns/felt.png");
+  background-attachment: fixed;
+}
+
+.gold-metallic-border {
+  border: 1px solid transparent;
+  background: linear-gradient(#201f1f, #201f1f) padding-box,
+              linear-gradient(135deg, #fceabb 0%, #f8b500 25%, #fceabb 50%, #f8b500 75%, #fceabb 100%) border-box;
+}
+
+.gold-button {
+  background: linear-gradient(135deg, #e9c349 0%, #c49a1d 50%, #e9c349 100%);
+  box-shadow: 0 4px 15px rgba(233, 195, 73, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  border: 1px solid #c49a1d;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.gold-button:hover {
+  background: linear-gradient(135deg, #fceabb 0%, #f8b500 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(233, 195, 73, 0.4);
+}
+
+.playing-card-style {
+  background: #1c1b1b;
+  border: 1px solid rgba(233, 195, 73, 0.3);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.playing-card-style::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border: 1px solid rgba(233, 195, 73, 0.15);
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+.gold-text-glow {
+  text-shadow: 0 2px 10px rgba(0,0,0,0.7), 0 0 20px rgba(233, 195, 73, 0.4);
+}
+
+.glass-header {
+  background: rgba(14, 14, 14, 0.7);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(233, 195, 73, 0.2);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+@keyframes floating {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: floating 6s ease-in-out infinite;
+}
+
+#hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}

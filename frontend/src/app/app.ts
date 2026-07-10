@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { GameTableComponent } from '../features/game-table/game-table.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [GameTableComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
