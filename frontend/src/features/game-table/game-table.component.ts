@@ -1,6 +1,10 @@
 import { Component, signal, computed, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameStateService, Card, PlayedCard, GameViewDTO, GameEvent } from '../../core/services/game-state.service';
+import { PlayerProfileComponent } from './components/player-profile/player-profile.component';
+import { FeltTableComponent } from './components/felt-table/felt-table.component';
+import { HumanHandComponent } from './components/human-hand/human-hand.component';
+import { GameOverModalComponent } from './components/game-over-modal/game-over-modal.component';
 
 const SUIT_ORDER: Record<'SPADES' | 'HEARTS' | 'CLUBS' | 'DIAMONDS', number> = {
   'SPADES': 0,
@@ -17,7 +21,13 @@ const RANK_ORDER: Record<string, number> = {
 @Component({
   selector: 'app-game-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    PlayerProfileComponent,
+    FeltTableComponent,
+    HumanHandComponent,
+    GameOverModalComponent
+  ],
   templateUrl: './game-table.component.html'
 })
 export class GameTableComponent implements OnInit {
@@ -57,6 +67,15 @@ export class GameTableComponent implements OnInit {
     const id = this.gameState()?.kazhudhaPlayerId;
     if (!id) return null;
     return this.getPlayerById(id);
+  });
+
+  allPlayersMap = computed(() => {
+    return {
+      'human': this.getPlayerById('human'),
+      'bot1': this.getPlayerById('bot1'),
+      'bot2': this.getPlayerById('bot2'),
+      'bot3': this.getPlayerById('bot3')
+    };
   });
 
   constructor(private gameStateService: GameStateService) {
