@@ -1,53 +1,87 @@
 @if (player) {
   <!-- Horizontal Stack layout for human / Bot 2 -->
   @if (isHorizontal) {
-    <div class="flex flex-row items-center space-x-3 select-none">
-      
-      <!-- Avatar Circle -->
-      <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full p-[1.5px] transition-all duration-300 z-10 flex-shrink-0"
-           [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-yellow-300 via-amber-500 to-yellow-600 scale-105 shadow-[0_0_15px_rgba(245,158,11,0.5)] ring-1 ring-amber-400/30' : 'bg-gradient-to-tr from-yellow-600 via-amber-500 to-yellow-700'">
+    @if (isHuman) {
+      <!-- Human Profile Layout (Blue glow avatar, horizontal layout) -->
+      <div class="flex flex-row items-center space-x-3 select-none">
         
-        <div class="w-full h-full rounded-full overflow-hidden bg-slate-950 border border-slate-900">
-          <img src="/avatar/avatar.jpeg" alt="Player Avatar" class="w-full h-full object-cover">
-        </div>
-
-        @if (chip) {
-          <div class="absolute -top-1 -right-1 flex items-center justify-center w-5.5 h-5.5 rounded-full border shadow font-black text-[8px] select-none transition-all duration-300 animate-chip-pop"
-               [ngClass]="{
-                 'bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-600 border-amber-200 text-slate-950 shadow-yellow-500/30': chip.type === 'gold',
-                 'bg-gradient-to-br from-slate-200 via-zinc-400 to-slate-500 border-zinc-200 text-slate-950 shadow-slate-400/30': chip.type === 'silver',
-                 'bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 border-orange-500 text-amber-100 shadow-orange-700/30': chip.type === 'bronze'
-               }">
-            {{ chip.label }}
+        <!-- Avatar Circle with Blue Glow Ring -->
+        <div class="relative w-20 h-20 sm:w-16 sm:h-16 rounded-full p-[2px] transition-all duration-300 z-10 flex-shrink-0 bg-gradient-to-tr from-sky-400 via-blue-500 to-indigo-600 scale-105 shadow-[0_0_20px_rgba(59,130,246,0.65)] ring-2 ring-blue-400/40">
+          <div class="w-full h-full rounded-full overflow-hidden bg-slate-950 border border-slate-900">
+            <img src="/avatar/avatar.jpeg" alt="Player Avatar" class="w-full h-full object-cover">
           </div>
-        }
-      </div>
 
-      <!-- Nameplate -->
-      <div class="bg-slate-950/85 border border-slate-800/80 rounded-xl px-3 py-1.5 flex items-center space-x-2.5 shadow-lg flex-shrink-0">
-        <div class="flex flex-col text-left">
-          <span class="font-extrabold text-xs text-slate-100 leading-none">{{ player.name }}</span>
-          <span class="text-[10px] text-slate-400 mt-1">{{ player.cardCount }} cards</span>
+          @if (chip) {
+            <div class="absolute -top-1 -right-1 flex items-center justify-center w-5.5 h-5.5 rounded-full border shadow font-black text-[8px] select-none transition-all duration-300 animate-chip-pop"
+                 [ngClass]="{
+                   'bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-600 border-amber-200 text-slate-950 shadow-yellow-500/30': chip.type === 'gold',
+                   'bg-gradient-to-br from-slate-200 via-zinc-400 to-slate-500 border-zinc-200 text-slate-950 shadow-slate-400/30': chip.type === 'silver',
+                   'bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 border-orange-500 text-amber-100 shadow-orange-700/30': chip.type === 'bronze'
+                 }">
+              {{ chip.label }}
+            </div>
+          }
         </div>
-        @if (isHuman) {
-          <span class="bg-indigo-950/70 text-indigo-300 border border-indigo-800/40 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md leading-none">
-            YOU
-          </span>
-        } @else {
-          <span class="bg-purple-950/70 text-purple-300 border border-purple-800/40 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md leading-none">
-            BOT
-          </span>
-        }
-      </div>
 
-    </div>
+        <!-- Nameplate containing You (white) and Sparky/Name (blue) -->
+        <div class="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl px-3.5 py-2 flex flex-col justify-center shadow-xl flex-shrink-0 min-w-[110px] text-left">
+          <span class="font-extrabold text-xs text-slate-100 leading-none">You</span>
+          <span class="font-bold text-sky-400 text-[11px] sm:text-xs mt-1.5 leading-none">{{ player.name === 'Player 1 (You)' ? 'Sparky' : player.name }}</span>
+        </div>
+
+      </div>
+    } @else {
+      <!-- Bot 2 Horizontal Profile Layout -->
+      <div class="flex flex-row items-center space-x-3 select-none">
+        
+        <!-- Avatar Circle with Purple Glow Ring -->
+        <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full p-[2px] transition-all duration-300 z-10 flex-shrink-0 bg-gradient-to-tr from-purple-500 via-fuchsia-600 to-purple-800"
+             [ngClass]="player.isCurrentTurn ? 'scale-105 shadow-[0_0_20px_rgba(168,85,247,0.65)] ring-2 ring-purple-400/40' : 'shadow-[0_0_12px_rgba(168,85,247,0.4)]'">
+          
+          <div class="w-full h-full rounded-full overflow-hidden bg-slate-950 border border-slate-900">
+            <img src="/avatar/avatar.jpeg" alt="Player Avatar" class="w-full h-full object-cover">
+          </div>
+
+          @if (chip) {
+            <div class="absolute -top-1 -right-1 flex items-center justify-center w-5.5 h-5.5 rounded-full border shadow font-black text-[8px] select-none transition-all duration-300 animate-chip-pop"
+                 [ngClass]="{
+                   'bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-600 border-amber-200 text-slate-950 shadow-yellow-500/30': chip.type === 'gold',
+                   'bg-gradient-to-br from-slate-200 via-zinc-400 to-slate-500 border-zinc-200 text-slate-950 shadow-slate-400/30': chip.type === 'silver',
+                   'bg-gradient-to-br from-amber-700 via-orange-600 to-amber-800 border-orange-500 text-amber-100 shadow-orange-700/30': chip.type === 'bronze'
+                 }">
+              {{ chip.label }}
+            </div>
+          }
+        </div>
+
+        <!-- Nameplate -->
+        <div class="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-xl px-3 py-1.5 flex items-center space-x-2.5 shadow-xl flex-shrink-0">
+          <div class="flex flex-col text-left">
+            <span class="font-extrabold text-xs text-slate-100 leading-none">{{ player.name }}</span>
+            <span class="text-[10px] text-slate-400 mt-1">{{ player.cardCount }} cards</span>
+          </div>
+        </div>
+
+      </div>
+    }
   } @else {
-    <!-- Vertical Sunken layout for Bot 1 / Bot 3 -->
+    <!-- Vertical Sunken layout for Bot 1 / Bot 3 (larger frames) -->
     <div class="flex flex-col items-center space-y-2 w-full select-none">
       
-      <!-- Avatar Circle -->
-      <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full p-[2px] transition-all duration-300 z-10"
-           [ngClass]="player.isCurrentTurn ? 'bg-gradient-to-tr from-yellow-300 via-amber-500 to-yellow-600 scale-105 shadow-[0_0_20px_rgba(245,158,11,0.6)] ring-2 ring-amber-400/40' : 'bg-gradient-to-tr from-yellow-600 via-amber-500 to-yellow-700'">
+      <!-- Avatar Circle (Scaled up on mobile, color-themed glows) -->
+      <div class="relative w-20 h-20 rounded-full p-[2px] transition-all duration-300 z-10"
+           [ngClass]="[
+             player.isCurrentTurn ? 'scale-105 ring-2' : '',
+             player.id === 'bot1' ? 'bg-gradient-to-tr from-yellow-500 via-amber-500 to-yellow-600' : '',
+             player.id === 'bot2' ? 'bg-gradient-to-tr from-purple-500 via-fuchsia-600 to-purple-800' : '',
+             player.id === 'bot3' ? 'bg-gradient-to-tr from-rose-500 via-red-600 to-rose-800' : '',
+             player.isCurrentTurn && player.id === 'bot1' ? 'shadow-[0_0_20px_rgba(245,158,11,0.65)] ring-amber-400/40' : '',
+             player.isCurrentTurn && player.id === 'bot2' ? 'shadow-[0_0_20px_rgba(168,85,247,0.65)] ring-purple-400/40' : '',
+             player.isCurrentTurn && player.id === 'bot3' ? 'shadow-[0_0_20px_rgba(239,68,68,0.65)] ring-rose-400/40' : '',
+             !player.isCurrentTurn && player.id === 'bot1' ? 'shadow-[0_0_12px_rgba(245,158,11,0.3)]' : '',
+             !player.isCurrentTurn && player.id === 'bot2' ? 'shadow-[0_0_12px_rgba(168,85,247,0.4)]' : '',
+             !player.isCurrentTurn && player.id === 'bot3' ? 'shadow-[0_0_12px_rgba(239,68,68,0.4)]' : ''
+           ]">
         
         <div class="w-full h-full rounded-full overflow-hidden bg-slate-950 border border-slate-900">
           <img src="/avatar/avatar.jpeg" alt="Player Avatar" class="w-full h-full object-cover">
@@ -65,15 +99,12 @@
         }
       </div>
 
-      <!-- Nameplate -->
-      <div class="bg-slate-950/85 border border-slate-800/80 rounded-xl px-2.5 py-1.5 text-center flex flex-col items-center min-w-[90px] shadow-lg -mt-3 relative z-20">
-        <span class="font-extrabold text-[10px] sm:text-xs text-slate-100 leading-tight truncate max-w-[80px]">
+      <!-- Nameplate (Scaled up on mobile) -->
+      <div class="bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-xl px-3 py-2 text-center flex flex-col items-center min-w-[110px] shadow-xl -mt-3 relative z-20">
+        <span class="font-extrabold text-xs text-slate-100 leading-tight truncate max-w-[95px]">
           {{ player.name }}
         </span>
-        <span class="bg-purple-950/70 text-purple-300 border border-purple-800/40 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md mt-1 leading-none">
-          BOT
-        </span>
-        <span class="text-[9px] text-slate-450 mt-1 font-semibold">
+        <span class="hidden md:block text-[10px] text-slate-450 mt-1 font-semibold">
           {{ player.cardCount }} cards
         </span>
       </div>

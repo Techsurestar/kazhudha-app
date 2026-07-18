@@ -3,6 +3,14 @@
   <!-- Central Soft Ambient Light Glow -->
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
+  <!-- MOBILE ONLY: Top Concentric Golden Arcs (Upward curves looking upwards) -->
+  <div class="absolute top-[36px] left-[-5%] right-[-5%] h-[260px] border-t-[3.5px] border-amber-500/15 rounded-t-[50%] pointer-events-none z-0 block md:hidden shadow-[0_-4px_20px_rgba(245,158,11,0.02)]"></div>
+  <div class="absolute top-[48px] left-[-1%] right-[-1%] h-[245px] border-t-[3.5px] border-amber-500/15 rounded-t-[50%] pointer-events-none z-0 block md:hidden"></div>
+
+  <!-- MOBILE ONLY: Bottom Concentric Golden Arcs (Downward curves facing downwards) -->
+  <div class="absolute bottom-0 left-[-5%] right-[-5%] h-[250px] border-b-[3.5px] border-amber-500/15 rounded-b-[50%] pointer-events-none z-0 block md:hidden shadow-[0_4px_20px_rgba(245,158,11,0.02)]"></div>
+  <div class="absolute bottom-[12px] left-[-1%] right-[-1%] h-[235px] border-b-[3.5px] border-amber-500/15 rounded-b-[50%] pointer-events-none z-0 block md:hidden"></div>
+
   <!-- VETTU Alert Banner -->
   @if (vettuAlertMessage() && !showGameOverModal()) {
     <div class="fixed top-24 left-1/2 -translate-x-1/2 bg-gradient-to-r from-rose-600 to-amber-600 border border-rose-500/50 text-white font-extrabold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-2xl z-55 flex items-center space-x-3 animate-bounce">
@@ -14,34 +22,76 @@
     </div>
   }
 
-  <!-- Header Bar -->
-  <header class="w-full max-w-5xl mx-auto flex justify-between items-center py-2.5 px-4 bg-slate-900/60 backdrop-blur-md border border-slate-800/80 rounded-2xl shadow-lg z-30">
-    <div class="flex items-center space-x-2">
-      <span class="text-indigo-400 font-black text-lg tracking-wider">KAZHUDHA</span>
-      <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Board</span>
-    </div>
-    <div class="flex items-center space-x-4">
-      <div class="flex items-center space-x-1.5 bg-slate-950/60 px-3 py-1 rounded-xl border border-slate-800/80 text-xs font-semibold">
-        <span class="text-slate-400">Lead Suit:</span>
-        <span class="text-indigo-400 flex items-center space-x-1">
-          <span>{{ activeRoundSuit() || 'None' }}</span>
-          <svg class="w-3.5 h-3.5 fill-current text-indigo-400 inline" viewBox="0 0 24 24"><path d="M12 2C9 6.5 4 8.5 4 12c0 3 2 5 5 5 1.5 0 2.5-.5 3-1.5.5 1 1.5 1.5 3 1.5 3 0 5-2 5-5 0-3.5-5-5.5-8-10zm0 18h-2v2h4v-2h-2z"/></svg>
-        </span>
-      </div>
-    </div>
-  </header>
 
   <!-- Responsive Virtual Card Table Arena -->
-  <main class="flex-grow w-full max-w-5xl mx-auto flex flex-col justify-between py-6 relative z-10">
+  <!-- MOBILE LAYOUT: Single container holding all 3 bots side-by-side in an arc row -->
+  <div class="flex md:hidden items-start justify-between w-full px-2 pt-2 gap-2 z-20 select-none mb-8">
+    
+    <!-- Bot 1 (Left) -->
+    @if (getPlayerById('bot1'); as player) {
+      <div class="flex flex-col items-center space-y-2 translate-y-12 -translate-x-3 transition-transform duration-300">
+        <app-player-profile [player]="player" [chip]="getPlayerChip('bot1')"></app-player-profile>
+        <div class="flex items-center space-x-2 mt-2">
+          <div class="flex -space-x-4 overflow-hidden">
+            @for (card of [].constructor(Math.min(player.cardCount, 3)); track $index) {
+              <div class="w-6 h-9 bg-gradient-to-b from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-md"></div>
+            }
+          </div>
+          <div class="bg-slate-950/90 border border-slate-800/80 rounded-lg px-2.5 py-1 text-xs font-black text-slate-100 min-w-[24px] text-center">
+            {{ player.cardCount }}
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Bot 2 (Center) -->
+    @if (getPlayerById('bot2'); as player) {
+      <div class="flex flex-col items-center space-y-2 -translate-y-3 transition-transform duration-300">
+        <app-player-profile [player]="player" [chip]="getPlayerChip('bot2')" [isHorizontal]="false"></app-player-profile>
+        <div class="flex items-center space-x-2 mt-2">
+          <div class="flex -space-x-4 overflow-hidden">
+            @for (card of [].constructor(Math.min(player.cardCount, 3)); track $index) {
+              <div class="w-6 h-9 bg-gradient-to-b from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-md"></div>
+            }
+          </div>
+          <div class="bg-slate-950/90 border border-slate-800/80 rounded-lg px-2.5 py-1 text-xs font-black text-slate-100 min-w-[24px] text-center">
+            {{ player.cardCount }}
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Bot 3 (Right) -->
+    @if (getPlayerById('bot3'); as player) {
+      <div class="flex flex-col items-center space-y-2 translate-y-12 translate-x-3 transition-transform duration-300">
+        <app-player-profile [player]="player" [chip]="getPlayerChip('bot3')"></app-player-profile>
+        <div class="flex items-center space-x-2 mt-2">
+          <div class="flex -space-x-4 overflow-hidden">
+            @for (card of [].constructor(Math.min(player.cardCount, 3)); track $index) {
+              <div class="w-6 h-9 bg-gradient-to-b from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-md"></div>
+            }
+          </div>
+          <div class="bg-slate-950/90 border border-slate-800/80 rounded-lg px-2.5 py-1 text-xs font-black text-slate-100 min-w-[24px] text-center">
+            {{ player.cardCount }}
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+
+  <!-- DESKTOP LAYOUT: Separate top and middle layout rows -->
+  <main class="hidden md:flex flex-col justify-between flex-grow w-full max-w-5xl mx-auto py-6 relative z-10">
 
     <!-- 1. TOP SIDE: Opponent 2 (Bot) -->
     <div class="w-full flex justify-center z-20">
       @if (getPlayerById('bot2'); as player) {
         <div class="flex flex-row items-center space-x-4">
+          <!-- Bot 2 Profile (Desktop: Nameplate next to avatar) -->
           <app-player-profile [player]="player" [chip]="getPlayerChip('bot2')" [isHorizontal]="true"></app-player-profile>
-          
+
           <!-- Mini Hand (Desktop only) -->
-          <div class="hidden md:flex justify-start -space-x-3 overflow-hidden p-1 flex-shrink-0">
+          <div class="flex justify-start -space-x-3 overflow-hidden p-1 flex-shrink-0">
             @for (card of [].constructor(player.cardCount); track $index) {
               <div class="w-6 h-9 bg-gradient-to-b from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-md"></div>
             }
@@ -51,16 +101,16 @@
     </div>
 
     <!-- 2. MIDDLE AREA (Left Bot, Play Pile, Right Bot in a flexible row) -->
-    <div class="w-full flex items-center justify-between my-auto px-2 md:px-8 gap-4">
+    <div class="w-full flex items-center justify-between my-auto px-8 gap-4">
 
       <!-- LEFT SIDE: Opponent 1 (Bot) -->
-      <div class="flex-shrink-0 w-24 md:w-44 flex justify-start z-20">
+      <div class="flex-shrink-0 w-44 flex justify-start z-20">
         @if (getPlayerById('bot1'); as player) {
           <div class="flex flex-col items-center space-y-2 w-full">
             <app-player-profile [player]="player" [chip]="getPlayerChip('bot1')"></app-player-profile>
 
-            <!-- Hand placeholder (Desktop only) -->
-            <div class="hidden md:flex justify-center -space-x-3 overflow-hidden p-1">
+            <!-- Hand placeholder (Desktop: Stacked Horizontally, Portrait Cards) -->
+            <div class="flex justify-center -space-x-3 overflow-hidden p-1">
               @for (card of [].constructor(player.cardCount); track $index) {
                 <div class="w-6 h-9 bg-gradient-to-b from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-md"></div>
               }
@@ -69,9 +119,9 @@
         }
       </div>
 
-      <!-- CENTER: Active Table Pile Slot -->
+      <!-- CENTER: Active Table Pile Slot (Desktop only) -->
       <app-felt-table
-        class="flex-grow w-full max-w-[640px] z-10 block"
+        class="flex-grow w-full max-w-[640px] z-10"
         [visualTablePile]="visualTablePile()"
         [activeRoundSuit]="activeRoundSuit()"
         [isVettuFlashing]="isVettuFlashing()"
@@ -80,13 +130,13 @@
       </app-felt-table>
 
       <!-- RIGHT SIDE: Opponent 3 (Bot) -->
-      <div class="flex-shrink-0 w-24 md:w-44 flex justify-end z-20">
+      <div class="flex-shrink-0 w-44 flex justify-end z-20">
         @if (getPlayerById('bot3'); as player) {
           <div class="flex flex-col items-center space-y-2 w-full">
             <app-player-profile [player]="player" [chip]="getPlayerChip('bot3')"></app-player-profile>
 
-            <!-- Hand placeholder (Desktop only) -->
-            <div class="hidden md:flex justify-center -space-x-3 overflow-hidden p-1">
+            <!-- Hand placeholder (Desktop: Stacked Horizontally, Portrait Cards) -->
+            <div class="flex justify-center -space-x-3 overflow-hidden p-1">
               @for (card of [].constructor(player.cardCount); track $index) {
                 <div class="w-6 h-9 bg-gradient-to-b from-indigo-800 to-indigo-950 rounded-md border border-indigo-500/20 shadow-md"></div>
               }
@@ -99,13 +149,25 @@
 
   </main>
 
+  <!-- MOBILE ONLY: Central Felt Table Pile placed just above the human player deck -->
+  <div class="block md:hidden w-full max-w-3xl mx-auto mb-3">
+    <app-felt-table
+      class="w-full z-10 block"
+      [visualTablePile]="visualTablePile()"
+      [activeRoundSuit]="activeRoundSuit()"
+      [isVettuFlashing]="isVettuFlashing()"
+      [showGameOverModal]="showGameOverModal()"
+      [cardTemplate]="cardTemplate">
+    </app-felt-table>
+  </div>
+
   <!-- 3. BOTTOM SIDE: Human Player Hand (Scrollable Deck Panel) -->
-  <div class="w-full max-w-3xl mx-auto bg-slate-900/70 backdrop-blur-lg border rounded-3xl p-3 sm:p-4 shadow-2xl relative z-20 transition-all duration-300"
-       [ngClass]="visualCurrentTurnPlayerId() === 'human' ? 'border-amber-500/80 shadow-[0_0_30px_rgba(245,158,11,0.18)] ring-1 ring-amber-500/30' : 'border-slate-800/85'">
+  <div class="w-full max-w-3xl mx-auto bg-transparent md:bg-slate-900/70 backdrop-blur-none md:backdrop-blur-lg border-none md:border rounded-3xl p-3 sm:p-4 shadow-none md:shadow-2xl relative z-20 transition-all duration-300 min-h-[250px] md:min-h-0"
+       [ngClass]="visualCurrentTurnPlayerId() === 'human' ? 'md:border-amber-500/80 md:shadow-[0_0_30px_rgba(245,158,11,0.18)] md:ring-1 md:ring-amber-500/30' : 'md:border-slate-800/85'">
     @if (getPlayerById('human'); as player) {
       
       <!-- Human Player Header (Horizontal Stack) -->
-      <div class="flex justify-between items-center mb-4 px-2.5">
+      <div class="flex justify-between items-center px-2.5">
         <app-player-profile [player]="player" [chip]="getPlayerChip('human')" [isHorizontal]="true" [isHuman]="true"></app-player-profile>
 
         <!-- Right Side: Turn Indicator Pill -->
@@ -119,6 +181,7 @@
       <app-human-hand
         [cards]="sortedHumanHand()"
         [isReplaying]="isReplaying"
+        [isCurrentTurn]="player.isCurrentTurn"
         [suitIconTemplate]="suitIconTemplate"
         (onPlayCard)="playCard($event)">
       </app-human-hand>
@@ -127,17 +190,14 @@
 
   <!-- Reusable Card Template inside Table -->
   <ng-template #cardTemplate let-card="card">
-    <div class="relative w-12 h-18 sm:w-14 sm:h-22 bg-slate-900 border border-slate-750 rounded-lg shadow-lg flex flex-col justify-between p-1 select-none pointer-events-none"
-         [ngClass]="card.suit === 'HEARTS' || card.suit === 'DIAMONDS' ? 'text-rose-500 border-rose-950/40' : 'text-sky-400 border-sky-950/40'">
+    <div class="relative w-20 h-28 sm:w-24 sm:h-32 border rounded-lg shadow-lg flex flex-col justify-between p-2 select-none pointer-events-none"
+         [ngClass]="card.suit === 'HEARTS' || card.suit === 'DIAMONDS' ? 'text-rose-600 border-rose-200 bg-[#fafaf9]' : 'text-slate-900 border-slate-200 bg-[#fafaf9]'">
       <div class="flex flex-col items-start leading-none">
-        <span class="text-[10px] sm:text-xs font-black tracking-tight">{{ getCardRankDisplay(card.rank) }}</span>
-        <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-2.5 h-2.5 sm:w-3 sm:h-3' }"></ng-container>
+        <span class="text-sm sm:text-base font-black tracking-tight">{{ getCardRankDisplay(card.rank) }}</span>
+        <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-3.5 h-3.5 sm:w-4 sm:h-4' }"></ng-container>
       </div>
-      <div class="absolute inset-0 flex items-center justify-center opacity-5">
-        <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-6 h-6' }"></ng-container>
-      </div>
-      <div class="flex justify-end items-end w-full leading-none">
-        <span class="text-[8px] sm:text-[9px] font-bold tracking-tighter">{{ getCardRankDisplay(card.rank) }}</span>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-10 h-10' }"></ng-container>
       </div>
     </div>
   </ng-template>
@@ -152,7 +212,7 @@
       } @else if (suit === 'DIAMONDS') {
         <path d="M12 2L2 12l10 10 10-10L12 2z"/>
       } @else {
-        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.66 0-3 1.34-3 3 0 1.08.57 2.02 1.42 2.58C9.55 16.14 8 17.87 8 20h8c0-2.13-1.55-3.86-2.42-4.42.85-.56 1.42-1.5 1.42-2.58 0-1.66-1.34-3-3-3z"/>
+        <path d="M12 2c-2.48 0-4.5 2.02-4.5 4.5 0 1.25.5 2.38 1.33 3.2C6.98 10.3 5 12.17 5 14.5c0 2.48 2.02 4.5 4.5 4.5.96 0 1.84-.3 2.58-.81V21h-2v2h4v-2h-2v-2.81c.74.51 1.62.81 2.58.81 2.48 0 4.5-2.02 4.5-4.5 0-2.33-1.98-4.2-3.83-4.8c.83-.82 1.33-1.95 1.33-3.2C16.5 4.02 14.48 2 12 2z"/>
       }
     </svg>
   </ng-template>

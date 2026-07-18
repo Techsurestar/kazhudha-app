@@ -37,6 +37,7 @@ export class GameTableComponent implements OnInit {
   visualTablePile = signal<PlayedCard[]>([]);
   visualCardCounts = signal<Record<string, number>>({});
   visualCurrentTurnPlayerId = signal<string | null>(null);
+  visualHumanHand = signal<Card[]>([]);
   vettuAlertMessage = signal<string | null>(null);
   isVettuFlashing = signal<boolean>(false);
   showGameOverModal = signal<boolean>(false);
@@ -51,10 +52,8 @@ export class GameTableComponent implements OnInit {
   
   activeRoundSuit = computed(() => this.gameState()?.activeRoundSuit || null);
 
-  humanHand = computed(() => this.gameState()?.humanHand || []);
-
   sortedHumanHand = computed(() => {
-    return [...this.humanHand()].sort((a, b) => {
+    return [...this.visualHumanHand()].sort((a, b) => {
       const suitDiff = SUIT_ORDER[a.suit] - SUIT_ORDER[b.suit];
       if (suitDiff !== 0) {
         return suitDiff;
@@ -107,6 +106,8 @@ export class GameTableComponent implements OnInit {
       alert("It is not your turn!");
       return;
     }
+    // Instantly remove from visual hand for immediate feedback
+    this.visualHumanHand.set(this.visualHumanHand().filter(c => !(c.suit === card.suit && c.rank === card.rank)));
     this.gameStateService.playCard('human', card, 'default');
   }
 
@@ -138,6 +139,8 @@ export class GameTableComponent implements OnInit {
       return;
     }
 
+    const isInitialLoad = !this.lastProcessedState;
+
     // Set dynamic initial counts and turn for playback based on previous state
     const initialCounts = this.lastProcessedState 
       ? this.getHandSizes(this.lastProcessedState)
@@ -166,6 +169,12 @@ export class GameTableComponent implements OnInit {
     // Queue up the new events to replay sequentially
     this.eventQueue = [...state.events];
 
+    // If there's a Vettu event, delay updating the human hand to visual state until animations run
+    const hasVettu = state.events.some(e => e.eventType === 'VETTU');
+    if (!hasVettu || isInitialLoad) {
+      this.visualHumanHand.set(state.humanHand);
+    }
+
     if (!this.isReplaying) {
       this.runNextEvent(state);
     }
@@ -185,6 +194,7 @@ export class GameTableComponent implements OnInit {
       this.isVettuFlashing.set(false);
       this.visualCardCounts.set(this.getHandSizes(finalState));
       this.visualCurrentTurnPlayerId.set(finalState.currentTurnPlayerId);
+      this.visualHumanHand.set(finalState.humanHand);
 
       // Re-evaluate escaped order based on final state in case any escaped players are not recorded
       const finalEscaped: string[] = [];

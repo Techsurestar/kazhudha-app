@@ -1,13 +1,13 @@
-<div class="w-full overflow-x-auto scrollbar-none py-1 flex justify-start sm:justify-center">
-  <div class="flex items-center space-x-[-12px] sm:space-x-[-16px] hover:space-x-1 transition-all duration-300 px-4 py-2">
+<div class="w-full overflow-x-auto scrollbar-none py-1 flex justify-center">
+  <div class="flex items-center space-x-[-18px] sm:space-x-[-16px] md:hover:space-x-1 transition-all duration-300 px-1 py-2">
     @for (card of cards; track card.suit + '-' + card.rank; let idx = $index) {
-      <button class="relative flex-shrink-0 w-14 h-22 sm:w-18 sm:h-28 bg-slate-850 border rounded-xl shadow-lg transition-all duration-300 active:scale-95 flex flex-col justify-between p-1.5 group select-none focus:outline-none"
+      <button class="relative flex-shrink-0 w-[42px] h-[100px] sm:w-18 sm:h-28 border rounded-xl shadow-lg transition-all duration-300 active:scale-95 flex flex-col justify-between p-1.5 group select-none focus:outline-none"
               (click)="play(card)"
               [style.z-index]="idx"
-              [ngStyle]="{ 'transform': 'rotate(' + (idx - cards.length / 2) * 1.5 + 'deg)' }"
+              [ngStyle]="{ 'transform': 'rotate(' + getCardRotation(idx, cards.length) + 'deg) translateY(' + getCardTranslateY(idx, cards.length) + 'px)' }"
               [ngClass]="[
-                isReplaying ? 'opacity-70 pointer-events-none cursor-not-allowed' : 'hover:-translate-y-6 hover:!z-50 hover:scale-105 cursor-pointer',
-                card.suit === 'HEARTS' || card.suit === 'DIAMONDS' ? 'text-rose-450 border-rose-500/30 hover:border-rose-500/80 hover:shadow-rose-500/15' : 'text-sky-450 border-sky-500/30 hover:border-sky-500/80 hover:shadow-sky-500/15'
+                isReplaying ? 'pointer-events-none cursor-not-allowed' : 'hover:-translate-y-12 hover:!z-55 hover:scale-110 cursor-pointer',
+                card.suit === 'HEARTS' || card.suit === 'DIAMONDS' ? 'text-rose-600 border-rose-200 bg-[#fafaf9] hover:border-rose-400 hover:shadow-rose-600/15' : 'text-slate-900 border-slate-200 bg-[#fafaf9] hover:border-slate-400 hover:shadow-slate-600/15'
               ]">
         <!-- Top Corner -->
         <div class="flex flex-col items-start leading-none">
@@ -16,14 +16,10 @@
         </div>
         
         <!-- Watermark -->
-        <div class="absolute inset-0 flex items-center justify-center opacity-5 group-hover:opacity-15 transition-opacity pointer-events-none">
+        <div class="absolute inset-0 flex items-center justify-center group-hover:opacity-15 transition-opacity pointer-events-none">
           <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-8 h-8' }"></ng-container>
         </div>
         
-        <!-- Bottom Corner -->
-        <div class="flex justify-end items-end w-full leading-none">
-          <span class="text-[10px] font-bold tracking-tighter">{{ getCardRankDisplay(card.rank) }}</span>
-        </div>
       </button>
     }
   </div>

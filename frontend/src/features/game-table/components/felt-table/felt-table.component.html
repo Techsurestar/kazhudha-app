@@ -1,7 +1,7 @@
 <!-- CENTER: Active Table Pile Slot -->
 <div class="flex-grow flex items-center justify-center z-10 w-full max-w-[640px] mx-auto py-4">
   <!-- Outer Gold Rail Container -->
-  <div class="relative w-full aspect-[21/10] sm:aspect-[23/10] max-h-[260px] casino-gold-rail rounded-full p-1.5 transition-all duration-350"
+  <div class="relative w-full aspect-[11/10] sm:aspect-[23/10] max-h-[320px] sm:max-h-[260px] casino-gold-rail rounded-full p-1.5 transition-all duration-350"
        [ngClass]="isVettuFlashing && !showGameOverModal ? 'ring-8 ring-rose-500/40 shadow-rose-500/30 scale-[1.02]' : ''">
 
     <!-- Dark Leather Rail Inner Cushion -->
@@ -33,7 +33,7 @@
           
           <!-- Top Played Card (Bot 2) -->
           @if (getPlayedCardByPlayer('bot2'); as played) {
-            <div class="absolute -translate-y-9 sm:-translate-y-12 md:-translate-y-14 z-25">
+            <div class="absolute -translate-y-14 sm:-translate-y-12 md:-translate-y-14 z-25">
               <div class="animate-slide-from-top">
                 <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
               </div>
@@ -42,7 +42,7 @@
 
           <!-- Left Played Card (Bot 1) -->
           @if (getPlayedCardByPlayer('bot1'); as played) {
-            <div class="absolute -translate-x-12 sm:-translate-x-18 md:-translate-x-22 -rotate-12 z-20">
+            <div class="absolute -translate-x-16 sm:-translate-x-18 md:-translate-x-22 -rotate-12 z-20">
               <div class="animate-slide-from-left">
                 <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
               </div>
@@ -51,7 +51,7 @@
 
           <!-- Right Played Card (Bot 3) -->
           @if (getPlayedCardByPlayer('bot3'); as played) {
-            <div class="absolute translate-x-12 sm:translate-x-18 md:translate-x-22 rotate-12 z-20">
+            <div class="absolute translate-x-16 sm:translate-x-18 md:translate-x-22 rotate-12 z-20">
               <div class="animate-slide-from-right">
                 <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
               </div>
@@ -60,7 +60,7 @@
 
           <!-- Bottom Played Card (Human) -->
           @if (getPlayedCardByPlayer('human'); as played) {
-            <div class="absolute translate-y-9 sm:translate-y-12 md:translate-y-14 z-30">
+            <div class="absolute translate-y-14 sm:translate-y-12 md:translate-y-14 z-30">
               <div class="animate-slide-from-bottom">
                 <ng-container *ngTemplateOutlet="cardTemplate; context: { card: played.card }"></ng-container>
               </div>
