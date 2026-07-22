@@ -22,20 +22,19 @@
       <canvas #heroCanvas id="hero-canvas"></canvas>
       <div class="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
       
-      <div class="relative z-10 text-center max-w-5xl mx-auto space-y-12 py-32 animate-float">
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-[#e9c349] gold-text-glow leading-[1.1] mb-8 font-serif">
+      <div class="relative z-10 text-center max-w-5xl mx-auto space-y-6 md:space-y-8 py-20 md:py-24 animate-float">
+        <!-- App Logo -->
+        <img src="assets/app-logo.png" alt="Kazhudha Club Logo" class="mx-auto w-72 h-72 object-contain drop-shadow-[0_0_20px_rgba(233,195,73,0.4)] mb-4" />
+        <h1 class="text-4xl md:text-5xl lg:text-5xl font-black text-[#e9c349] gold-text-glow leading-[1.1] mb-4 font-serif">
           Welcome to <br/> Kazhudha Club!
         </h1>
-        <p class="text-lg md:text-2xl text-slate-200 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md">
-          Enter the high-stakes world of South India's beloved classic. Strategic depth meets premium multiplayer action in our digital lounge.
+        <p class="text-lg md:text-2xl text-slate-200 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md mb-4">
+          Ready to pass the blame and skip the shame!! <br/>
+          Ditch the card. Claim the crown.
         </p>
-        <div class="flex flex-col md:flex-row gap-8 justify-center items-center pt-12">
-          <button routerLink="/game" class="bg-slate-100 text-slate-950 px-14 py-6 rounded-full font-bold text-lg flex items-center gap-4 hover:bg-slate-200 transition-all shadow-[0_20px_50px_rgba(255,255,255,0.15)] hover:-translate-y-2 group cursor-pointer focus:outline-none">
-            <span class="material-symbols-outlined text-slate-950 transition-transform group-hover:scale-125">bolt</span>
-            QUICK PLAY
-          </button>
+        <div class="flex flex-col md:flex-row gap-8 justify-center items-center">
           <button routerLink="/game" class="gold-metallic-border text-[#e9c349] px-14 py-6 rounded-full font-bold text-lg hover:bg-[#e9c349]/10 transition-all shadow-2xl hover:-translate-y-2 backdrop-blur-sm cursor-pointer focus:outline-none">
-            CREATE PRIVATE ROOM
+            PLAY NOW
           </button>
         </div>
       </div>
