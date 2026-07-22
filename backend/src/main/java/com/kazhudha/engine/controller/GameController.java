@@ -43,6 +43,24 @@ public class GameController {
 
     @RequestMapping(value = "/start", method = {RequestMethod.GET, RequestMethod.POST})
     public GameViewDTO startGame(@RequestParam(value = "sessionId", defaultValue = "default") String sessionId) {
+        GameSession session;
+        boolean hasExisting = false;
+        try {
+            session = sessionManager.getSession(sessionId);
+            hasExisting = true;
+        } catch (SessionNotFoundException e) {
+            session = null;
+        }
+
+        if (hasExisting && session != null && !session.isTournamentOver()) {
+            synchronized (session) {
+                session.resetForNextHand(dealerService);
+                List<GameEvent> executionEvents = new ArrayList<>();
+                runBotTurnsIfApplicable(session, executionEvents);
+                return mapToView(session, executionEvents);
+            }
+        }
+
         Player p1 = new Player("human", "Player 1 (You)", false);
         Player p2 = new Player("bot1", "Bot 1", true);
         Player p3 = new Player("bot2", "Bot 2", true);
@@ -57,12 +75,12 @@ public class GameController {
         GameState state = new GameState(players);
         state.setCurrentTurnPlayerId(startingPlayerId);
 
-        GameSession session = sessionManager.createSession(sessionId, state, players);
+        session = sessionManager.createSession(sessionId, state, players);
 
         List<GameEvent> executionEvents = new ArrayList<>();
         synchronized (session) {
             runBotTurnsIfApplicable(session, executionEvents);
-            return mapToView(state, executionEvents);
+            return mapToView(session, executionEvents);
         }
     }
 
@@ -92,7 +110,7 @@ public class GameController {
                 runBotTurnsIfApplicable(session, executionEvents);
 
                 if (isGameOver(state)) {
-                    sessionManager.terminateSession(sessionId);
+                    session.recordCurrentHand();
                 } else {
                     sessionManager.updateSession(sessionId, session);
                 }
@@ -100,7 +118,7 @@ public class GameController {
                 throw new InvalidMoveException(e.getMessage());
             }
 
-            return mapToView(state, executionEvents);
+            return mapToView(session, executionEvents);
         }
     }
 
@@ -216,7 +234,8 @@ public class GameController {
         return activePlayersCount <= 1;
     }
 
-    private GameViewDTO mapToView(GameState state, List<GameEvent> events) {
+    private GameViewDTO mapToView(GameSession session, List<GameEvent> events) {
+        GameState state = session.getGameState();
         Player human = state.getPlayers().stream()
                 .filter(p -> !p.isBot())
                 .findFirst()
@@ -242,7 +261,9 @@ public class GameController {
                 otherPlayers,
                 gameOver,
                 kazhudhaPlayerId,
-                events
+                events,
+                session.getHands(),
+                session.isTournamentOver()
         );
     }
 }

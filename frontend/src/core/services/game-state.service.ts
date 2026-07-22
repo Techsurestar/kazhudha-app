@@ -28,6 +28,13 @@ export interface GameEvent {
   description: string;
 }
 
+export interface HandResult {
+  handNumber: number;
+  winnerId: string;
+  scores: Record<string, number>;
+  kazhudhaPlayerId: string;
+}
+
 export interface GameViewDTO {
   tablePile: PlayedCard[];
   activeRoundSuit: 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS' | null;
@@ -37,6 +44,8 @@ export interface GameViewDTO {
   gameOver: boolean;
   kazhudhaPlayerId: string | null;
   events: GameEvent[];
+  hands: HandResult[];
+  tournamentOver: boolean;
 }
 
 const SYMBOL_TO_SUIT: Record<string, 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS'> = {
@@ -82,7 +91,9 @@ function normalizeGameViewDTO(dto: any): GameViewDTO {
     events: (dto.events || []).map((e: any) => ({
       ...e,
       card: e.card ? normalizeCard(e.card) : null
-    }))
+    })),
+    hands: dto.hands || [],
+    tournamentOver: !!dto.tournamentOver
   };
 }
 

@@ -14,6 +14,7 @@ public class GameState {
     private final Map<String, Player> playerMap;
     private final List<PlayedCard> tablePile;
     private final Map<String, Set<Suit>> playerSuitVoids;
+    private final List<String> escapedPlayerIds;
     private String currentTurnPlayerId;
     private Suit activeRoundSuit;
 
@@ -24,6 +25,7 @@ public class GameState {
         this.tablePile = Collections.synchronizedList(new ArrayList<>());
         this.activeRoundSuit = null;
         this.playerSuitVoids = new ConcurrentHashMap<>();
+        this.escapedPlayerIds = Collections.synchronizedList(new ArrayList<>());
         for (Player p : players) {
             this.playerSuitVoids.put(p.getId(), ConcurrentHashMap.newKeySet());
         }
@@ -67,5 +69,13 @@ public class GameState {
 
     public Map<String, Set<Suit>> getPlayerSuitVoids() {
         return playerSuitVoids;
+    }
+
+    public List<String> getEscapedPlayerIds() {
+        return escapedPlayerIds;
+    }
+
+    public void clearEscapedPlayerIds() {
+        escapedPlayerIds.clear();
     }
 }

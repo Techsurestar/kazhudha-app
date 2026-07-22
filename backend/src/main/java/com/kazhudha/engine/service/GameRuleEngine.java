@@ -56,7 +56,7 @@ public class GameRuleEngine {
             handleVettuCondition(state, state.getPlayers(), player, card);
         }
 
-        updatePlayerSheddingStatus(state.getPlayers());
+        updatePlayerSheddingStatus(state, state.getPlayers());
     }
 
     public void handleVettuCondition(GameState state, List<Player> players, Player currentTurnPlayer, Card playedCard) {
@@ -101,17 +101,22 @@ public class GameRuleEngine {
 
         // Reset the gotten-away status of the penalized player
         penalizedPlayer.setHasGottenAway(false);
+        state.getEscapedPlayerIds().remove(penalizedPlayerId);
 
         state.clearTablePile();
         state.setActiveRoundSuit(null);
         state.setCurrentTurnPlayerId(penalizedPlayerId);
     }
 
-    public void updatePlayerSheddingStatus(List<Player> players) {
+    public void updatePlayerSheddingStatus(GameState state, List<Player> players) {
+        Objects.requireNonNull(state, "GameState cannot be null");
         Objects.requireNonNull(players, "Players list cannot be null");
         for (Player player : players) {
             if (player.getHand().isEmpty() && !player.hasGottenAway()) {
                 player.setHasGottenAway(true);
+                if (!state.getEscapedPlayerIds().contains(player.getId())) {
+                    state.getEscapedPlayerIds().add(player.getId());
+                }
             }
         }
     }

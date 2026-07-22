@@ -77,6 +77,18 @@ export class GameTableComponent implements OnInit {
     };
   });
 
+  hands = computed(() => this.gameState()?.hands || []);
+  tournamentOver = computed(() => this.gameState()?.tournamentOver || false);
+
+  playersList = computed(() => {
+    return [
+      { id: 'human', name: 'You' },
+      { id: 'bot1', name: this.allPlayersMap()['bot1']?.name || 'Bot 1' },
+      { id: 'bot2', name: this.allPlayersMap()['bot2']?.name || 'Bot 2' },
+      { id: 'bot3', name: this.allPlayersMap()['bot3']?.name || 'Bot 3' }
+    ];
+  });
+
   constructor(private gameStateService: GameStateService) {
     // Process new game states reactively
     effect(() => {

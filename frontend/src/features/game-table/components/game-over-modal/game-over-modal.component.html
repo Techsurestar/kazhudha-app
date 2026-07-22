@@ -1,60 +1,118 @@
 <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300">
-  <div class="relative w-full max-w-md bg-slate-900/90 border rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center scale-95 animate-chip-pop"
-       [ngClass]="kazhudhaPlayer?.id === 'human' ? 'border-rose-500/50 shadow-rose-950/40' : 'border-indigo-500/50 shadow-indigo-950/40'">
+  <div class="relative w-full max-w-2xl border-2 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center scale-95 border-amber-500/50 shadow-black/80 animate-chip-pop"
+       style="background-color: #0a3d1d; background-image: radial-gradient(circle at 50% 50%, rgba(10, 61, 29, 0.2) 0%, rgba(4, 36, 17, 1) 90%), url('https://www.transparenttextures.com/patterns/felt.png');">
     
-    <!-- Victory/Loss Header Icon -->
-    <div class="w-16 h-16 rounded-full flex items-center justify-center text-4xl mb-4"
-         [ngClass]="kazhudhaPlayer?.id === 'human' ? 'bg-rose-500/10 text-rose-450 border border-rose-500/30' : 'bg-emerald-500/10 text-emerald-450 border border-emerald-500/30'">
-      {{ kazhudhaPlayer?.id === 'human' ? '🫏' : '🏆' }}
-    </div>
+    <!-- Congratulations SVG Header -->
+    <svg class="w-full max-w-sm h-28 mb-4 drop-shadow-[0_0_15px_rgba(233,195,73,0.5)]" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#fff" />
+          <stop offset="30%" stop-color="#fceabb" />
+          <stop offset="70%" stop-color="#f8b500" />
+          <stop offset="100%" stop-color="#c49a1d" />
+        </linearGradient>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      <!-- Background Ribbons/Stars -->
+      <path d="M 20 60 Q 50 10, 90 40 T 160 50 T 230 20 T 300 60" fill="none" stroke="rgba(248,181,0,0.3)" stroke-width="3" stroke-dasharray="5 5" />
+      <path d="M 380 60 Q 350 110, 310 80 T 240 70 T 170 100 T 100 60" fill="none" stroke="rgba(233,195,73,0.3)" stroke-width="2" stroke-dasharray="4 4" />
+      
+      <!-- Tiny Confetti shapes -->
+      <polygon points="40,20 45,10 50,15" fill="#f8b500" transform="rotate(15 45 15)"/>
+      <polygon points="340,30 348,22 342,15" fill="#ff4d4d" transform="rotate(45 345 22)"/>
+      <polygon points="70,100 78,90 82,102" fill="#4d79ff" transform="rotate(-30 75 95)"/>
+      <polygon points="320,105 325,95 330,102" fill="#00e676" transform="rotate(10 325 100)"/>
+      <circle cx="110" cy="20" r="3" fill="#e9c349" />
+      <circle cx="280" cy="90" r="4" fill="#ffeb3b" />
+      <circle cx="150" cy="10" r="2" fill="#fff" />
+      <circle cx="250" cy="110" r="3" fill="#ff5722" />
 
-    <h2 class="text-2xl sm:text-3xl font-black mb-2 tracking-tight uppercase">
-      {{ kazhudhaPlayer?.id === 'human' ? 'You Lost!' : 'Victory!' }}
+      <!-- Stars -->
+      <path d="M 50 40 L 53 47 L 60 48 L 55 53 L 57 60 L 50 56 L 43 60 L 45 53 L 40 48 L 47 47 Z" fill="#e9c349" />
+      <path d="M 350 70 L 352 74 L 357 75 L 354 78 L 355 83 L 350 81 L 345 83 L 346 78 L 343 75 L 348 74 Z" fill="#e9c349" />
+
+      <!-- Word -->
+      <text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" font-family="'Inter', sans-serif" font-weight="900" font-size="34" fill="url(#gold-grad)" letter-spacing="2" filter="url(#glow)">
+        CONGRATULATIONS
+      </text>
+    </svg>
+
+    <!-- Bold Centered Winner Title matching home page typography -->
+    <h2 class="text-2xl sm:text-3xl text-[#e9c349] font-extrabold gold-text-glow tracking-tight text-center uppercase mb-6 font-sans">
+      @if (tournamentOver) {
+        {{ getTournamentWinnerName() }} wins the tournament!
+      } @else {
+        {{ getCurrentHandWinnerName() }} wins hand {{ getCurrentHandNumber() }}
+      }
     </h2>
-    <p class="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
-      {{ kazhudhaPlayer?.id === 'human' ? 'You held onto cards till the end and became the Kazhudha.' : kazhudhaPlayer?.name + ' has been declared the Kazhudha!' }}
-    </p>
 
-    <!-- Standings Stats Table -->
-    <div class="w-full bg-slate-950/60 rounded-2xl border border-slate-800/80 overflow-hidden mb-8">
-      <div class="grid grid-cols-3 bg-slate-900/50 py-2.5 px-4 text-[10px] font-bold text-slate-400 border-b border-slate-800 uppercase tracking-widest text-left">
-        <span>Rank</span>
-        <span>Player</span>
-        <span class="text-right">Status</span>
+    <!-- Results Scoreboard Container (Premium Arcade/Casino style) -->
+    <div class="w-full bg-[#1c1b1b]/80 rounded-2xl border border-[#e9c349]/40 p-4 sm:p-5 mb-8 shadow-2xl backdrop-blur-md flex flex-col">
+      
+      <!-- Grid Header Row -->
+      <div class="grid grid-cols-5 gap-1 sm:gap-2 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#e9c349] border-b border-[#e9c349]/20 pb-3 mb-2 px-1">
+        <div>Hand</div>
+        <div>You</div>
+        <div>Bot 1</div>
+        <div>Bot 2</div>
+        <div>Bot 3</div>
       </div>
-      
-      <!-- Escape rankings mapping -->
-      @for (id of escapedOrder; track id; let idx = $index) {
-        <div class="grid grid-cols-3 py-3 px-4 text-xs font-semibold text-slate-200 border-b border-slate-900/50 text-left items-center">
-          <span class="font-extrabold text-indigo-400">#{{ idx + 1 }}</span>
-          <span class="truncate">{{ getPlayerName(id) }}</span>
-          <span class="text-right text-[10px] font-black uppercase text-emerald-450 flex justify-end items-center space-x-1.5">
-            <span>Escaped</span>
-            <!-- Chip Mini Medal -->
-            <span class="w-3.5 h-3.5 rounded-full flex items-center justify-center text-[7px] text-slate-950 font-black"
-                  [ngClass]="{
-                    'bg-amber-400': idx === 0,
-                    'bg-zinc-300': idx === 1,
-                    'bg-amber-600': idx === 2
-                  }">
-              {{ idx === 0 ? 'G' : idx === 1 ? 'S' : 'B' }}
-            </span>
-          </span>
-        </div>
-      }
-      
-      <!-- Donkey entry -->
-      @if (kazhudhaPlayer; as loser) {
-        <div class="grid grid-cols-3 py-3.5 px-4 text-xs font-black text-rose-450 bg-rose-500/5 text-left items-center">
-          <span>#4</span>
-          <span class="truncate">{{ loser.id === 'human' ? 'You' : loser.name }}</span>
-          <span class="text-right text-[10px] uppercase font-bold tracking-widest">Kazhudha 🫏</span>
-        </div>
-      }
+
+      <!-- Scrollable Hand History Items -->
+      <div class="max-h-[220px] sm:max-h-[300px] overflow-y-auto space-y-2 pr-1">
+        @for (hand of hands; track hand.handNumber) {
+          <div class="grid grid-cols-5 gap-1 sm:gap-2 text-center items-center py-2 px-1 bg-black/40 rounded-xl border border-white/[0.03] hover:border-[#e9c349]/30 transition-all duration-300">
+            <!-- Hand Number Badge -->
+            <div class="flex justify-center">
+              <span class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-black bg-[#e9c349]/10 text-[#e9c349] border border-[#e9c349]/30 shadow-inner">
+                #{{ hand.handNumber }}
+              </span>
+            </div>
+            <!-- You Score -->
+            <div class="flex justify-center">
+              <span [class]="getScoreChipClass(getPlayerHandScore(hand, 'human'))">
+                {{ getPlayerHandScore(hand, 'human') }}
+              </span>
+            </div>
+            <!-- Bot 1 Score -->
+            <div class="flex justify-center">
+              <span [class]="getScoreChipClass(getPlayerHandScore(hand, 'bot1'))">
+                {{ getPlayerHandScore(hand, 'bot1') }}
+              </span>
+            </div>
+            <!-- Bot 2 Score -->
+            <div class="flex justify-center">
+              <span [class]="getScoreChipClass(getPlayerHandScore(hand, 'bot2'))">
+                {{ getPlayerHandScore(hand, 'bot2') }}
+              </span>
+            </div>
+            <!-- Bot 3 Score -->
+            <div class="flex justify-center">
+              <span [class]="getScoreChipClass(getPlayerHandScore(hand, 'bot3'))">
+                {{ getPlayerHandScore(hand, 'bot3') }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Recalculating Pinned Total Row Card -->
+      <div class="grid grid-cols-5 gap-1 sm:gap-2 text-center items-center py-3.5 px-1 mt-3 bg-gradient-to-r from-[#e9c349]/15 to-[#c49a1d]/15 rounded-xl border border-[#e9c349]/40 shadow-lg text-white font-black text-xs sm:text-sm">
+        <div class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-[#e9c349] bg-black/35 py-1.5 rounded-lg border border-[#e9c349]/10">Total</div>
+        <div class="text-white drop-shadow-[0_0_8px_rgba(233,195,73,0.6)] font-black text-sm sm:text-base">{{ getPlayerTotalScore('human') }}</div>
+        <div class="text-slate-200 font-black text-sm sm:text-base">{{ getPlayerTotalScore('bot1') }}</div>
+        <div class="text-slate-200 font-black text-sm sm:text-base">{{ getPlayerTotalScore('bot2') }}</div>
+        <div class="text-slate-200 font-black text-sm sm:text-base">{{ getPlayerTotalScore('bot3') }}</div>
+      </div>
+
     </div>
 
-    <button (click)="restart()" class="gold-button text-slate-950 w-full py-3.5 rounded-2xl font-bold text-sm tracking-widest transition-all duration-300 transform active:scale-95 cursor-pointer focus:outline-none">
-      PLAY AGAIN
+    <!-- Play another hand / Start new tournament button -->
+    <button (click)="restart()" class="gold-button text-slate-950 w-full py-4 rounded-2xl font-black text-sm tracking-widest transition-all duration-300 transform active:scale-95 cursor-pointer focus:outline-none uppercase">
+      {{ tournamentOver ? 'Start New Tournament' : 'Play another hand' }}
     </button>
 
   </div>
