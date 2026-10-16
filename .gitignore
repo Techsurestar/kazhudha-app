@@ -22,3 +22,7 @@
 *.jar
 *.war
 *.class
+
+# --- Archive & Monorepo ---
+_archive/
+node_modules/

@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 export interface Card {
   suit: 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS';
@@ -48,62 +48,13 @@ export interface GameViewDTO {
   tournamentOver: boolean;
 }
 
-const SYMBOL_TO_SUIT: Record<string, 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS'> = {
-  '♠': 'SPADES',
-  '♥': 'HEARTS',
-  '♦': 'DIAMONDS',
-  '♣': 'CLUBS',
-  'SPADES': 'SPADES',
-  'HEARTS': 'HEARTS',
-  'DIAMONDS': 'DIAMONDS',
-  'CLUBS': 'CLUBS'
-};
-
-const SUIT_TO_SYMBOL: Record<'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS', string> = {
-  'SPADES': '♠',
-  'HEARTS': '♥',
-  'DIAMONDS': '♦',
-  'CLUBS': '♣'
-};
-
-function normalizeSuit(suit: string | null | undefined): 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS' | null {
-  if (!suit) return null;
-  return SYMBOL_TO_SUIT[suit] || null;
-}
-
-function normalizeCard(card: any): Card {
-  return {
-    ...card,
-    suit: normalizeSuit(card.suit) as any
-  };
-}
-
-function normalizeGameViewDTO(dto: any): GameViewDTO {
-  return {
-    ...dto,
-    activeRoundSuit: normalizeSuit(dto.activeRoundSuit),
-    tablePile: (dto.tablePile || []).map((pc: any) => ({
-      ...pc,
-      card: normalizeCard(pc.card)
-    })),
-    humanHand: (dto.humanHand || []).map((c: any) => normalizeCard(c)),
-    kazhudhaPlayerId: dto.kazhudhaPlayerId || null,
-    events: (dto.events || []).map((e: any) => ({
-      ...e,
-      card: e.card ? normalizeCard(e.card) : null
-    })),
-    hands: dto.hands || [],
-    tournamentOver: !!dto.tournamentOver
-  };
-}
-
 @Injectable({
   providedIn: 'root'
 })
 export class GameStateService {
   private readonly apiUrl = 'http://localhost:8080/api/game';
   
-  // Writable Signal to store the normalized backend game state DTO
+  // Writable Signal to store the game state DTO
   gameState = signal<GameViewDTO | null>(null);
 
   constructor(private http: HttpClient) {}
@@ -114,13 +65,13 @@ export class GameStateService {
    */
   startGame(sessionId: string = 'default'): Observable<GameViewDTO> {
     const url = `${this.apiUrl}/start?sessionId=${encodeURIComponent(sessionId)}`;
-    const obs = this.http.get<any>(url).pipe(
-      map(dto => normalizeGameViewDTO(dto))
+    const obs = this.http.get<GameViewDTO>(url).pipe(
+      tap({
+        next: (state) => this.gameState.set(state),
+        error: (err) => console.error('Error starting game:', err)
+      })
     );
-    obs.subscribe({
-      next: (state) => this.gameState.set(state),
-      error: (err) => console.error('Error starting game:', err)
-    });
+    obs.subscribe();
     return obs;
   }
 
@@ -132,21 +83,14 @@ export class GameStateService {
    */
   playCard(playerId: string, card: Card, sessionId: string = 'default'): Observable<GameViewDTO> {
     const url = `${this.apiUrl}/play?sessionId=${encodeURIComponent(sessionId)}`;
-    
-    // Map the suit name to symbol for backend compatibility
-    const backendCard = {
-      ...card,
-      suit: SUIT_TO_SYMBOL[card.suit as 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS'] || card.suit
-    };
-    
-    const body = { playerId, card: backendCard };
-    const obs = this.http.post<any>(url, body).pipe(
-      map(dto => normalizeGameViewDTO(dto))
+    const body = { playerId, card };
+    const obs = this.http.post<GameViewDTO>(url, body).pipe(
+      tap({
+        next: (state) => this.gameState.set(state),
+        error: (err) => console.error('Error playing card:', err)
+      })
     );
-    obs.subscribe({
-      next: (state) => this.gameState.set(state),
-      error: (err) => console.error('Error playing card:', err)
-    });
+    obs.subscribe();
     return obs;
   }
 }
