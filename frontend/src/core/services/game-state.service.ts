@@ -1,78 +1,57 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { GameController } from '../engine/index.js';
+import type {
+  Card,
+  Suit,
+  Rank,
+  PlayedCard,
+  PlayerHandSizeDTO,
+  HandResult,
+  GameViewDTO,
+  PlayRequest,
+} from '../engine/index.js';
 
-export interface Card {
-  suit: 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS';
-  rank: string;
-}
-
-export interface PlayedCard {
-  playerId: string;
-  card: Card;
-}
-
-export interface PlayerHandSizeDTO {
-  id: string;
-  name: string;
-  handSize: number;
-  isBot: boolean;
-  hasGottenAway: boolean;
-}
+export type {
+  Card,
+  Suit,
+  Rank,
+  PlayedCard,
+  PlayerHandSizeDTO,
+  HandResult,
+  GameViewDTO,
+  PlayRequest,
+};
 
 export interface GameEvent {
-  eventType: 'PLAY' | 'VETTU' | 'ESCAPE';
+  eventType: 'PLAY' | 'VETTU' | 'ESCAPE' | string;
   playerId: string;
   card: Card | null;
   description: string;
 }
 
-export interface HandResult {
-  handNumber: number;
-  winnerId: string;
-  scores: Record<string, number>;
-  kazhudhaPlayerId: string;
-}
-
-export interface GameViewDTO {
-  tablePile: PlayedCard[];
-  activeRoundSuit: 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS' | null;
-  currentTurnPlayerId: string;
-  humanHand: Card[];
-  otherPlayers: PlayerHandSizeDTO[];
-  gameOver: boolean;
-  kazhudhaPlayerId: string | null;
-  events: GameEvent[];
-  hands: HandResult[];
-  tournamentOver: boolean;
-}
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameStateService {
-  private readonly apiUrl = 'http://localhost:8080/api/game';
-  
+  private readonly controller = new GameController();
+
   // Writable Signal to store the game state DTO
   gameState = signal<GameViewDTO | null>(null);
-
-  constructor(private http: HttpClient) {}
 
   /**
    * Starts a new game session
    * @param sessionId Session identifier
    */
   startGame(sessionId: string = 'default'): Observable<GameViewDTO> {
-    const url = `${this.apiUrl}/start?sessionId=${encodeURIComponent(sessionId)}`;
-    const obs = this.http.get<GameViewDTO>(url).pipe(
-      tap({
-        next: (state) => this.gameState.set(state),
-        error: (err) => console.error('Error starting game:', err)
-      })
-    );
-    obs.subscribe();
-    return obs;
+    try {
+      const state = this.controller.startGame(sessionId);
+      this.gameState.set(state);
+      return of(state);
+    } catch (err) {
+      console.error('Error starting game:', err);
+      throw err;
+    }
   }
 
   /**
@@ -81,16 +60,18 @@ export class GameStateService {
    * @param card Card object
    * @param sessionId Session identifier
    */
-  playCard(playerId: string, card: Card, sessionId: string = 'default'): Observable<GameViewDTO> {
-    const url = `${this.apiUrl}/play?sessionId=${encodeURIComponent(sessionId)}`;
-    const body = { playerId, card };
-    const obs = this.http.post<GameViewDTO>(url, body).pipe(
-      tap({
-        next: (state) => this.gameState.set(state),
-        error: (err) => console.error('Error playing card:', err)
-      })
-    );
-    obs.subscribe();
-    return obs;
+  playCard(
+    playerId: string,
+    card: Card,
+    sessionId: string = 'default'
+  ): Observable<GameViewDTO> {
+    try {
+      const state = this.controller.playCard(sessionId, { playerId, card });
+      this.gameState.set(state);
+      return of(state);
+    } catch (err) {
+      console.error('Error playing card:', err);
+      throw err;
+    }
   }
 }

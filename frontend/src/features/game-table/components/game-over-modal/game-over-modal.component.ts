@@ -23,7 +23,8 @@ export class GameOverModalComponent {
     return hand.scores[playerId] !== undefined ? hand.scores[playerId] : 0;
   }
 
-  getPlayerName(id: string): string {
+  getPlayerName(id: string | null | undefined): string {
+    if (!id) return '';
     const p = this.players.find(player => player.id === id);
     if (!p) return id === 'human' ? 'You' : id;
     return p.id === 'human' ? 'You' : p.name;
