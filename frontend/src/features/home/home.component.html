@@ -6,7 +6,6 @@
         Kazhudha Club
       </div>
       <div class="hidden md:flex gap-10 items-center">
-        <a class="text-sm text-slate-100 hover:text-[#e9c349] transition-all uppercase tracking-widest font-bold" href="#about">About</a>
         <a class="text-sm text-slate-100 hover:text-[#e9c349] transition-all uppercase tracking-widest font-bold" href="#how-to-play">How to Play</a>
         <a class="text-sm text-slate-100 hover:text-[#e9c349] transition-all uppercase tracking-widest font-bold" href="#tips">Tips</a>
       </div>
@@ -38,38 +37,8 @@
           </button>
         </div>
       </div>
-      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer opacity-50 hover:opacity-100 transition-opacity" (click)="scrollToAbout()">
+      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer opacity-50 hover:opacity-100 transition-opacity" (click)="scrollToHowToPlay()">
         <span class="material-symbols-outlined text-[#e9c349] text-4xl">keyboard_double_arrow_down</span>
-      </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="py-32 px-6 md:px-12 bg-black/40 border-y border-[#e9c349]/30 relative" id="about">
-      <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-        <div class="space-y-8">
-          <h2 class="text-3xl md:text-5xl font-extrabold text-[#e9c349] gold-text-glow font-serif">A Heritage of Strategy</h2>
-          <p class="text-base md:text-lg text-slate-200/90 leading-relaxed">
-            Among the myriad of card games played, “Kazhutha,” the local term for the Donkey Card Game in Kerala region of India, stands out as a timeless favorite. It is a tradition that adds laughter and excitement. This combination of quick action and friendly banter made the game a hit at gatherings across generations. It still remains a go-to choice for parties and casual get-togethers, loved by both kids and adults alike.
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="p-8 playing-card-style rounded-xl group hover:border-[#e9c349] transition-colors duration-300">
-              <span class="material-symbols-outlined text-[#e9c349] mb-6 block text-4xl">diversity_3</span>
-              <h3 class="text-xl font-bold text-[#e9c349] mb-3">Interactive Play</h3>
-              <p class="text-sm text-slate-400 leading-relaxed">The ultimate arena for India’s favorite nostalgic card showdown—Kazhutha is back, and it’s competitive!</p>
-            </div>
-            <div class="p-8 playing-card-style rounded-xl group hover:border-[#e9c349] transition-colors duration-300">
-              <span class="material-symbols-outlined text-[#e9c349] mb-6 block text-4xl">bolt</span>
-              <h3 class="text-xl font-bold text-[#e9c349] mb-3">High-Speed Action</h3>
-              <p class="text-sm text-slate-400 leading-relaxed">Match the suits, dump your hand, and pass the pressure before the deck turns against you. Speed is your only shield.</p>
-            </div>
-          </div>
-        </div>
-        <div class="relative group">
-          <div class="absolute -inset-4 bg-[#e9c349]/20 blur-3xl opacity-50 group-hover:opacity-80 transition-opacity"></div>
-          <div class="gold-metallic-border p-1 rounded-2xl overflow-hidden shadow-2xl">
-            <img alt="Kazhudha Club Logo" class="relative rounded-xl w-full h-[500px] object-contain bg-black/20 p-8" src="assets/app-logo.png"/>
-          </div>
-        </div>
       </div>
     </section>
 

@@ -41,10 +41,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  scrollToAbout() {
-    const aboutSec = document.getElementById('about');
-    if (aboutSec) {
-      aboutSec.scrollIntoView({ behavior: 'smooth' });
+  scrollToHowToPlay() {
+    const section = document.getElementById('how-to-play');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
     }
   }
 

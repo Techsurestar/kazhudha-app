@@ -9,6 +9,8 @@
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
+    "start": "npm start --prefix frontend",
+    "dev": "npm start --prefix frontend",
     "dev:backend": "npm run dev --workspace=backend",
     "start:backend": "npm run start --workspace=backend"
   }
