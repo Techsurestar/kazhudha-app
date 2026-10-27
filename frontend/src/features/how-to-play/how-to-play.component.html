@@ -1,0 +1,1044 @@
+<div class="casino-bg h-[100dvh] max-h-[100dvh] text-slate-100 flex flex-col justify-between selection:bg-[#e9c349]/30 overflow-hidden relative">
+
+  <!-- Outer Centering Container (Mobile App Frame on Desktop, Full Viewport on Mobile) -->
+  <div class="w-full max-w-md mx-auto h-full flex flex-col justify-between px-3 py-1.5 sm:px-4 sm:py-2 relative z-10 overflow-hidden">
+
+    <!-- Top Header Bar -->
+    <header class="flex items-center justify-between pb-1 pt-0.5 flex-shrink-0">
+      <div class="flex flex-col items-start cursor-default select-none">
+        <h1 class="text-base sm:text-lg font-serif font-black tracking-tight gold-metallic-text leading-tight">
+          Kazhudhaa Club
+        </h1>
+        <!-- Ornate gold underline with centered diamond flourish -->
+        <div class="flex items-center space-x-1.5 mt-0.5 opacity-90">
+          <div class="h-[1px] w-8 bg-gradient-to-r from-transparent via-[#d4af37] to-[#d4af37]"></div>
+          <div class="w-1.5 h-1.5 rotate-45 border border-[#d4af37] bg-[#f9e396] shadow-[0_0_4px_rgba(233,195,73,0.8)]"></div>
+          <div class="h-[1px] w-8 bg-gradient-to-l from-transparent via-[#d4af37] to-[#d4af37]"></div>
+        </div>
+      </div>
+      <button 
+        type="button"
+        (click)="skip()" 
+        class="text-[11px] sm:text-xs uppercase tracking-widest font-semibold text-[#e5c158] hover:text-[#fff2c6] transition-colors px-2 py-1 rounded-md hover:bg-white/5 active:scale-95 cursor-pointer focus:outline-none flex items-center space-x-1">
+        <span>SKIP</span>
+        <svg class="w-3.5 h-3.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Stepper Progress Bar (1 to 5) -->
+    <div class="py-1 flex-shrink-0">
+      <div class="relative flex items-center justify-between max-w-[260px] mx-auto">
+        <!-- Connecting Track Line -->
+        <div class="absolute left-2.5 right-2.5 top-1/2 -translate-y-1/2 h-[1.5px] bg-[#1e402b] -z-0"></div>
+        <div 
+          class="absolute left-2.5 top-1/2 -translate-y-1/2 h-[1.5px] bg-gradient-to-r from-[#d4af37] to-[#ffe071] transition-all duration-300 -z-0"
+          [style.width]="((currentStep() - 1) / (totalSteps - 1) * 100) + '%'">
+        </div>
+
+        <!-- 5 Step Dots -->
+        @for (step of [1, 2, 3, 4, 5]; track step) {
+          <button
+            type="button"
+            (click)="goToStep(step)"
+            class="relative z-10 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer focus:outline-none"
+            [attr.aria-label]="'Go to step ' + step"
+            [ngClass]="{
+              'scale-110': currentStep() === step
+            }">
+            <!-- Active Step -->
+            @if (currentStep() === step) {
+              <div class="w-3.5 h-3.5 rounded-full bg-gradient-to-br from-[#fff0a6] via-[#e5c158] to-[#996515] ring-2 ring-[#e5c158]/80 shadow-[0_0_12px_rgba(245,197,66,0.95)]"></div>
+            } @else if (step < currentStep()) {
+              <div class="w-3 h-3 rounded-full bg-[#e9c349]/90 ring-2 ring-[#e9c349]/50"></div>
+            } @else {
+              <div class="w-2.5 h-2.5 rounded-full bg-[#02180d] border border-[#3b5d47] hover:border-[#d4af37]/60"></div>
+            }
+          </button>
+        }
+      </div>
+
+      <!-- Step Counter Subtitle: — STEP 1 OF 5 — -->
+      <div class="text-center text-[10px] font-semibold tracking-[0.25em] text-[#d4af37] uppercase mt-1.5 flex items-center justify-center space-x-2">
+        <span class="inline-block w-4 h-[1px] bg-[#d4af37]/60"></span>
+        <span>STEP {{ currentStep() }} OF {{ totalSteps }}</span>
+        <span class="inline-block w-4 h-[1px] bg-[#d4af37]/60"></span>
+      </div>
+    </div>
+
+    <!-- Scrollable Main Step Content Area (Zero scrollbar displayed) -->
+    <main id="tutorial-scroll-container" class="flex-grow py-1 overflow-y-auto no-scrollbar flex flex-col min-h-0">
+
+      <!-- ========================================== -->
+      <!-- STEP 1: WELCOME TO KAZHUDHAA -->
+      <!-- ========================================== -->
+      @if (currentStep() === 1) {
+        <div class="flex-1 min-h-full flex flex-col justify-between animate-fadeIn py-0.5">
+          <!-- Step 1 Title & Tagline -->
+          <div class="text-center space-y-0.5 sm:space-y-1 flex-shrink-0">
+            <h2 class="text-2xl font-serif font-black tracking-tight gold-metallic-text leading-tight">
+              How to play<br/>Kazhudhaa
+            </h2>
+            <!-- Ornate Divider with Diamond & Club: — ❖ ♣ ❖ — -->
+            <div class="flex items-center justify-center space-x-2 py-0.5 opacity-90">
+              <div class="h-[1px] w-10 sm:w-12 bg-gradient-to-r from-transparent via-[#d4af37]/60 to-[#d4af37]"></div>
+              <span class="text-[#d4af37] text-[9px]">❖</span>
+              <span class="text-[#d4af37] text-xs">♣</span>
+              <span class="text-[#d4af37] text-[9px]">❖</span>
+              <div class="h-[1px] w-10 sm:w-12 bg-gradient-to-l from-transparent via-[#d4af37]/60 to-[#d4af37]"></div>
+            </div>
+            <p class="text-[11px] sm:text-xs text-slate-300 max-w-[290px] mx-auto leading-relaxed">
+              A classic 4-player card game. Finish your cards, score points, and don't be the last one!
+            </p>
+          </div>
+
+          <!-- Hero Graphic: Standing Cards on Green Felt Poker Table with Concentric Rings -->
+          <div class="relative py-3 sm:py-2 flex flex-col items-center justify-center overflow-hidden my-auto flex-shrink-0 hero-card-fan">
+            
+            <!-- 4 Standing Cards Row -->
+            <div class="relative h-28 w-full max-w-[280px] flex items-end justify-center z-10">
+              
+              <!-- Card 1: Q of Hearts (tilted left -8deg) -->
+              <div class="relative -mr-3 sm:-mr-3.5 fan-card-1 select-none flex-shrink-0 z-10">
+                <app-card
+                  [rank]="'Q'"
+                  [suit]="'HEARTS'"
+                  [cardClass]="'w-[68px] h-[102px] p-1.5 rounded-xl border border-[#d4af37]/60 bg-gradient-to-b from-[#ffffff] via-[#faf8f2] to-[#f4eee1] shadow-2xl'"
+                  [cornerSize]="'text-sm font-serif font-black'"
+                  [cornerIconSize]="'w-3 h-3'"
+                  [centerSize]="'w-9 h-9 sm:w-10 sm:h-10'"
+                  [centerClass]="'translate-x-1 sm:translate-x-1.5 translate-y-2 sm:translate-y-2.5'">
+                </app-card>
+              </div>
+
+              <!-- Card 2: K of Hearts (tilted slight left -3deg) -->
+              <div class="relative -mr-3 sm:-mr-3.5 fan-card-2 select-none flex-shrink-0 z-20">
+                <app-card
+                  [rank]="'K'"
+                  [suit]="'HEARTS'"
+                  [cardClass]="'w-[68px] h-[102px] p-1.5 rounded-xl border border-[#d4af37]/60 bg-gradient-to-b from-[#ffffff] via-[#faf8f2] to-[#f4eee1] shadow-2xl'"
+                  [cornerSize]="'text-sm font-serif font-black'"
+                  [cornerIconSize]="'w-3 h-3'"
+                  [centerSize]="'w-9 h-9 sm:w-10 sm:h-10'"
+                  [centerClass]="'translate-x-1 sm:translate-x-1.5 translate-y-2 sm:translate-y-2.5'">
+                </app-card>
+              </div>
+
+              <!-- Card 3: Ace of Spades (Center tall, ~1deg) -->
+              <div class="relative -mr-3 sm:-mr-3.5 fan-card-3 select-none flex-shrink-0 z-30">
+                <app-card
+                  [rank]="'A'"
+                  [suit]="'SPADES'"
+                  [cardClass]="'w-[70px] h-[106px] p-1.5 rounded-xl border-1.5 border-[#d4af37] bg-gradient-to-b from-[#ffffff] via-[#faf8f2] to-[#f4eee1] shadow-[0_12px_28px_rgba(0,0,0,0.7)] ring-1 ring-[#e5c158]/40'"
+                  [cornerSize]="'text-sm font-serif font-black'"
+                  [cornerIconSize]="'w-3 h-3'"
+                  [centerSize]="'w-10 h-10 sm:w-11 sm:h-11'"
+                  [centerClass]="'translate-x-1 sm:translate-x-1.5 translate-y-2 sm:translate-y-2.5'">
+                </app-card>
+              </div>
+
+              <!-- Card 4: Ornate Red Card Back with Gold Club Medallion (tilted +9deg) -->
+              <div class="relative fan-card-4 select-none flex-shrink-0 z-20">
+                <div class="w-[68px] h-[102px] rounded-xl overflow-hidden shadow-2xl border-1.5 border-[#d4af37] bg-gradient-to-b from-[#87111e] via-[#600913] to-[#3a040a] p-1 flex items-center justify-center cursor-default">
+                  <div class="w-full h-full rounded-lg border border-[#d4af37]/60 relative flex items-center justify-center overflow-hidden">
+                    <!-- Ornate Arabesque Pattern -->
+                    <svg class="absolute inset-0 w-full h-full opacity-40" viewBox="0 0 70 100" fill="none" stroke="#d4af37" shape-rendering="geometricPrecision">
+                      <path d="M0,0 Q35,50 0,100 M70,0 Q35,50 70,100 M0,50 Q35,0 70,50 M0,50 Q35,100 70,50" stroke-width="0.8" />
+                      <circle cx="35" cy="50" r="22" stroke-width="0.8" stroke-dasharray="2,2"/>
+                      <circle cx="35" cy="50" r="18" stroke-width="0.5"/>
+                      <path d="M4,4 Q16,8 8,16 Q4,12 4,4" fill="#d4af37" opacity="0.7"/>
+                      <path d="M66,4 Q54,8 62,16 Q66,12 66,4" fill="#d4af37" opacity="0.7"/>
+                      <path d="M4,96 Q16,92 8,84 Q4,88 4,96" fill="#d4af37" opacity="0.7"/>
+                      <path d="M66,96 Q54,92 62,84 Q66,88 66,96" fill="#d4af37" opacity="0.7"/>
+                    </svg>
+                    <!-- Gold Medallion with Club -->
+                    <div class="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[#f3cf65] bg-gradient-to-b from-[#87111e] to-[#45070e] flex items-center justify-center shadow-[0_0_8px_rgba(243,207,101,0.6)]">
+                      <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full border border-[#f3cf65]/40 flex items-center justify-center bg-black/25">
+                        <span class="w-3.5 h-3.5 bi-suit-club-fill text-[#f3cf65] inline-block"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Green Poker Felt Table Inlay & Spotlight -->
+            <div class="w-full flex flex-col items-center pointer-events-none -mt-4 relative z-0">
+              <div class="relative w-72 h-14 flex items-center justify-center">
+                <!-- Outer gold ring on felt -->
+                <div class="absolute inset-0 rounded-[100%] border border-[#d4af37]/35 shadow-[0_0_15px_rgba(212,175,55,0.2)]"></div>
+                <!-- Inner gold ring on felt -->
+                <div class="absolute inset-x-3.5 inset-y-1.5 rounded-[100%] border border-[#d4af37]/20"></div>
+                <!-- Spotlight highlight -->
+                <div class="absolute inset-x-8 inset-y-2 rounded-[100%] bg-emerald-400/12 blur-md"></div>
+              </div>
+              <!-- Contact Shadow beneath cards -->
+              <div class="w-64 h-5 bg-black/75 blur-md rounded-full -mt-7"></div>
+            </div>
+          </div>
+
+          <!-- Feature Bullets (Single Premium Glass Container with 4 Info Items) -->
+          <div class="glass-feature-card rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2 lg:py-1.5 flex-shrink-0 cursor-default">
+            <!-- 1. 4 Players -->
+            <div class="flex items-center space-x-3 py-2.5 sm:py-3.5 lg:py-1.5 first:pt-1 sm:first:pt-1.5 lg:first:pt-0.5 last:pb-1 sm:last:pb-1.5 lg:last:pb-0.5">
+              <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-[#e5c158] flex-shrink-0">
+                <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+              </div>
+              <div class="flex flex-col justify-center gap-1">
+                <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">4 Players</div>
+                <div class="text-[10px] sm:text-[10.5px] text-slate-300">The player holding the Ace of Spades starts the game</div>
+              </div>
+            </div>
+
+            <!-- Ornate Divider -->
+            <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent"></div>
+
+            <!-- 2. Standard 52 Cards -->
+            <div class="flex items-center space-x-3 py-2 sm:py-3.5 lg:py-1.5 first:pt-1 sm:first:pt-1.5 lg:first:pt-0.5 last:pb-1 sm:last:pb-1.5 lg:last:pb-0.5">
+              <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-[#e5c158] flex-shrink-0">
+                <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-none stroke-current" stroke-width="1.8" viewBox="0 0 24 24">
+                  <rect x="3" y="6" width="13" height="15" rx="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M7 6V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2h-2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9.5 13.5l2-2.5 2 2.5-2 2.5-2-2.5z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="flex flex-col justify-center gap-1">
+                <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">Standard 52 cards</div>
+                <div class="text-[10px] sm:text-[10.5px] text-slate-300">No jokers</div>
+              </div>
+            </div>
+
+            <!-- Ornate Divider -->
+            <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent"></div>
+
+            <!-- 3. Goal -->
+            <div class="flex items-center space-x-3 py-2 sm:py-3.5 lg:py-1.5 first:pt-1 sm:first:pt-1.5 lg:first:pt-0.5 last:pb-1 sm:last:pb-1.5 lg:last:pb-0.5">
+              <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-[#e5c158] flex-shrink-0">
+                <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-none stroke-current" stroke-width="1.8" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9"/>
+                  <circle cx="12" cy="12" r="5"/>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                  <path d="M19 5l-5 5" stroke-linecap="round"/>
+                  <path d="M15 5h4v4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="flex flex-col justify-center gap-1">
+                <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">Goal</div>
+                <div class="text-[10px] sm:text-[10.5px] text-slate-300">Be the first to finish your cards</div>
+              </div>
+            </div>
+
+            <!-- Ornate Divider -->
+            <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent"></div>
+
+            <!-- 4. Last player -->
+            <div class="flex items-center space-x-3 py-2 sm:py-3.5 lg:py-1.5 first:pt-1 sm:first:pt-1.5 lg:first:pt-0.5 last:pb-1 sm:last:pb-1.5 lg:last:pb-0.5">
+              <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-[#e5c158] flex-shrink-0">
+                <svg xmlns='http://www.w3.org/2000/svg' class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-current" viewBox="0 0 640 576">
+                  <path d="M64 96C64 87.1 67.8 75.1 70.2 68.7C71.2 65.9 74 64 77 64C78.9 64 80.8 64.7 82.2 66.1L128 109.7L173.8 66.1C175.2 64.8 177 64 179 64C182 64 184.8 65.8 185.8 68.7C188.2 75.2 192 87.1 192 96C192 122.5 170.1 138 162.5 142.6L238.7 215.2C244.7 220.9 252.6 224 260.8 224L480 224L512 224C552.3 224 590.2 243 614.4 275.2L633.6 300.8C644.2 314.9 641.3 335 627.2 345.6C613.1 356.2 593 353.3 582.4 339.2L563.2 313.6C557.9 306.6 551.4 300.8 544 296.6L544 384L192 384L151.6 289.7C147.7 280.5 136.3 277.1 128 282.7L85.9 310.7C76.8 316.8 66.2 320 55.2 320L53.2 320C23.9 320 0 296.1 0 266.7C0 254.6 4.1 242.9 11.7 233.4L87.6 138.6C78.1 131.4 64 117.2 64 96zM544 416L544 544C544 561.7 529.7 576 512 576L480 576C462.3 576 448 561.7 448 544L448 480L288 480L288 544C288 561.7 273.7 576 256 576L224 576C206.3 576 192 561.7 192 544L192 416L544 416zM256 344C269.3 344 280 333.3 280 320C280 306.7 269.3 296 256 296C242.7 296 232 306.7 232 320C232 333.3 242.7 344 256 344zM504 320C504 306.7 493.3 296 480 296C466.7 296 456 306.7 456 320C456 333.3 466.7 344 480 344C493.3 344 504 333.3 504 320zM368 344C381.3 344 392 333.3 392 320C392 306.7 381.3 296 368 296C354.7 296 344 306.7 344 320C344 333.3 354.7 344 368 344z"/>
+                </svg>
+              </div>
+              <div class="flex flex-col justify-center gap-1">
+                <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">Last player</div>
+                <div class="text-[10px] sm:text-[10.5px] text-slate-300">Gets 0 points and you are declared as the Kazhudha!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ========================================== -->
+      <!-- STEP 2: CARD POWER (With 8-4 Ditto Range) -->
+      <!-- ========================================== -->
+      @if (currentStep() === 2) {
+        <div class="flex-1 min-h-full flex flex-col justify-between animate-fadeIn py-0.5 sm:py-1 space-y-1.5">
+          <!-- Title & Subtitle -->
+          <div class="text-center space-y-0.5 flex-shrink-0">
+            <h2 class="text-lg sm:text-xl font-serif font-black text-[#e9c349] tracking-tight gold-text-glow leading-tight">
+              Card Power
+            </h2>
+            <p class="text-[11px] text-slate-300">
+              Higher card beats lower card of the same suit.
+            </p>
+          </div>
+
+          <!-- Card Ranking Table: Clear Cards with 8-4 Ditto Range -->
+          <div class="glass-panel rounded-xl overflow-hidden shadow-lg flex-1 flex flex-col justify-between my-1 min-h-0">
+            @for (card of cardRanks; track card.rank; let last = $last) {
+              <div class="flex-1 flex items-center justify-between px-2.5 sm:px-3 py-0.5 sm:py-1 hover:bg-white/[0.03] transition-colors leading-tight min-h-[28px]">
+                <!-- Mini Playing Card Symbol + Name -->
+                <div class="flex items-center space-x-2 sm:space-x-2.5">
+                  @if (card.isRange) {
+                    <!-- Ditto Range Cards: 8 ··· 4 -->
+                    <div class="flex items-center space-x-1 flex-shrink-0">
+                      <app-card
+                        [rank]="'8'"
+                        [suit]="'SPADES'"
+                        [cardClass]="'!rounded-sm w-5.5 h-7.5 sm:w-6 sm:h-8 p-0.5 border border-slate-300 shadow-xs flex-shrink-0'"
+                        [cornerSize]="'text-[8.5px] sm:text-[9px]'"
+                        [cornerIconSize]="'hidden'"
+                        [centerSize]="'w-3 h-4'">
+                      </app-card>
+                      <span class="text-slate-400 font-bold text-xs tracking-wider">···</span>
+                      <app-card
+                        [rank]="'4'"
+                        [suit]="'SPADES'"
+                        [cardClass]="'!rounded-sm w-5.5 h-7.5 sm:w-6 sm:h-8 p-0.5 border border-slate-300 shadow-xs flex-shrink-0'"
+                        [cornerSize]="'text-[8.5px] sm:text-[9px]'"
+                        [cornerIconSize]="'hidden'"
+                        [centerSize]="'w-3 h-4'">
+                      </app-card>
+                    </div>
+                  } @else {
+                    <!-- Single Card -->
+                    <app-card
+                      [rank]="card.rank"
+                      [suit]="card.suit"
+                      [cardClass]="'!rounded-sm w-5.5 h-7.5 sm:w-6 sm:h-8 p-0.5 border border-slate-300 shadow-xs flex-shrink-0'"
+                      [cornerSize]="'text-[8.5px] sm:text-[9px]'"
+                      [cornerIconSize]="'hidden'"
+                      [centerSize]="'w-3 h-4 mt-1'">
+                    </app-card>
+                  }
+
+                  <span class="text-xs font-semibold text-slate-100 pl-2">{{ card.name }}</span>
+                </div>
+
+                <!-- Power Tag -->
+                <div class="text-[10.5px] sm:text-[11px] font-medium text-slate-400">
+                  {{ card.powerLabel }}
+                </div>
+              </div>
+
+              @if (!last) {
+                <!-- Ornate Divider -->
+                <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent flex-shrink-0"></div>
+              }
+            }
+          </div>
+
+          <!-- Lightbulb Note Box -->
+          <div class="glass-panel rounded-lg px-2.5 py-1.5 sm:py-2 flex items-center space-x-2 border-amber-400/30 bg-amber-950/20 flex-shrink-0">
+            <div class="text-amber-400 flex-shrink-0">
+              <svg class="w-6 h- fill-current" viewBox="0 0 24 24">
+                <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-1.3l-.85-.6A4.997 4.997 0 017 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+              </svg>
+            </div>
+            <div class="text-[10px] text-slate-300 leading-snug">
+              This order is the same for all suits <br/>(
+              <span class="text-slate-100 font-bold">♠ Spades</span>,
+              <span class="text-rose-400 font-bold">♦ Diamonds</span>,
+              <span class="text-slate-100 font-bold">♣ Clubs</span> and
+              <span class="text-rose-400 font-bold">♥ Hearts</span>).
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ========================================== -->
+      <!-- STEP 3: FOLLOW THE SUIT -->
+      <!-- ========================================== -->
+      @if (currentStep() === 3) {
+        <div class="flex-1 min-h-full flex flex-col justify-between animate-fadeIn py-0.5 sm:py-1 space-y-2">
+          <div class="text-center space-y-0.5 flex-shrink-0">
+            <h2 class="text-lg sm:text-xl font-serif font-black text-[#e9c349] tracking-tight gold-text-glow">
+              Follow the Suit
+            </h2>
+            <p class="text-[11px] sm:text-xs text-slate-300">
+              Play the same suit if you have one.
+            </p>
+          </div>
+
+          <!-- Section 1: Example Box -->
+          <div class="glass-panel rounded-xl p-2.5 sm:p-3 flex flex-col justify-between shadow-lg border-[#e9c349]/25 min-h-0">
+            <div class="space-y-0.5">
+              <div class="text-[10px] font-bold text-[#e9c349] uppercase tracking-wider">Example</div>
+              <p class="text-[11px] sm:text-xs text-slate-200">
+                Player 1 plays a Heart (<span class="text-rose-400 font-bold">7♥</span>).
+              </p>
+            </div>
+
+            <!-- Player 1 Lead Card with Glowing Red Border and Callout -->
+            <div class="flex items-center justify-center space-x-3 py-1 my-auto">
+              <div class="flex flex-col items-center">
+                <span class="text-[9.5px] sm:text-[10px] text-slate-300 font-medium mb-1">Player 1 (Lead)</span>
+                <!-- Card 7 of Hearts -->
+                <app-card
+                  [rank]="'7'"
+                  [suit]="'HEARTS'"
+                  [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 !border-2 !border-[#ef4444] !shadow-[0_0_16px_rgba(239,68,68,0.55),_0_4px_10px_rgba(0,0,0,0.5)] p-1'"
+                  [cornerSize]="'text-xs'"
+                  [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                  [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                  [centerClass]="'translate-x-1 translate-y-1'">
+                </app-card>
+              </div>
+
+              <!-- Callout badge: "Hearts is the lead suit" -->
+              <div class="relative bg-rose-950/80 border border-rose-500/50 text-rose-200 text-[9.5px] sm:text-[10px] font-semibold px-2 py-1.5 rounded-lg shadow-md animate-pulse-subtle">
+                <div class="absolute -left-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-rose-950/80 border-l border-b border-rose-500/50 rotate-45"></div>
+                Hearts is<br/>the lead suit
+              </div>
+            </div>
+
+            <!-- Other Players Row (Player 2, 3, 4 with checkmarks) -->
+            <div class="grid grid-cols-3 gap-1.5 sm:gap-2 pt-1 border-white/10">
+              <!-- Player 2: K♥ -->
+              <div class="flex flex-col items-center space-y-0.5 sm:space-y-1">
+                <span class="text-[9px] text-slate-400 font-medium">Player 2</span>
+                <div class="relative">
+                  <app-card
+                    [rank]="'K'"
+                    [suit]="'HEARTS'"
+                    [cardClass]="'w-14 h-20 sm:w-12 sm:h-18  p-1'"
+                    [cornerSize]="'text-xs'"
+                    [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                    [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                    [centerClass]="'translate-x-1 translate-y-1'">
+                  </app-card>
+                  <!-- Check badge -->
+                  <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white text-white flex items-center justify-center shadow z-20">
+                    <svg class="w-2 h-2 fill-current" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Player 3: 3♥ -->
+              <div class="flex flex-col items-center space-y-0.5 sm:space-y-1">
+                <span class="text-[9px] text-slate-400 font-medium">Player 3</span>
+                <div class="relative">
+                  <app-card
+                    [rank]="'3'"
+                    [suit]="'HEARTS'"
+                    [cardClass]="'w-14 h-20 sm:w-12 sm:h-18  p-1'"
+                    [cornerSize]="'text-xs'"
+                    [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                    [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                    [centerClass]="'translate-x-1 translate-y-1'">
+                  </app-card>
+                  <!-- Check badge -->
+                  <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white text-white flex items-center justify-center shadow z-20">
+                    <svg class="w-2 h-2 fill-current" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Player 4: Q♥ -->
+              <div class="flex flex-col items-center space-y-0.5 sm:space-y-1">
+                <span class="text-[9px] text-slate-400 font-medium">Player 4</span>
+                <div class="relative">
+                  <app-card
+                    [rank]="'Q'"
+                    [suit]="'HEARTS'"
+                    [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                    [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                    [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                    [centerClass]="'translate-x-1 translate-y-1'">
+                  </app-card>
+                  <!-- Check badge -->
+                  <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white text-white flex items-center justify-center shadow z-20">
+                    <svg class="w-2 h-2 fill-current" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-[10px] text-slate-300 text-center leading-relaxed pt-2">
+              All other players had a Heart, so they must play a Heart.
+            </div>
+          </div>
+
+          <!-- Section 2: Who Wins this Trick? -->
+          <div class="glass-panel rounded-xl p-2.5 sm:p-3 flex-1 flex flex-col justify-between shadow-lg border-[#e9c349]/25 min-h-0">
+            <div class="text-[10px] font-bold text-[#e9c349] uppercase tracking-wider">Who will lead the next round?</div>
+
+            <!-- 4 Cards Played (K♥ with Crown winner highlight) -->
+            <div class="flex items-center justify-center gap-4 pt-2 pb-0.5">
+              <!-- Winner: K♥ -->
+              <div class="relative flex flex-col items-center">
+                <!-- Floating Crown -->
+                <div class="absolute -top-3.5 text-amber-300 drop-shadow-[0_2px_8px_rgba(233,195,73,0.8)] animate-bounce z-20">
+                  <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/>
+                  </svg>
+                </div>
+                <app-card
+                  [rank]="'K'"
+                  [suit]="'HEARTS'"
+                  [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 card-winner-glow p-1'"
+                  [cornerSize]="'text-xs'"
+                  [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                  [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                  [centerClass]="'translate-x-1 translate-y-1'">
+                </app-card>
+              </div>
+
+              <!-- Q♥ -->
+              <app-card
+                [rank]="'Q'"
+                [suit]="'HEARTS'"
+                [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                [cornerSize]="'text-xs'"
+                [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                [centerClass]="'translate-x-1 translate-y-1'">
+              </app-card>
+
+              <!-- 7♥ -->
+              <app-card
+                [rank]="'7'"
+                [suit]="'HEARTS'"
+                [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                [cornerSize]="'text-xs'"
+                [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                [centerClass]="'translate-x-1 translate-y-1'">
+              </app-card>
+
+              <!-- 3♥ -->
+              <app-card
+                [rank]="'3'"
+                [suit]="'HEARTS'"
+                [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                [cornerSize]="'text-xs'"
+                [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                [centerClass]="'translate-x-1 translate-y-1'">
+              </app-card>
+            </div>
+
+            <div class="text-[10px] text-slate-300 text-center leading-relaxed">
+              <span class="text-white font-bold">King</span> is the highest Heart, so <span class="text-[#e9c349] font-bold">Player 2</span> will lead the next round.
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ========================================== -->
+      <!-- STEP 4: THE VETTU -->
+      <!-- ========================================== -->
+      @if (currentStep() === 4) {
+        <div class="flex-1 min-h-full flex flex-col justify-between animate-fadeIn py-0.5 sm:py-1 space-y-1.5">
+          <div class="text-center space-y-0.5 flex-shrink-0">
+            <h2 class="text-lg sm:text-xl font-serif font-black text-[#e9c349] tracking-tight gold-text-glow">
+              The Strike (Vettu)
+            </h2>
+            <p class="text-[11px] text-slate-300 max-w-[300px] mx-auto leading-relaxed">
+              If you don't have the lead suit, you can play any card. The round stops immediately after the Strike (Vettu).
+            </p>
+          </div>
+
+          <!-- Section: Example with 3 Numbered Steps -->
+          <div class="glass-panel rounded-xl p-2.5 sm:p-3 flex-1 flex flex-col justify-between shadow-lg border-[#e9c349]/25 min-h-0">
+            <div class="text-[10px] font-bold text-[#e9c349] uppercase tracking-wider flex-shrink-0">Example</div>
+
+            <!-- ① Step 1: Player 1 plays Club (9♣) -->
+            <div class="flex-1 flex flex-col justify-center space-y-1 py-1">
+              <div class="flex items-center space-x-1.5">
+                <div class="w-4 h-4 rounded-full bg-[#e9c349] text-slate-950 font-bold text-[10px] flex items-center justify-center flex-shrink-0">1</div>
+                <div class="text-[11px] text-slate-200">
+                  Player 1 plays a Club (<span class="text-slate-100 font-bold">9♣</span>).
+                </div>
+              </div>
+
+              <!-- 4 Players in Row (Player 3 plays Strike (Vettu), Player 4 does not play) -->
+              <div class="grid grid-cols-4 gap-1.5 pt-0.5">
+                <!-- Player 1 (Lead): 9♣ -->
+                <div class="flex flex-col items-center space-y-0.5 sm:space-y-1">
+                  <span class="text-[8.5px] text-slate-400 font-medium">Player 1 (Lead)</span>
+                  <app-card
+                    [rank]="'9'"
+                    [suit]="'CLUBS'"
+                    [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                    [cornerSize]="'text-xs'"
+                    [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                    [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                    [centerClass]="'translate-x-1 translate-y-1'">
+                  </app-card>
+                </div>
+
+                <!-- Player 2: K♣ -->
+                <div class="flex flex-col items-center space-y-0.5 sm:space-y-1">
+                  <span class="text-[8.5px] text-slate-400 font-medium">Player 2</span>
+                  <div class="relative">
+                    <app-card
+                      [rank]="'K'"
+                      [suit]="'CLUBS'"
+                      [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                      [cornerSize]="'text-xs'"
+                      [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                      [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                      [centerClass]="'translate-x-1 translate-y-1'">
+                    </app-card>
+                    <!-- Check badge -->
+                    <div class="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-emerald-600 border border-white text-white flex items-center justify-center shadow z-20">
+                      <svg class="w-2 h-2 fill-current" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Player 3 (no Club): 5♦ with Vettu badge! -->
+                <div class="flex flex-col items-center space-y-0.5">
+                  <span class="text-[8.5px] text-rose-400 font-medium">Player 3 (no Club)</span>
+                  <app-card
+                    [rank]="'5'"
+                    [suit]="'DIAMONDS'"
+                    [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                    [cornerSize]="'text-xs'"
+                    [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                    [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                    [centerClass]="'translate-x-1 translate-y-1'">
+                  </app-card>
+                  <!-- Vettu badge -->
+                  <span class="bg-rose-950 border border-rose-500 text-rose-200 text-[8px] font-black px-1 py-0.2 rounded-full uppercase tracking-tight shadow mt-1">
+                    Strike!
+                  </span>
+                </div>
+
+                <!-- Player 4: Does not play (trick stops) -->
+                <div class="flex flex-col items-center space-y-0.5 sm:space-y-1">
+                  <span class="text-[8.5px] text-slate-500 font-medium">Player 4</span>
+                  <div class="w-14 h-20 sm:w-12 sm:h-18 rounded border border-dashed border-slate-600/80 bg-black/20 flex items-center justify-center p-0.5 text-center">
+                    <span class="text-[7.5px] text-slate-400 leading-normal">Does not play (round stops with player 3)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ② Step 2: Round ends immediately -->
+            <div class="flex-1 flex flex-col justify-center gap-4 space-y-1 py-1 border-t border-white/10">
+              <div class="flex items-center space-x-1.5">
+                <div class="w-4 h-4 rounded-full bg-[#e9c349] text-slate-950 font-bold text-[10px] flex items-center justify-center flex-shrink-0">2</div>
+                <div class="text-[11px] text-slate-200">
+                  Round ends immediately when Player 3 plays Vettu.
+                </div>
+              </div>
+
+              <!-- 3 Cards on table: 9♣, K♣, 5♦ -->
+              <div class="flex items-center justify-center gap-8 space-x-2.5 py-0.5">
+                <!-- 9♣ -->
+                <app-card
+                  [rank]="'9'"
+                  [suit]="'CLUBS'"
+                  [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                  [cornerSize]="'text-xs'"
+                  [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                  [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                  [centerClass]="'translate-x-1 translate-y-1'">
+                </app-card>
+
+                <!-- K♣ -->
+                <app-card
+                  [rank]="'K'"
+                  [suit]="'CLUBS'"
+                  [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                  [cornerSize]="'text-xs'"
+                  [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                  [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                  [centerClass]="'translate-x-1 translate-y-1'">
+                </app-card>
+
+                <!-- 5♦ -->
+                <app-card
+                  [rank]="'5'"
+                  [suit]="'DIAMONDS'"
+                  [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                  [cornerSize]="'text-xs'"
+                  [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                  [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                  [centerClass]="'translate-x-1 translate-y-1'">
+                </app-card>
+              </div>
+            </div>
+
+            <!-- ③ Step 3: Highest card of original suit wins -->
+            <div class="flex-1 flex flex-col justify-center space-y-1 py-1 border-t border-white/10">
+              <div class="flex items-center space-x-1.5">
+                <div class="w-4 h-4 rounded-full bg-[#e9c349] text-slate-950 font-bold text-[10px] flex items-center justify-center flex-shrink-0">3</div>
+                <div class="text-[11px] text-slate-200">
+                  Highest card of the original suit (Clubs) leads the next round.
+                </div>
+              </div>
+
+              <!-- Cards with Winner badge on K♣ -->
+              <div class="flex items-center justify-center gap-8 pt-2 pb-0.5">
+                <!-- 9♣ -->
+                <app-card
+                  [rank]="'9'"
+                  [suit]="'CLUBS'"
+                  [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                  [cornerSize]="'text-xs'"
+                  [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                  [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                  [centerClass]="'translate-x-1 translate-y-1'">
+                </app-card>
+
+                <!-- K♣ (Winner) -->
+                <div class="relative flex flex-col items-center">
+                  <!-- Winner Badge -->
+                  <div class="absolute -top-3 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 text-[7.5px] font-black uppercase px-1.5 py-0.5 rounded-full shadow-md flex items-center space-x-0.5 z-20">
+                    <svg class="w-2 h-2 fill-current" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/></svg>
+                    <span>Leads</span>
+                  </div>
+                  <app-card
+                    [rank]="'K'"
+                    [suit]="'CLUBS'"
+                    [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                    [cornerSize]="'text-xs'"
+                    [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                    [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                    [centerClass]="'translate-x-1 translate-y-1'">
+                  </app-card>
+                </div>
+
+                <!-- 5♦ -->
+                <app-card
+                  [rank]="'5'"
+                  [suit]="'DIAMONDS'"
+                  [cardClass]="'w-14 h-20 sm:w-12 sm:h-18 p-1'"
+                  [cornerSize]="'text-xs'"
+                  [cornerIconSize]="'w-3 h-3 !-mt-2 sm:!-mt-2'"
+                  [centerSize]="'w-7 h-7 sm:w-7 sm:h-7'"
+                  [centerClass]="'translate-x-1 translate-y-1'">
+                </app-card>
+              </div>
+
+              <div class="text-[10px] text-slate-300 text-center leading-relaxed">
+                <span class="text-[#e9c349] font-bold">Player 2 (King of Clubs)</span> receives all the cards (9♣, K♣, 5♦) and leads the next trick.
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- ========================================== -->
+      <!-- STEP 5: ESCAPE & SCORE -->
+      <!-- ========================================== -->
+      @if (currentStep() === 5) {
+        <div class="flex-1 min-h-full flex flex-col justify-center gap-4 animate-fadeIn py-0.5 sm:py-1 space-y-1.5">
+          <div class="text-center space-y-0.5 flex-shrink-0">
+            <h2 class="text-lg sm:text-xl font-serif font-black text-[#e9c349] tracking-tight gold-text-glow">
+              Escape & Score
+            </h2>
+            <p class="text-[11px] sm:text-xs text-slate-300">
+              Get rid of your cards and earn points.
+            </p>
+          </div>
+
+          <!-- 4 Score Ranking Items (Single Premium Glass Container) -->
+          <div class="glass-feature-card rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 lg:py-1.5 flex flex-col justify-center gap-4 my-0.5 cursor-default">
+            <!-- 1st Place: 20 points -->
+            <div class="flex items-center justify-between py-2">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-[#e5c158] flex-shrink-0">
+                  <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
+                  </svg>
+                </div>
+                <div class="flex flex-col justify-center gap-2">
+                  <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">1st Place</div>
+                  <div class="text-[10px] sm:text-[10.5px] text-slate-300">First player to empty their hand</div>
+                </div>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <span class="text-xs sm:text-[13px] font-black text-[#e9c349] gold-text-glow">20 points</span>
+              </div>
+            </div>
+
+            <!-- Ornate Divider -->
+            <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent flex-shrink-0"></div>
+
+            <!-- 2nd Place: 15 points -->
+            <div class="flex items-center justify-between py-2">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-slate-300 flex-shrink-0">
+                  <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-current" viewBox="0 0 24 24">
+                    <circle cx="12" cy="9" r="6"/>
+                    <path d="M15.5 13.5L18 21l-6-3-6 3 2.5-7.5"/>
+                  </svg>
+                </div>
+                <div class="flex flex-col justify-center gap-2">
+                  <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">2nd Place</div>
+                  <div class="text-[10px] sm:text-[10.5px] text-slate-300">Second player to finish</div>
+                </div>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <span class="text-xs sm:text-[13px] font-bold text-slate-100">15 points</span>
+              </div>
+            </div>
+
+            <!-- Ornate Divider -->
+            <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent flex-shrink-0"></div>
+
+            <!-- 3rd Place: 10 points -->
+            <div class="flex items-center justify-between py-2">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-amber-500 flex-shrink-0">
+                  <svg class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-current" viewBox="0 0 24 24">
+                    <circle cx="12" cy="9" r="6"/>
+                    <path d="M15.5 13.5L18 21l-6-3-6 3 2.5-7.5"/>
+                  </svg>
+                </div>
+                <div class="flex flex-col justify-center gap-2">
+                  <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">3rd Place</div>
+                  <div class="text-[10px] sm:text-[10.5px] text-slate-300">Third player to finish</div>
+                </div>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <span class="text-xs sm:text-[13px] font-bold text-amber-500">10 points</span>
+              </div>
+            </div>
+
+            <!-- Ornate Divider -->
+            <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-[#d4af37]/50 to-transparent flex-shrink-0"></div>
+
+            <!-- Last Place: Kazhudhaa (0 points) -->
+            <div class="flex items-center justify-between py-2">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center text-[#e5c158] flex-shrink-0">
+                  <svg xmlns='http://www.w3.org/2000/svg' class="w-5 h-5 sm:w-5.5 sm:h-5.5 fill-current" viewBox="0 0 640 576">
+                    <path d="M64 96C64 87.1 67.8 75.1 70.2 68.7C71.2 65.9 74 64 77 64C78.9 64 80.8 64.7 82.2 66.1L128 109.7L173.8 66.1C175.2 64.8 177 64 179 64C182 64 184.8 65.8 185.8 68.7C188.2 75.2 192 87.1 192 96C192 122.5 170.1 138 162.5 142.6L238.7 215.2C244.7 220.9 252.6 224 260.8 224L480 224L512 224C552.3 224 590.2 243 614.4 275.2L633.6 300.8C644.2 314.9 641.3 335 627.2 345.6C613.1 356.2 593 353.3 582.4 339.2L563.2 313.6C557.9 306.6 551.4 300.8 544 296.6L544 384L192 384L151.6 289.7C147.7 280.5 136.3 277.1 128 282.7L85.9 310.7C76.8 316.8 66.2 320 55.2 320L53.2 320C23.9 320 0 296.1 0 266.7C0 254.6 4.1 242.9 11.7 233.4L87.6 138.6C78.1 131.4 64 117.2 64 96zM544 416L544 544C544 561.7 529.7 576 512 576L480 576C462.3 576 448 561.7 448 544L448 480L288 480L288 544C288 561.7 273.7 576 256 576L224 576C206.3 576 192 561.7 192 544L192 416L544 416zM256 344C269.3 344 280 333.3 280 320C280 306.7 269.3 296 256 296C242.7 296 232 306.7 232 320C232 333.3 242.7 344 256 344zM504 320C504 306.7 493.3 296 480 296C466.7 296 456 306.7 456 320C456 333.3 466.7 344 480 344C493.3 344 504 333.3 504 320zM368 344C381.3 344 392 333.3 392 320C392 306.7 381.3 296 368 296C354.7 296 344 306.7 344 320C344 333.3 354.7 344 368 344z"/>
+                  </svg>
+                </div>
+                <div class="flex flex-col justify-center gap-2">
+                  <div class="text-xs sm:text-[13px] font-bold text-white tracking-tight leading-tight">Last player <span class="text-slate-400 font-normal">(Kazhudhaa)</span></div>
+                  <div class="text-[10px] sm:text-[10.5px] text-slate-300">Last player holding cards is declared the Kazhudha!</div>
+                </div>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <span class="text-xs sm:text-[13px] font-bold text-rose-400">0 points</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Game Ends Box -->
+          <div class="glass-panel rounded-xl p-4 sm:p-2.5 flex items-start space-x-4 border-white/10 flex-shrink-0">
+            <div class="text-white text-base flex-shrink-0 mt-0.5">
+              🏁
+            </div>
+            <div class="flex flex-col justify-center gap-2">
+              <div class="text-xs font-bold text-white leading-tight">Game ends</div>
+              <div class="text-[10px] text-slate-300 leading-relaxed mt-0.5">
+                When one or more players reach 100 points or more. The player with the highest points wins.
+              </div>
+            </div>
+          </div>
+
+          <!-- You're ready to play! -->
+          <div class="text-center pt-0.5 flex-shrink-0">
+            <div class="text-[11px] font-bold text-[#e9c349] flex items-center justify-center space-x-1">
+              <span>All Set! You're ready to play!</span>
+            </div>
+          </div>
+        </div>
+      }
+    </main>
+
+    <!-- Bottom Actions / Navigation Bar -->
+    <footer class="pt-1.5 pb-1 flex-shrink-0">
+      <!-- Step 1: Home & Next Buttons -->
+      @if (currentStep() === 1) {
+        <div class="grid grid-cols-2 gap-2 sm:gap-2.5">
+          <button
+            type="button"
+            (click)="goHome()"
+            class="dark-outline-btn font-semibold text-xs py-2.5 sm:py-2.5 rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer active:scale-[0.98] transition-all"
+            aria-label="Go to Home">
+            <home-icon [size]="20" />
+            <span>Home</span>
+          </button>
+          <button
+            type="button"
+            (click)="nextStep()"
+            class="gold-gradient-btn text-slate-950 font-bold text-xs py-2.5 sm:py-2.5 rounded-xl shadow-md flex items-center justify-center space-x-1.5 cursor-pointer active:scale-[0.98] transition-all">
+            <span>Next</span>
+             <chevrons-right-icon [size]="20" />
+          </button>
+        </div>
+      }
+
+      <!-- Steps 2, 3, 4: Back & Next Buttons -->
+      @if (currentStep() > 1 && currentStep() < 5) {
+        <div class="grid grid-cols-2 gap-2 sm:gap-2.5">
+          <button
+            type="button"
+            (click)="prevStep()"
+            class="dark-outline-btn font-semibold text-xs py-2 sm:py-2.5 rounded-xl flex items-center justify-center space-x-1 cursor-pointer">
+            <chevrons-left-icon [size]="20" />
+            <span>Back</span>
+          </button>
+          <button
+            type="button"
+            (click)="nextStep()"
+            class="gold-gradient-btn text-slate-950 font-bold text-xs py-2 sm:py-2.5 rounded-xl shadow-md flex items-center justify-center space-x-1 cursor-pointer">
+            <span>Next</span>
+            <chevrons-right-icon [size]="20" />
+          </button>
+        </div>
+      }
+
+      <!-- Step 5: Play Now & Review All Rules -->
+      @if (currentStep() === 5) {
+        <div class="space-y-1">
+          <!-- Big Play Now Button -->
+          <button
+            type="button"
+            (click)="playNow()"
+            class="w-full gold-gradient-btn text-slate-950 font-black text-xs py-2.5 sm:py-3 rounded-xl shadow-xl flex items-center justify-center space-x-1.5 cursor-pointer">
+            <span>Play Now</span>
+            <chevrons-right-icon [size]="20" />
+          </button>
+
+          <!-- Back and Review All Rules -->
+          <div class="flex items-center justify-between pt-0.5 text-[11px]">
+            <button
+              type="button"
+              (click)="prevStep()"
+              class="text-slate-400 hover:text-white flex items-center space-x-1 px-1.5 py-0.5 rounded transition-colors cursor-pointer">
+              <chevrons-left-icon [size]="20" />
+              <span>Back</span>
+            </button>
+            <button
+              type="button"
+              (click)="openRulesModal()"
+              class="text-slate-300 hover:text-[#e9c349] flex items-center space-x-1 px-1.5 py-0.5 rounded transition-colors cursor-pointer">
+              <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                <path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/>
+              </svg>
+              <span>Review All Rules</span>
+            </button>
+          </div>
+        </div>
+      }
+    </footer>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ALL RULES OVERVIEW MODAL / DRAWER -->
+  <!-- ========================================== -->
+  @if (showRulesModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+      <div class="relative w-full max-w-lg max-h-[85vh] bg-[#042411] border border-[#e9c349]/40 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-100">
+        
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-[#e9c349]/20 bg-black/30">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">📜</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] gold-text-glow">Kazhudhaa Complete Rules</h3>
+          </div>
+          <button 
+            type="button"
+            (click)="closeRulesModal()"
+            class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors cursor-pointer">
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        </div>
+
+        <!-- Modal Body (Scrollable Summary of all 5 steps) -->
+        <div class="p-4 overflow-y-auto space-y-4 no-scrollbar text-xs leading-relaxed">
+          <!-- 1. The Deal & Setup -->
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold text-[#e9c349] flex items-center space-x-1.5">
+              <span>1.</span>
+              <span>The Deal & Goal</span>
+            </h4>
+            <p class="text-slate-300">
+              Played with 4 players and a standard 52-card deck (no jokers). The player holding the Ace of Spades (A♠) leads the first trick. The ultimate goal is to shed all cards from your hand before your opponents.
+            </p>
+          </div>
+
+          <!-- 2. Card Hierarchy -->
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold text-[#e9c349] flex items-center space-x-1.5">
+              <span>2.</span>
+              <span>Card Power Ranking</span>
+            </h4>
+            <p class="text-slate-300">
+              Cards rank strictly in descending order: <strong>Ace (Highest)</strong> &gt; King &gt; Queen &gt; Jack &gt; 10 &gt; 9 &gt; 8 &gt; 7 &gt; 6 &gt; 5 &gt; 4 &gt; 3 &gt; <strong>2 (Lowest)</strong>. This hierarchy is identical across all four suits.
+            </p>
+          </div>
+
+          <!-- 3. Following Suit -->
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold text-[#e9c349] flex items-center space-x-1.5">
+              <span>3.</span>
+              <span>Following the Suit</span>
+            </h4>
+            <p class="text-slate-300">
+              Each subsequent player must follow the lead suit if they hold at least one card of that suit. If everyone follows suit, the player with the highest card of that suit wins the trick and leads the next turn. All cards in the trick are cleared.
+            </p>
+          </div>
+
+          <!-- 4. The Vettu -->
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold text-[#e9c349] flex items-center space-x-1.5">
+              <span>4.</span>
+              <span>The Strike ("Vettu")</span>
+            </h4>
+            <p class="text-slate-300">
+              If a player has no cards in the lead suit, they can strike by playing <strong>any card</strong> from another suit. This is called a <strong>Vettu</strong>. The trick ends immediately, and all cards in the trick are dumped onto the hand of the player who played the highest card of the original lead suit! That player must then lead the next trick.
+            </p>
+          </div>
+
+          <!-- 5. Scoring & Winning -->
+          <div class="space-y-1">
+            <h4 class="text-xs font-bold text-[#e9c349] flex items-center space-x-1.5">
+              <span>5.</span>
+              <span>Scoring & The Kazhudhaa</span>
+            </h4>
+            <ul class="list-disc list-inside space-y-0.5 text-slate-300">
+              <li><strong class="text-[#e9c349]">1st to empty hand:</strong> 20 points</li>
+              <li><strong class="text-slate-200">2nd to empty hand:</strong> 15 points</li>
+              <li><strong class="text-amber-500">3rd to empty hand:</strong> 10 points</li>
+              <li><strong class="text-rose-400">Last player (Kazhudhaa):</strong> 0 points</li>
+            </ul>
+            <p class="text-slate-300 pt-1">
+              Matches continue across rounds until at least one player scores <strong>100 points or more</strong>. The player with the highest total points wins the game!
+            </p>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-3 border-t border-[#e9c349]/20 bg-black/30 flex justify-between items-center">
+          <button
+            type="button"
+            (click)="closeRulesModal()"
+            class="dark-outline-btn px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">
+            Close
+          </button>
+          <button
+            type="button"
+            (click)="playNow()"
+            class="gold-gradient-btn text-slate-950 font-bold px-4 py-1.5 rounded-lg text-xs cursor-pointer shadow">
+            Start Game →
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
+
+<!-- ========================================== -->
+<!-- REUSABLE UNIFORM PLAYING CARD TEMPLATE -->
+<!-- Only left-top representation & center symbol -->
+<!-- NO bottom notation! -->
+<!-- ========================================== -->
+<ng-template #cardView let-rank="rank" let-suit="suit" let-cardClass="cardClass" let-cornerSize="cornerSize" let-cornerIconSize="cornerIconSize" let-centerSize="centerSize" let-centerClass="centerClass">
+  <app-card
+    [rank]="rank"
+    [suit]="suit"
+    [cardClass]="cardClass"
+    [cornerSize]="cornerSize"
+    [cornerIconSize]="cornerIconSize"
+    [centerSize]="centerSize"
+    [centerClass]="centerClass">
+  </app-card>
+</ng-template>
+
+

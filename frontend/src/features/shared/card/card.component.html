@@ -1,0 +1,28 @@
+<div class="relative playing-card select-none flex flex-col justify-between overflow-hidden"
+     [ngClass]="[
+       cardClass,
+       isRed ? 'text-rose-600 border-rose-200' : 'text-slate-900 border-slate-300'
+     ]">
+
+  <!-- Top-Left Corner Representation (Rank + Suit Icon) -->
+  <div class="leading-none flex flex-col items-start z-10 select-none">
+    <div class="font-black tracking-tight" [ngClass]="cornerSize || 'text-xs'">{{ effectiveRank }}</div>
+    <div>
+      <suit-icon
+        [suit]="effectiveSuit"
+        [size]="cornerIconSize"
+        [color]="isRed ? '#ef4444' : '#000'"
+      />
+    </div>
+  </div>
+
+  <!-- Middle Symbol (Center of Card) -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+       [ngClass]="centerClass">
+    <suit-icon
+      [suit]="effectiveSuit"
+      [size]="centerSize || 'w-6 h-6 sm:w-7 sm:h-7'"
+      [color]="isRed ? '#ef4444' : '#000'"
+    />
+  </div>
+</div>

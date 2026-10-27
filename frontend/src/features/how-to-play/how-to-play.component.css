@@ -1,0 +1,226 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #031c0e;
+  color: #f1f5f9;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Background Casino Felt Theme */
+.casino-bg {
+  background-color: #031c0e;
+  background-image: 
+    radial-gradient(ellipse at 50% 25%, #0e4b27 0%, #062714 55%, #021208 100%),
+    url("https://www.transparenttextures.com/patterns/felt.png");
+  background-attachment: fixed;
+}
+
+/* Gold typography and button accents */
+.gold-text-glow {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7), 0 0 16px rgba(233, 195, 73, 0.35);
+}
+
+.gold-metallic-text {
+  background: linear-gradient(180deg, #fff7d6 0%, #f5d475 35%, #cf9c2e 70%, #996e14 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7));
+}
+
+.gold-gradient-btn {
+  background: linear-gradient(180deg, #fceabb 0%, #f3cf65 30%, #d4a329 70%, #a87910 100%);
+  transition: all 0.25s ease;
+}
+
+.gold-gradient-btn:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fceabb 25%, #e5b842 65%, #b88616 100%);
+}
+
+.gold-gradient-btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.dark-outline-btn {
+  background: #0e4b27 ;
+  border: 2px solid rgba(233, 195, 73, 0.35);
+  color: #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.dark-outline-btn:hover {
+  background: rgba(30, 41, 35, 0.95);
+  border-color: rgba(233, 195, 73, 0.7);
+  color: #e9c349;
+}
+
+/* Dark glassy cards */
+.glass-panel {
+  background: #021208;
+  border: 1px solid rgba(229, 193, 88, 0.7);
+}
+
+.glass-panel-subtle {
+  background: rgba(6, 22, 13, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-feature-card {
+  background: #021208;
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(229, 193, 88, 0.7);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(233, 195, 73, 0.15);
+}
+
+/* Playing Card styling */
+.playing-card {
+  background-color: #fafaf9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  user-select: none;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.playing-card svg {
+  shape-rendering: geometricPrecision;
+}
+
+.card-lead-glow {
+  border: 2px solid #ef4444 !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.55), 0 4px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.card-winner-glow {
+  border: 2px solid #e9c349 !important;
+  box-shadow: 0 0 20px rgba(233, 195, 73, 0.65), 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Step 1 Visual Card Fan / Standing Cards */
+.hero-card-fan {
+  perspective: 1000px;
+  transform-origin: center bottom;
+  transition: transform 0.3s ease;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.hero-card-fan svg {
+  shape-rendering: geometricPrecision;
+}
+
+.fan-card-1 {
+  transform: rotate(-8deg) translateY(6px);
+  transform-origin: bottom center;
+  transition: transform 0.3s ease;
+}
+
+.fan-card-2 {
+  transform: rotate(-3deg) translateY(2px);
+  transform-origin: bottom center;
+  transition: transform 0.3s ease;
+}
+
+.fan-card-3 {
+  transform: rotate(1deg) translateY(0px);
+  transform-origin: bottom center;
+  transition: transform 0.3s ease;
+}
+
+.fan-card-4 {
+  transform: rotate(9deg) translateY(6px);
+  transform-origin: bottom center;
+  transition: transform 0.3s ease;
+}
+
+/* Card Back Pattern for 4th card in Fan */
+.card-back-pattern {
+  background: radial-gradient(circle, #8b1524 10%, #54080e 90%);
+  border: 2px solid #d4af37;
+  position: relative;
+}
+
+.card-back-pattern::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px dashed rgba(212, 175, 55, 0.5);
+  border-radius: 5px;
+}
+
+/* Zero Scrollbar: completely hides vertical and horizontal scrollbars */
+.no-scrollbar,
+.custom-scrollbar,
+#tutorial-scroll-container {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+.no-scrollbar::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar,
+#tutorial-scroll-container::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, WebKit */
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Subtle glow animations */
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 3s ease-in-out infinite;
+}
+
+/* Height-adaptive Scaling for Compact Mobile Screens (e.g. iPhone SE, height < 720px) */
+@media (max-width: 639px) and (max-height: 720px) {
+  .hero-card-fan {
+    transform: scale(0.88);
+  }
+}
+
+@media (max-width: 639px) and (max-height: 640px) {
+  .hero-card-fan {
+    transform: scale(0.76);
+  }
+}
+
+/* Laptop & Desktop Viewport Fitting (width >= 640px) */
+/* Ensures Step 1 fits cleanly within standard laptop viewports (600px - 750px height) without scrolling */
+@media (min-width: 640px) {
+  .hero-card-fan {
+    transform: scale(0.92);
+    transform-origin: center center;
+  }
+}
+
+@media (min-width: 640px) and (max-height: 760px) {
+  .hero-card-fan {
+    transform: scale(0.84);
+    transform-origin: center center;
+    margin-top: -6px;
+    margin-bottom: -6px;
+  }
+  .glass-feature-card {
+    padding-top: 0.45rem !important;
+    padding-bottom: 0.45rem !important;
+  }
+}
+
+@media (min-width: 640px) and (max-height: 660px) {
+  .hero-card-fan {
+    transform: scale(0.76);
+    transform-origin: center center;
+    margin-top: -10px;
+    margin-bottom: -10px;
+  }
+  .glass-feature-card {
+    padding-top: 0.35rem !important;
+    padding-bottom: 0.35rem !important;
+  }
+}
