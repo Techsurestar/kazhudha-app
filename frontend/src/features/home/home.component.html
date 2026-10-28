@@ -1,66 +1,90 @@
-<div class="felt-texture text-on-surface min-h-screen relative flex flex-col justify-between">
-  <!-- Header Nav -->
-  <header class="fixed top-0 w-full z-50 glass-header">
-    <nav class="flex justify-between items-center px-6 md:px-12 h-20 w-full max-w-7xl mx-auto">
-      <div class="text-2xl md:text-4xl text-[#e9c349] font-bold gold-text-glow tracking-tight cursor-default">
-        Kazhudha Club
-      </div>
-      <div class="hidden md:flex gap-10 items-center">
-        <a class="text-sm text-slate-100 hover:text-[#e9c349] transition-all uppercase tracking-widest font-bold" routerLink="/how-to-play">How to Play</a>
-      </div>
-      <button routerLink="/game" class="gold-button text-slate-950 px-8 py-3 rounded-lg text-sm font-semibold tracking-wider transition-all duration-300 transform active:scale-95 cursor-pointer focus:outline-none">
-        Play Now
-      </button>
-    </nav>
-  </header>
+<div class="felt-texture h-[100dvh] max-h-[100dvh] text-slate-100 flex flex-col justify-between selection:bg-[#e9c349]/30 overflow-hidden relative">
+  <!-- Interactive WebGL Felt Canvas Background -->
+  <canvas #heroCanvas id="hero-canvas"></canvas>
+  <div class="absolute inset-0 bg-black/40 pointer-events-none z-0"></div>
 
-  <main class="flex-grow">
-    <!-- Hero Section -->
-    <section class="relative min-h-[100vh] flex items-center justify-center overflow-hidden px-4">
-      <canvas #heroCanvas id="hero-canvas"></canvas>
-      <div class="absolute inset-0 bg-black/30 pointer-events-none z-0"></div>
-      
-      <div class="relative z-10 text-center max-w-5xl mx-auto space-y-6 md:space-y-8 py-20 md:py-24 animate-float">
-        <!-- App Logo -->
-        <img src="assets/app-logo.png" alt="Kazhudha Club Logo" class="mx-auto w-72 h-72 object-contain drop-shadow-[0_0_20px_rgba(233,195,73,0.4)] mb-4" />
-        <h1 class="text-4xl md:text-5xl lg:text-5xl font-black text-[#e9c349] gold-text-glow leading-[1.1] mb-4 font-serif">
-          Welcome to <br/> Kazhudha Club!
+  <!-- Outer Centering Container (Mobile App Frame on Desktop, Full Viewport on Mobile) -->
+  <div class="w-full max-w-md mx-auto h-full flex flex-col justify-between px-4 py-3 sm:px-5 sm:py-4 relative z-10 overflow-hidden">
+
+    <!-- Top Header Bar -->
+    <header class="flex items-center justify-between pb-1 pt-0.5 flex-shrink-0">
+      <div class="flex flex-col items-start cursor-default select-none">
+        <h1 class="text-base sm:text-lg font-serif font-black tracking-tight gold-metallic-text leading-tight">
+          Kazhudha Club
         </h1>
-        <p class="text-lg md:text-2xl text-slate-200 max-w-3xl mx-auto font-medium leading-relaxed drop-shadow-md mb-4">
-          Ready to pass the blame and skip the shame!! <br/>
-          Ditch the card. Claim the crown.
-        </p>
-        <div class="flex flex-col md:flex-row gap-8 justify-center items-center">
-          <button routerLink="/game" class="gold-metallic-border text-[#e9c349] px-14 py-6 rounded-full font-bold text-lg hover:bg-[#e9c349]/10 transition-all shadow-2xl hover:-translate-y-2 backdrop-blur-sm cursor-pointer focus:outline-none">
-            PLAY NOW
-          </button>
+        <!-- Ornate gold underline with centered diamond flourish -->
+        <div class="flex items-center space-x-1.5 mt-0.5 opacity-90">
+          <div class="h-[1px] w-8 bg-gradient-to-r from-transparent via-[#d4af37] to-[#d4af37]"></div>
+          <div class="w-1.5 h-1.5 rotate-45 border border-[#d4af37] bg-[#f9e396] shadow-[0_0_4px_rgba(233,195,73,0.8)]"></div>
+          <div class="h-[1px] w-8 bg-gradient-to-l from-transparent via-[#d4af37] to-[#d4af37]"></div>
         </div>
       </div>
-      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer opacity-50 hover:opacity-100 transition-opacity" (click)="scrollToHowToPlay()">
-        <span class="material-symbols-outlined text-[#e9c349] text-4xl">keyboard_double_arrow_down</span>
-      </div>
-    </section>
 
-  </main>
+      <!-- How to Play Quick Link -->
+      <a routerLink="/how-to-play"
+         class="text-[11px] sm:text-xs uppercase tracking-widest font-semibold text-[#e5c158] hover:text-[#fff2c6] transition-colors px-2.5 py-1.5 rounded-lg border border-[#e5c158]/35 hover:bg-white/5 active:scale-95 cursor-pointer focus:outline-none flex items-center space-x-1">
+        <span>How to Play</span>
+        <svg class="w-3.5 h-3.5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </a>
+    </header>
 
-  <footer class="bg-black/80 w-full py-20 border-t border-[#e9c349]/30 relative overflow-hidden">
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-[#e9c349]/50 to-transparent"></div>
-    <div class="flex flex-col items-center gap-12 px-12 max-w-7xl mx-auto text-center relative z-10">
-      <div class="text-3xl text-[#e9c349] font-bold gold-text-glow tracking-tighter cursor-default">
-        Kazhudha Club
+    <!-- Main Content Area (Vertically Centered in Screen) -->
+    <main class="flex-1 flex flex-col items-center justify-center text-center my-auto min-h-0 py-2">
+      <!-- App Logo with Floating Animation & Glow -->
+      <div class="relative py-2 sm:py-3 flex items-center justify-center flex-shrink-0">
+        <img src="assets/app-logo.png"
+             alt="Kazhudha Club Logo"
+             class="w-64 h-64 sm:w-40 sm:h-40 object-contain drop-shadow-[0_0_24px_rgba(233,195,73,0.45)] select-none animate-float" />
       </div>
-      <div class="flex flex-wrap justify-center gap-10">
-        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Terms</a>
-        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Privacy</a>
-        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Fair Play</a>
-        <a class="text-[#e2e2e2]/40 hover:text-[#e9c349] transition-all uppercase tracking-widest text-[10px] font-bold" href="#">Contact</a>
+
+      <!-- Main Heading & Tagline -->
+      <div class="space-y-1.5 sm:space-y-2 flex-shrink-0">
+        <h2 class="text-2xl sm:text-3xl font-serif font-black text-[#e9c349] gold-text-glow leading-tight tracking-tight">
+          Welcome to <br/> Kazhudha Club!
+        </h2>
+        <p class="text-xs sm:text-[13px] text-slate-200 font-medium leading-relaxed max-w-[280px] sm:max-w-[320px] mx-auto drop-shadow-md">
+          Ready to pass the blame and skip the shame!<br/>
+          <span class="text-[#f5d475] font-semibold">Ditch the card. Claim the crown.</span>
+        </p>
       </div>
-      <div class="text-[#e2e2e2]/40 max-w-md text-xs leading-loose">
-        Kazhudha Club is intended for entertainment purposes only. Experience the thrill of the cards responsibly.
+
+      <!-- Action Buttons Container -->
+      <div class="w-full space-y-2.5 pt-5 sm:pt-6 flex-shrink-0 max-w-[300px] mx-auto">
+        <!-- Play Now Button -->
+        <button routerLink="/game"
+                class="gold-gradient-btn w-full text-slate-950 font-black text-sm sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
+          <span>PLAY NOW</span>
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+
+        <!-- Learn Rules Button -->
+        <a routerLink="/how-to-play"
+           class="dark-outline-btn w-full font-semibold text-xs sm:text-sm py-2.5 sm:py-3 rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer active:scale-[0.98] transition-all">
+          <span>Learn Rules & How to Play</span>
+          <svg class="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </a>
       </div>
-      <div class="text-[#e9c349]/60 text-[10px] font-bold tracking-[0.4em] uppercase">
-        © 2024 KAZHUDHA CLUB • ALL RIGHTS RESERVED
+    </main>
+
+    <!-- Compact Mobile App Footer -->
+    <footer class="pt-2 pb-1 flex-shrink-0 text-center">
+      <div class="flex items-center justify-center space-x-4 text-[10px] text-slate-400">
+        <span class="hover:text-slate-200 cursor-pointer">Terms</span>
+        <span>•</span>
+        <span class="hover:text-slate-200 cursor-pointer">Privacy</span>
+        <span>•</span>
+        <span class="hover:text-slate-200 cursor-pointer">Fair Play</span>
       </div>
-    </div>
-  </footer>
+      <div class="text-[9px] text-[#e9c349]/60 font-semibold tracking-wider uppercase mt-1">
+        © 2024 Kazhudha Club • All Rights Reserved
+      </div>
+    </footer>
+
+  </div>
 </div>
