@@ -1,11 +1,17 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, PLATFORM_ID, Inject, signal } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { HomeIconComponent } from '../shared/icon/home-icon.component';
+import { BookOpenIconComponent } from '../shared/icon/book-open-icon.component';
+import { LeadboardIconComponent } from '../shared/icon/leadboard-icon.component';
+import { UserIconComponent } from '../shared/icon/user-icon.component';
+import { ChevronsRightComponent } from '../shared/icon/chevrons-right.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, HomeIconComponent, BookOpenIconComponent, 
+            LeadboardIconComponent, UserIconComponent, ChevronsRightComponent ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -13,12 +19,40 @@ import { RouterLink } from '@angular/router';
 export class HomeComponent implements AfterViewInit, OnDestroy {
   @ViewChild('heroCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
+  readonly activeTab = signal<'home' | 'rules' | 'leaderboard' | 'profile'>('home');
+  readonly showLeaderboardModal = signal<boolean>(false);
+  readonly showProfileModal = signal<boolean>(false);
+
   private gl: WebGLRenderingContext | null = null;
   private animationFrameId: number | null = null;
   private resizeListener: (() => void) | null = null;
   private observer: IntersectionObserver | null = null;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
+  ) {}
+
+  setActiveTab(tab: 'home' | 'rules' | 'leaderboard' | 'profile'): void {
+    this.activeTab.set(tab);
+    if (tab === 'rules') {
+      this.router.navigate(['/how-to-play']);
+    } else if (tab === 'leaderboard') {
+      this.showLeaderboardModal.set(true);
+    } else if (tab === 'profile') {
+      this.showProfileModal.set(true);
+    }
+  }
+
+  closeLeaderboard(): void {
+    this.showLeaderboardModal.set(false);
+    this.activeTab.set('home');
+  }
+
+  closeProfile(): void {
+    this.showProfileModal.set(false);
+    this.activeTab.set('home');
+  }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
