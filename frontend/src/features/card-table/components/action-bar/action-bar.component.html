@@ -1,0 +1,71 @@
+<nav
+  class="flex justify-between items-center px-4 space-x-3 select-none"
+  aria-label="Table Actions">
+
+  <!-- "Information" Button (with On/Off State) -->
+  <button
+    type="button"
+    (click)="onInfoClick()"
+    [attr.aria-pressed]="effectiveIsInfoOn()"
+    aria-label="Information"
+    class="flex flex-col items-center group focus:outline-none cursor-pointer transition-all"
+    [class.is-on]="effectiveIsInfoOn()"
+    [class.is-off]="!effectiveIsInfoOn()">
+    <div
+      class="action-circle-btn relative flex items-center justify-center transition-all duration-200"
+      [class.btn-on]="effectiveIsInfoOn()"
+      [class.btn-off]="!effectiveIsInfoOn()">
+      <info-icon [size]="20" />
+      <!-- Status LED Indicator Dot for On / Off State -->
+      <span
+        class="absolute top-1 right-1 w-2.5 h-2.5 rounded-full border border-black/40 transition-all duration-200"
+        [class.bg-emerald-400]="effectiveIsInfoOn()"
+        [class.shadow-[0_0_6px_#34d399]]="effectiveIsInfoOn()"
+        [class.bg-slate-600]="!effectiveIsInfoOn()"
+        [class.opacity-40]="!effectiveIsInfoOn()"
+        aria-hidden="true">
+      </span>
+    </div>
+    <span
+      class="text-[11px] font-bold mt-1 tracking-wide transition-colors"
+      [class.text-amber-300]="effectiveIsInfoOn()"
+      [class.drop-shadow-[0_0_6px_rgba(245,197,24,0.7)]]="effectiveIsInfoOn()"
+      [class.text-amber-200]="!effectiveIsInfoOn()"
+      [class.opacity-80]="!effectiveIsInfoOn()">
+      Info
+    </span>
+  </button>
+
+  <!-- Text Area Badge -->
+  <div
+    class="text-area-badge flex-1 max-w-[200px] sm:max-w-[240px] mx-2 min-h-[42px] px-3 py-1.5 rounded-xl flex items-center justify-center text-center select-none"
+    role="status"
+    aria-live="polite">
+    <ng-content>
+      <span class="text-[11px] sm:text-xs font-semibold text-amber-200 leading-tight text-center line-clamp-2">
+        {{ effectiveBadgeText() }}
+      </span>
+    </ng-content>
+  </div>
+
+  <!-- "Hint" Button -->
+  <button
+    type="button"
+    (click)="onHintClick()"
+    [disabled]="isHintDisabled()"
+    aria-label="Get move hint"
+    class="flex flex-col items-center group focus:outline-none cursor-pointer transition-opacity"
+    [class.opacity-50]="isHintDisabled()"
+    [class.cursor-not-allowed]="isHintDisabled()">
+    <div class="action-circle-btn flex items-center justify-center">
+      <svg class="w-5 h-5 text-amber-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a6 6 0 0 0-6 6c0 2.22 1.2 4.15 3 5.19V17a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-3.81c1.8-1.04 3-2.97 3-5.19a6 6 0 0 0-6-6z"/>
+        <path d="M9 21h6"/>
+      </svg>
+    </div>
+    <span class="text-[11px] font-bold text-amber-200 mt-1 tracking-wide group-hover:text-white transition-colors">
+      Hint
+    </span>
+  </button>
+
+</nav>

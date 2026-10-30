@@ -5,6 +5,7 @@ import { PlayerProfileComponent } from './components/player-profile/player-profi
 import { FeltTableComponent } from './components/felt-table/felt-table.component';
 import { HumanHandComponent } from './components/human-hand/human-hand.component';
 import { GameOverModalComponent } from './components/game-over-modal/game-over-modal.component';
+import { CardComponent } from '../shared/card/card.component';
 
 const SUIT_ORDER: Record<'SPADES' | 'HEARTS' | 'CLUBS' | 'DIAMONDS', number> = {
   'SPADES': 0,
@@ -26,7 +27,8 @@ const RANK_ORDER: Record<string, number> = {
     PlayerProfileComponent,
     FeltTableComponent,
     HumanHandComponent,
-    GameOverModalComponent
+    GameOverModalComponent,
+    CardComponent
   ],
   templateUrl: './game-table.component.html'
 })

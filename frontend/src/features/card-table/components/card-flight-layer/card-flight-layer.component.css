@@ -1,0 +1,162 @@
+:host {
+  display: block;
+  pointer-events: none;
+}
+
+/* Card Flight Keyframes from Cardinal Origins to Table Center */
+
+@keyframes flightFromTop {
+  0% {
+    top: 4%;
+    left: 50%;
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    top: 36%;
+    left: 50%;
+    transform: translate(-50%, -50px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flightFromLeft {
+  0% {
+    top: 42%;
+    left: 4%;
+    transform: translate(0, -50%) rotate(-12deg) scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    top: 42%;
+    left: 50%;
+    transform: translate(calc(-50% - 56px), -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flightFromRight {
+  0% {
+    top: 42%;
+    left: 96%;
+    transform: translate(-100%, -50%) rotate(12deg) scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    top: 42%;
+    left: 50%;
+    transform: translate(calc(-50% + 56px), -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flightFromBottom {
+  0% {
+    top: 72%;
+    left: 50%;
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.95;
+  }
+  100% {
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, 5px) scale(1);
+    opacity: 1;
+  }
+}
+
+.fly-from-top {
+  animation: flightFromTop 0.6s linear forwards;
+}
+
+.fly-from-left {
+  animation: flightFromLeft 0.6s linear forwards;
+}
+
+.fly-from-right {
+  animation: flightFromRight 0.6s linear forwards;
+}
+
+.fly-from-bottom {
+  animation: flightFromBottom 0.6s linear forwards;
+}
+
+/* ======================================================== */
+/* Card Deal Keyframes from Center Table Deck to Players   */
+/* ======================================================== */
+
+@keyframes dealToTop {
+  0% {
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    top: 4%;
+    left: 50%;
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes dealToLeft {
+  0% {
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    top: 42%;
+    left: 4%;
+    transform: translate(0, -50%) rotate(-12deg) scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes dealToRight {
+  0% {
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    top: 42%;
+    left: 96%;
+    transform: translate(-100%, -50%) rotate(12deg) scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes dealToBottom {
+  0% {
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    top: 72%;
+    left: 50%;
+    transform: translate(-50%, 0) scale(1);
+    opacity: 0.95;
+  }
+}
+
+.deal-to-top {
+  animation: dealToTop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+.deal-to-left {
+  animation: dealToLeft 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+.deal-to-right {
+  animation: dealToRight 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+.deal-to-bottom {
+  animation: dealToBottom 0.22s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}

@@ -283,32 +283,30 @@
   </div>
 
   <!-- Reusable Card Template inside Table -->
-  <ng-template #cardTemplate let-card="card">
-    <div class="relative w-20 h-28 sm:w-24 sm:h-32 border rounded-lg shadow-lg flex flex-col justify-between p-2 select-none pointer-events-none"
-         [ngClass]="card.suit === 'HEARTS' || card.suit === 'DIAMONDS' ? 'text-rose-600 border-rose-200 bg-[#fafaf9]' : 'text-slate-900 border-slate-200 bg-[#fafaf9]'">
-      <div class="flex flex-col items-start leading-none">
-        <span class="text-sm sm:text-base font-black tracking-tight">{{ getCardRankDisplay(card.rank) }}</span>
-        <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-3.5 h-3.5 sm:w-4 sm:h-4' }"></ng-container>
-      </div>
-      <div class="absolute inset-0 flex items-center justify-center">
-        <ng-container *ngTemplateOutlet="suitIconTemplate; context: { suit: card.suit, sizeClass: 'w-10 h-10' }"></ng-container>
-      </div>
-    </div>
+  <ng-template #cardTemplate let-card="card" let-rank="rank" let-suit="suit" let-cardClass="cardClass" let-cornerSize="cornerSize" let-cornerIconSize="cornerIconSize" let-centerSize="centerSize" let-centerClass="centerClass">
+    <app-card
+      [card]="card"
+      [rank]="rank || card?.rank"
+      [suit]="suit || card?.suit"
+      [cardClass]="cardClass || 'w-20 h-28 sm:w-24 sm:h-32 !p-2 border rounded-lg shadow-lg select-none pointer-events-none'"
+      [cornerSize]="cornerSize || 'text-sm sm:text-base'"
+      [cornerIconSize]="cornerIconSize || 'w-3.5 h-3.5 sm:w-4 sm:h-4'"
+      [centerSize]="centerSize || 'w-10 h-10'"
+      [centerClass]="centerClass">
+    </app-card>
   </ng-template>
 
-  <!-- Reusable SVG Suit Icon Template -->
-  <ng-template #suitIconTemplate let-suit="suit" let-sizeClass="sizeClass">
-    <svg [class]="sizeClass" class="fill-current inline-block" viewBox="0 0 24 24">
-      @if (suit === 'SPADES') {
-        <path d="M12 2C9 6.5 4 8.5 4 12c0 3 2 5 5 5 1.5 0 2.5-.5 3-1.5.5 1 1.5 1.5 3 1.5 3 0 5-2 5-5 0-3.5-5-5.5-8-10zm0 18h-2v2h4v-2h-2z"/>
-      } @else if (suit === 'HEARTS') {
-        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-      } @else if (suit === 'DIAMONDS') {
-        <path d="M12 2L2 12l10 10 10-10L12 2z"/>
-      } @else {
-        <path d="M12 2c-2.48 0-4.5 2.02-4.5 4.5 0 1.25.5 2.38 1.33 3.2C6.98 10.3 5 12.17 5 14.5c0 2.48 2.02 4.5 4.5 4.5.96 0 1.84-.3 2.58-.81V21h-2v2h4v-2h-2v-2.81c.74.51 1.62.81 2.58.81 2.48 0 4.5-2.02 4.5-4.5 0-2.33-1.98-4.2-3.83-4.8c.83-.82 1.33-1.95 1.33-3.2C16.5 4.02 14.48 2 12 2z"/>
-      }
-    </svg>
+  <ng-template #suitIconTemplate let-card="card" let-rank="rank" let-suit="suit" let-cardClass="cardClass" let-cornerSize="cornerSize" let-cornerIconSize="cornerIconSize" let-centerSize="centerSize" let-centerClass="centerClass">
+      <app-card
+        [card]="card"
+        [rank]="rank || card?.rank"
+        [suit]="suit || card?.suit"
+        [cardClass]="cardClass || 'w-20 h-28 sm:w-24 sm:h-32 !p-2 border rounded-lg shadow-lg select-none pointer-events-none'"
+        [cornerSize]="cornerSize || 'text-sm sm:text-base'"
+        [cornerIconSize]="cornerIconSize || 'w-3.5 h-3.5 sm:w-4 sm:h-4'"
+        [centerSize]="centerSize || 'w-10 h-10'"
+        [centerClass]="centerClass">
+      </app-card>
   </ng-template>
 
   <!-- Game Over Modal Overlay -->

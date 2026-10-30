@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+/* Circular Bottom Action Button */
+.action-circle-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  margin-left: 8px;
+  margin-right: 8px;
+  background: radial-gradient(circle at 35% 35%, #23653b 0%, #154526 70%, #0d2f19 100%);
+  border: 2px solid #d4af37;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.action-circle-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 14px rgba(212, 175, 55, 0.35);
+}
+
+.action-circle-btn:active {
+  transform: scale(0.96);
+}
+
+/* ON State (Active / Selected) */
+.action-circle-btn.btn-on {
+  border-color: #ffd700;
+  background: radial-gradient(circle at 35% 35%, #2e8b57 0%, #1c6838 60%, #104222 100%);
+  box-shadow: 0 0 14px rgba(245, 197, 24, 0.85), inset 0 1px 3px rgba(255, 255, 255, 0.65);
+  color: #ffffff;
+}
+
+/* OFF State (Inactive / Unselected) */
+.action-circle-btn.btn-off {
+  opacity: 0.85;
+  border-color: rgba(212, 175, 55, 0.5);
+  color: rgba(254, 243, 199, 0.7);
+}
+
+/* Central Text Area Badge */
+.text-area-badge {
+  background: rgba(12, 36, 21, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(212, 175, 55, 0.55);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: all 0.2s ease;
+}
+
+.text-area-badge:hover {
+  border-color: rgba(212, 175, 55, 0.85);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+}

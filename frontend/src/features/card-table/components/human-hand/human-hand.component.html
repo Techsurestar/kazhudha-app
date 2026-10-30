@@ -1,0 +1,67 @@
+<div class="flex flex-col items-center w-full select-none">
+
+  <!-- Human Gold Nameplate Badge -->
+  <div
+    class="human-nameplate mb-1 flex self-start ml-2 items-center space-x-1.5 p-1 rounded-xl transition-all duration-300"
+    [class.human-turn-active]="effectiveIsTurn()"
+    [class.turn-active]="effectiveIsTurn()">
+    <!-- Left: Square Avatar Frame -->
+    <div class="nameplate-avatar-box">
+      <img
+        src="/avatar/avatar.jpeg"
+        alt="Avatar"
+        class="w-full h-full object-cover rounded-[5px]"
+      />
+    </div>
+
+    <!-- Right: Username + 2 Stat Rows -->
+    <div class="flex flex-col justify-between h-[42px] sm:h-[46px] w-[48px] sm:w-[84px]">
+      <!-- Row 0: Username -->
+      <div class="nameplate-username-bar">
+        <span class="truncate">{{ effectiveName() }}</span>
+      </div>
+
+      <!-- Row 1: Remaining Cards (Below username) -->
+      <div class="nameplate-stat-bar">
+        <span>{{ effectiveCardCount() }} Cards</span>
+      </div>
+
+      <!-- Row 2: Points -->
+      <div class="nameplate-stat-bar">
+        <span>{{ effectiveScore() }} pts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Playable Hand Fan -->
+  <div class="flex -space-x-[32px] sm:-space-x-5 overflow-x-auto no-scrollbar w-full justify-center px-2 py-2">
+    @for (card of cards(); track card.suit + '-' + card.rank + '-' + $index; let idx = $index) {
+      <button
+        type="button"
+        (click)="onCardClick(card)"
+        [attr.aria-label]="getRankDisplay(card.rank) + ' of ' + card.suit"
+        class="group relative flex-shrink-0 transition-all duration-150 select-none focus:outline-none"
+        [class.hover:-translate-y-3]="!disabled()"
+        [class.hover:z-30]="!disabled()"
+        [class.active:scale-95]="!disabled()"
+        [class.cursor-pointer]="!disabled()"
+        [class.cursor-not-allowed]="disabled()"
+        [style.zIndex]="idx">
+        <app-card
+          [card]="card"
+          [rank]="card.rank"
+          [suit]="card.suit"
+          cardClass="w-14 h-22 sm:w-10 sm:h-16 !p-1 rounded-md border shadow-md transition-shadow group-hover:shadow-xl pointer-events-none"
+          cornerSize="text-[14px] sm:text-[10px] font-black"
+          cornerIconSize="w-3 h-2.5 -mt-1 sm:w-2.5 sm:h-2.5"
+          centerSize="w-6 h-6 mt-3 sm:w-4 sm:h-4">
+        </app-card>
+      </button>
+    } @empty {
+      <div class="py-2 text-[10px] font-semibold text-amber-200/50 uppercase tracking-wider">
+        Hand Empty
+      </div>
+    }
+  </div>
+
+</div>

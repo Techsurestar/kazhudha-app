@@ -1,0 +1,79 @@
+:host {
+  display: block;
+}
+
+/* Bot Nameplate Container */
+.bot-nameplate {
+  background: rgb(12 30 18);
+  backdrop-filter: blur(6px);
+  border: 1.5px solid rgba(56, 189, 248, 0.45);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Square Avatar Box with 3D Beveled Frame */
+.nameplate-avatar-box {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .nameplate-avatar-box {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* Username Pill */
+.nameplate-username-bar {
+  height: 15px;
+  display: flex;
+  align-items: center;
+  padding-right: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #cdc823;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 640px) {
+  .nameplate-username-bar {
+    height: 17px;
+    font-size: 11px;
+  }
+}
+
+/* Stat Bar Pill */
+.nameplate-stat-bar {
+  width: 100%;
+  height: 13px;
+  display: flex;
+  align-items: center;
+  padding-right: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+@media (min-width: 640px) {
+  .nameplate-stat-bar {
+    height: 14px;
+    font-size: 9px;
+  }
+}
+
+/* Turn Active Pulse */
+.turn-active {
+  border-color: rgba(245, 158, 11, 0.95) !important;
+  box-shadow: 0 0 4px rgba(245, 158, 11, 0.75), inset 0 0 6px rgba(245, 158, 11, 0.3) !important;
+  animation: pulseTurn 1.8s infinite;
+}
+
+@keyframes pulseTurn {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.85);
+  }
+}

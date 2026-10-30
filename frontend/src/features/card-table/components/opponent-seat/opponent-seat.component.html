@@ -1,0 +1,182 @@
+<div class="select-none">
+
+  @switch (effectivePosition()) {
+
+    <!-- ========================================== -->
+    <!-- TOP OPPONENT LAYOUT                        -->
+    <!-- ========================================== -->
+    @case ('top') {
+      <div class="flex flex-col items-center">
+        <!-- Face-Down Cards Fan OR Finished Rank Chip -->
+        @if (chip()) {
+          <div class="flex items-center justify-center animate-chip-pop pt-1">
+            <div class="w-8 h-8 rounded-full border-2 border-dashed shadow-md flex items-center justify-center font-black text-xs select-none"
+                 [class]="chipClass()">
+              {{ chip()?.label }}
+            </div>
+          </div>
+        } @else {
+          <div class="flex -space-x-[40px] overflow-hidden pt-1">
+            @for (idx of visibleCardIndices(); track idx) {
+              <div class="bot-card-back w-13 h-20 shadow-md flex-shrink-0">
+                <div class="w-2.5 h-2.5 rounded-full border border-amber-300/40 bg-amber-400/20"></div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Nameplate Badge (Below cards) -->
+        <div
+          class="bot-nameplate mt-1 flex items-center space-x-1.5 p-1 rounded-xl transition-all duration-300"
+          [class.turn-active]="effectiveIsTurn()">
+          <!-- Left: Square Avatar Frame -->
+          <div class="nameplate-avatar-box">
+            <img
+              src="/avatar/avatar.jpeg"
+              alt="Avatar"
+              class="w-full h-full object-cover rounded-[5px]"
+            />
+          </div>
+
+          <!-- Right: Username + 2 Stat Rows -->
+          <div class="flex flex-col justify-between h-[42px] sm:h-[46px] w-[48px] sm:w-[84px]">
+            <!-- Row 0: Username -->
+            <div class="nameplate-username-bar">
+              <span class="truncate">{{ effectiveName() }}</span>
+            </div>
+
+            <!-- Row 1: Remaining Cards (Below username) -->
+            <div class="nameplate-stat-bar">
+              <span>{{ effectiveCardCount() }} Cards</span>
+            </div>
+
+            <!-- Row 2: Points -->
+            <div class="nameplate-stat-bar">
+              <span>{{ effectiveScore() }} pts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ========================================== -->
+    <!-- LEFT OPPONENT LAYOUT                       -->
+    <!-- ========================================== -->
+    @case ('left') {
+      <div class="flex flex-col items-start">
+        <!-- Nameplate Badge (Above cards) -->
+        <div
+          class="bot-nameplate mb-1 flex items-center space-x-1.5 p-1 rounded-xl transition-all duration-300"
+          [class.turn-active]="effectiveIsTurn()">
+          <!-- Left: Square Avatar Frame -->
+          <div class="nameplate-avatar-box">
+            <img
+              src="/avatar/avatar.jpeg"
+              alt="Avatar"
+              class="w-full h-full object-cover rounded-[5px]"
+            />
+          </div>
+
+          <!-- Right: Username + 2 Stat Rows -->
+          <div class="flex flex-col justify-between h-[42px] sm:h-[46px] w-[48px] sm:w-[84px]">
+            <!-- Row 0: Username -->
+            <div class="nameplate-username-bar">
+              <span class="truncate">{{ effectiveName() }}</span>
+            </div>
+
+            <!-- Row 1: Remaining Cards (Below username) -->
+            <div class="nameplate-stat-bar">
+              <span>{{ effectiveCardCount() }} Cards</span>
+            </div>
+
+            <!-- Row 2: Points -->
+            <div class="nameplate-stat-bar">
+              <span>{{ effectiveScore() }} pts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vertical Cards Fan OR Finished Rank Chip -->
+        <div class="h-[184px] flex flex-col items-start">
+          @if (chip()) {
+            <div class="flex items-center justify-center animate-chip-pop pl-1 py-1">
+              <div class="w-8 h-8 rounded-full border-2 border-dashed shadow-md flex items-center justify-center font-black text-xs select-none"
+                   [class]="chipClass()">
+                {{ chip()?.label }}
+              </div>
+            </div>
+          } @else {
+            <div class="flex flex-col -space-y-10 overflow-hidden pl-0.5">
+              @for (idx of visibleCardIndices(); track idx) {
+                <div class="bot-card-back w-20 h-13 shadow-md flex-shrink-0">
+                  <div class="w-2.5 h-2.5 rounded-full border border-amber-300/40 bg-amber-400/20"></div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ========================================== -->
+    <!-- RIGHT OPPONENT LAYOUT                      -->
+    <!-- ========================================== -->
+    @case ('right') {
+      <div class="flex flex-col items-end">
+        <!-- Nameplate Badge (Above cards) -->
+        <div
+          class="bot-nameplate mb-1 flex items-center space-x-1.5 p-1 rounded-xl transition-all duration-300"
+          [class.turn-active]="effectiveIsTurn()">
+          <!-- Left: Square Avatar Frame -->
+          <div class="nameplate-avatar-box">
+            <img
+              src="/avatar/avatar.jpeg"
+              alt="Avatar"
+              class="w-full h-full object-cover rounded-[5px]"
+            />
+          </div>
+
+          <!-- Right: Username + 2 Stat Rows -->
+          <div class="flex flex-col justify-between h-[42px] sm:h-[46px] w-[48px] sm:w-[84px]">
+            <!-- Row 0: Username -->
+            <div class="nameplate-username-bar">
+              <span class="truncate">{{ effectiveName() }}</span>
+            </div>
+
+            <!-- Row 1: Remaining Cards (Below username) -->
+            <div class="nameplate-stat-bar">
+              <span>{{ effectiveCardCount() }} Cards</span>
+            </div>
+
+            <!-- Row 2: Points -->
+            <div class="nameplate-stat-bar">
+              <span>{{ effectiveScore() }} pts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vertical Cards Fan OR Finished Rank Chip -->
+        <div class="h-[184px] flex flex-col items-end">
+          @if (chip()) {
+            <div class="flex items-center justify-center animate-chip-pop pr-1 py-1">
+              <div class="w-8 h-8 rounded-full border-2 border-dashed shadow-md flex items-center justify-center font-black text-xs select-none"
+                   [class]="chipClass()">
+                {{ chip()?.label }}
+              </div>
+            </div>
+          } @else {
+            <div class="flex flex-col -space-y-10 overflow-hidden pr-0.5">
+              @for (idx of visibleCardIndices(); track idx) {
+                <div class="bot-card-back w-20 h-13 shadow-md flex-shrink-0">
+                  <div class="w-2.5 h-2.5 rounded-full border border-amber-300/40 bg-amber-400/20"></div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+  }
+
+</div>
