@@ -20,14 +20,14 @@ describe('AdBannerComponent', () => {
   });
 
   it('should clamp height between 50px and 60px', () => {
-    component.heightPx = 40; // Too small
-    expect(component.clampedHeight).toBe(50);
+    fixture.componentRef.setInput('heightPx', 40); // Too small
+    expect(component.clampedHeight()).toBe(50);
 
-    component.heightPx = 75; // Too large
-    expect(component.clampedHeight).toBe(60);
+    fixture.componentRef.setInput('heightPx', 75); // Too large
+    expect(component.clampedHeight()).toBe(60);
 
-    component.heightPx = 56; // In range
-    expect(component.clampedHeight).toBe(56);
+    fixture.componentRef.setInput('heightPx', 56); // In range
+    expect(component.clampedHeight()).toBe(56);
   });
 
   it('should render test mode placeholder by default', () => {
@@ -40,7 +40,7 @@ describe('AdBannerComponent', () => {
   });
 
   it('should render custom label', () => {
-    component.label = 'SPONSORED';
+    fixture.componentRef.setInput('label', 'SPONSORED');
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
@@ -48,9 +48,9 @@ describe('AdBannerComponent', () => {
   });
 
   it('should render live adsbygoogle container when not in test mode and adSlotId is provided', () => {
-    component.isTestMode = false;
-    component.adSlotId = '1234567890';
-    component.adClient = 'ca-pub-9999999999999999';
+    fixture.componentRef.setInput('isTestMode', false);
+    fixture.componentRef.setInput('adSlotId', '1234567890');
+    fixture.componentRef.setInput('adClient', 'ca-pub-9999999999999999');
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;

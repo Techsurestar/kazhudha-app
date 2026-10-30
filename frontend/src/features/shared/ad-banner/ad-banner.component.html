@@ -1,18 +1,18 @@
 <aside
   class="w-full flex flex-col items-center justify-center bg-[#0d1218] border-b border-amber-500/15 overflow-hidden select-none relative z-30 transition-all"
-  [style.height.px]="clampedHeight"
-  [style.minHeight.px]="clampedHeight"
-  [style.maxHeight.px]="clampedHeight"
+  [style.height.px]="clampedHeight()"
+  [style.minHeight.px]="clampedHeight()"
+  [style.maxHeight.px]="clampedHeight()"
   role="complementary"
   aria-label="Advertisement Banner">
 
   <!-- Subtle AD Indicator Badge -->
   <span class="absolute top-0.5 right-2 text-[8px] font-mono tracking-widest text-slate-500/70 uppercase pointer-events-none select-none">
-    {{ label }}
+    {{ label() }}
   </span>
 
   <!-- Test Mode Placeholder View -->
-  @if (isTestMode || !adSlotId) {
+  @if (isTestMode() || !adSlotId()) {
     <div class="flex items-center justify-center space-x-2.5 px-3 py-1 w-full max-w-[320px] mx-auto text-slate-400">
       <div class="w-6 h-6 rounded bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-[10px] text-amber-450 font-black shadow-sm flex-shrink-0">
         AD
@@ -31,8 +31,8 @@
     <div class="w-full h-full flex items-center justify-center overflow-hidden">
       <ins class="adsbygoogle"
            style="display:inline-block;width:320px;height:50px"
-           [attr.data-ad-client]="adClient"
-           [attr.data-ad-slot]="adSlotId"
+           [attr.data-ad-client]="adClient()"
+           [attr.data-ad-slot]="adSlotId()"
            data-ad-format="horizontal"
            data-full-width-responsive="false"></ins>
     </div>
