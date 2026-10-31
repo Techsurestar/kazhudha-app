@@ -105,15 +105,6 @@
       (flightComplete)="onFlightComplete($event)">
     </app-card-flight-layer>
 
-    <!-- ---------------------------------------- -->
-    <!-- HINT NOTIFICATION BANNER                 -->
-    <!-- ---------------------------------------- -->
-    @if (toastMessage() && isHintPlayMessage(toastMessage())) {
-      <div class="absolute top-16 left-1/2 -translate-x-1/2 z-40 bg-slate-950/90 border border-amber-400/60 text-amber-200 font-bold text-xs px-4 py-1.5 rounded-full shadow-2xl backdrop-blur-md animate-fade-in pointer-events-none text-center max-w-[85%]">
-        {{ toastMessage() }}
-      </div>
-    }
-
     <!-- ========================================== -->
     <!-- GAME OVER / ROUND OVER MODAL OVERLAY       -->
     <!-- ========================================== -->

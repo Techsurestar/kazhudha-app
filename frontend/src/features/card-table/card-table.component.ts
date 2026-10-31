@@ -282,17 +282,13 @@ export class CardTableComponent implements AfterViewInit {
 
   showToast(message: string, durationMs: number = 2200): void {
     this.toastMessage.set(message);
-
-    const isHint = this.isHintPlayMessage(message);
-    if (!isHint) {
-      this.toastBadgeText.set(message);
-    }
+    this.toastBadgeText.set(message);
 
     setTimeout(() => {
       if (this.toastMessage() === message) {
         this.toastMessage.set(null);
       }
-      if (!isHint && this.toastBadgeText() === message) {
+      if (this.toastBadgeText() === message) {
         this.toastBadgeText.set('');
       }
     }, durationMs);
@@ -480,7 +476,7 @@ export class CardTableComponent implements AfterViewInit {
     if (!isVettuPlay && nextPile.length >= this.getActivePlayersCount()) {
       const winner = this.getTrickWinner(nextPile);
       if (winner) {
-        this.showToast(`👑 ${winner.name} won the trick!`, 1200);
+        this.showToast(`👑 ${winner.name} will lead the next turn!`, 1200);
       }
       await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
       if (this.isDestroyed) return;
@@ -636,7 +632,7 @@ export class CardTableComponent implements AfterViewInit {
           if (nextPile.length >= this.getActivePlayersCount()) {
             const winner = this.getTrickWinner(nextPile);
             if (winner) {
-              this.showToast(`👑 ${winner.name} won the trick!`, 1200);
+              this.showToast(`👑 ${winner.name} will lead the next turn!`, 1200);
             }
             await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
             if (this.isDestroyed) return;
@@ -685,7 +681,7 @@ export class CardTableComponent implements AfterViewInit {
         if (nextPile.length >= this.getActivePlayersCount()) {
           const winner = this.getTrickWinner(nextPile);
           if (winner) {
-            this.showToast(`👑 ${winner.name} won the trick!`, 1200);
+            this.showToast(`👑 ${winner.name} will lead the next turn!`, 1200);
           }
           await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
           if (this.isDestroyed) return;
@@ -782,7 +778,10 @@ export class CardTableComponent implements AfterViewInit {
       // Trigger Vettu flash and message banner
       this.isVettuFlashing.set(true);
       const cutterName = this.getPlayerName(event.playerId);
-      this.vettuAlertMessage.set(`💥 Vettu! ${cutterName} cut the trick!`);
+      const nextLeadId = penalizedPlayerId || finalState.currentTurnPlayerId || event.playerId;
+      const nextLeadName = nextLeadId ? this.getPlayerName(nextLeadId) : '';
+      const leadText = nextLeadName ? ` ${nextLeadName} will lead the next turn!` : '';
+      this.vettuAlertMessage.set(`💥 Vettu! ${cutterName} strikes!${leadText}`);
 
       await new Promise(r => setTimeout(r, 1600));
       if (this.isDestroyed) return;

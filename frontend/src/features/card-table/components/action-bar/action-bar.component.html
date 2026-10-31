@@ -41,11 +41,13 @@
     class="text-area-badge flex-1 max-w-[200px] sm:max-w-[240px] mx-2 min-h-[42px] px-3 py-1.5 rounded-xl flex items-center justify-center text-center select-none"
     role="status"
     aria-live="polite">
-    <ng-content>
-      <span class="text-[11px] sm:text-xs font-semibold text-amber-200 leading-tight text-center line-clamp-2">
-        {{ effectiveBadgeText() }}
-      </span>
-    </ng-content>
+    @if (shouldShowBadge()) {
+      <ng-content>
+        <span class="text-[11px] sm:text-xs font-semibold text-amber-200 leading-tight text-center line-clamp-2">
+          {{ effectiveBadgeText() }}
+        </span>
+      </ng-content>
+    }
   </div>
 
   <!-- "Hint" Button -->

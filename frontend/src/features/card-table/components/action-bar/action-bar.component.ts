@@ -14,8 +14,8 @@ export class ActionBarComponent {
   /** Emitted when the "Hint" action is triggered */
   readonly hint = output<void>();
 
-  /** Two-way bindable on/off state for the Information button (defaults to false / off) */
-  readonly isInfoOn = model<boolean>(false);
+  /** Two-way bindable on/off state for the Information button (defaults to true / on) */
+  readonly isInfoOn = model<boolean>(true);
 
   /** Optional input override for on/off state */
   readonly isInfoActive = input<boolean | undefined>(undefined);
@@ -32,8 +32,32 @@ export class ActionBarComponent {
     return this.isInfoOn();
   });
 
+  /** Checks if a message is a hint message */
+  isHintMessage(message: string | null | undefined): boolean {
+    return !!message && /hint/i.test(message);
+  }
+
+  /** Whether the text area badge should display content */
+  readonly shouldShowBadge = computed(() => {
+    const rawText = this.badgeText() || this.text();
+    if (this.isHintMessage(rawText)) {
+      return true;
+    }
+    return this.effectiveIsInfoOn();
+  });
+
   /** Effective text displayed inside the text area badge */
-  readonly effectiveBadgeText = computed(() => this.badgeText() || this.text());
+  readonly effectiveBadgeText = computed(() => {
+    const rawText = this.badgeText() || this.text();
+    if (!rawText) return '';
+    if (this.isHintMessage(rawText)) {
+      return rawText;
+    }
+    if (!this.effectiveIsInfoOn()) {
+      return '';
+    }
+    return rawText;
+  });
 
   onHintClick(): void {
     if (this.isHintDisabled()) return;

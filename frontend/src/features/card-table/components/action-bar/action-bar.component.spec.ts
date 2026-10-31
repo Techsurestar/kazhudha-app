@@ -51,29 +51,89 @@ describe('ActionBarComponent', () => {
     expect(badge?.textContent).toContain('Your Turn');
   });
 
-  it('should render the information button with icon and initial off state', () => {
+  it('should not display the info message in the text area badge if the Information button is in Off state', () => {
+    fixture.componentRef.setInput('badgeText', 'Your Turn');
+    fixture.detectChanges();
+
+    const badge = fixture.nativeElement.querySelector('.text-area-badge');
+    expect(badge?.textContent).toContain('Your Turn');
+
+    // Turn Information button off
+    const infoBtn = fixture.nativeElement.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
+    infoBtn.click();
+    fixture.detectChanges();
+
+    expect(component.effectiveIsInfoOn()).toBe(false);
+    expect(component.effectiveBadgeText()).toBe('');
+    expect(badge?.textContent?.trim()).toBe('');
+
+    // Turn Information button back on
+    infoBtn.click();
+    fixture.detectChanges();
+
+    expect(component.effectiveIsInfoOn()).toBe(true);
+    expect(component.effectiveBadgeText()).toBe('Your Turn');
+    expect(badge?.textContent).toContain('Your Turn');
+  });
+
+  it('should not display text in the text area badge when isInfoActive is false', () => {
+    fixture.componentRef.setInput('badgeText', 'Your Turn');
+    fixture.componentRef.setInput('isInfoActive', false);
+    fixture.detectChanges();
+
+    const badge = fixture.nativeElement.querySelector('.text-area-badge');
+    expect(component.effectiveIsInfoOn()).toBe(false);
+    expect(component.effectiveBadgeText()).toBe('');
+    expect(badge?.textContent?.trim()).toBe('');
+  });
+
+  it('should display the hint message in the text area badge even if the Information button is in Off state', () => {
+    const hintMsg = '💡 Hint: Play 4 of CLUBS';
+    fixture.componentRef.setInput('badgeText', hintMsg);
+
+    // Turn Information button off
+    const infoBtn = fixture.nativeElement.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
+    infoBtn.click();
+    fixture.detectChanges();
+
+    expect(component.effectiveIsInfoOn()).toBe(false);
+    expect(component.isHintMessage(hintMsg)).toBe(true);
+    expect(component.shouldShowBadge()).toBe(true);
+    expect(component.effectiveBadgeText()).toBe(hintMsg);
+
+    const badge = fixture.nativeElement.querySelector('.text-area-badge');
+    expect(badge?.textContent).toContain(hintMsg);
+  });
+
+  it('should display the hint message in the text area badge when isInfoActive is false', () => {
+    const hintMsg = '💡 Hint: Play A of SPADES';
+    fixture.componentRef.setInput('badgeText', hintMsg);
+    fixture.componentRef.setInput('isInfoActive', false);
+    fixture.detectChanges();
+
+    expect(component.effectiveIsInfoOn()).toBe(false);
+    expect(component.effectiveBadgeText()).toBe(hintMsg);
+
+    const badge = fixture.nativeElement.querySelector('.text-area-badge');
+    expect(badge?.textContent).toContain(hintMsg);
+  });
+
+  it('should render the information button with icon and initial on state', () => {
     const el: HTMLElement = fixture.nativeElement;
     const infoBtn = el.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
     expect(infoBtn).not.toBeNull();
     expect(infoBtn.querySelector('info-icon, svg')).not.toBeNull();
-    expect(infoBtn.getAttribute('aria-pressed')).toBe('false');
-    expect(infoBtn.classList.contains('is-off')).toBe(true);
-    expect(infoBtn.classList.contains('is-on')).toBe(false);
+    expect(infoBtn.getAttribute('aria-pressed')).toBe('true');
+    expect(infoBtn.classList.contains('is-on')).toBe(true);
+    expect(infoBtn.classList.contains('is-off')).toBe(false);
   });
 
   it('should toggle on/off state when information button is clicked', () => {
     const el: HTMLElement = fixture.nativeElement;
     const infoBtn = el.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
 
-    // Initially off
-    expect(component.effectiveIsInfoOn()).toBe(false);
-
-    // Toggle on
-    infoBtn.click();
-    fixture.detectChanges();
+    // Initially on
     expect(component.effectiveIsInfoOn()).toBe(true);
-    expect(infoBtn.getAttribute('aria-pressed')).toBe('true');
-    expect(infoBtn.classList.contains('is-on')).toBe(true);
 
     // Toggle off
     infoBtn.click();
@@ -81,16 +141,23 @@ describe('ActionBarComponent', () => {
     expect(component.effectiveIsInfoOn()).toBe(false);
     expect(infoBtn.getAttribute('aria-pressed')).toBe('false');
     expect(infoBtn.classList.contains('is-off')).toBe(true);
-  });
 
-  it('should respect input on/off state', () => {
-    fixture.componentRef.setInput('isInfoOn', true);
+    // Toggle on
+    infoBtn.click();
     fixture.detectChanges();
-
-    const infoBtn = fixture.nativeElement.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
     expect(component.effectiveIsInfoOn()).toBe(true);
     expect(infoBtn.getAttribute('aria-pressed')).toBe('true');
     expect(infoBtn.classList.contains('is-on')).toBe(true);
+  });
+
+  it('should respect input on/off state', () => {
+    fixture.componentRef.setInput('isInfoOn', false);
+    fixture.detectChanges();
+
+    const infoBtn = fixture.nativeElement.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
+    expect(component.effectiveIsInfoOn()).toBe(false);
+    expect(infoBtn.getAttribute('aria-pressed')).toBe('false');
+    expect(infoBtn.classList.contains('is-off')).toBe(true);
   });
 
   it('should emit hint event when Hint button is clicked', () => {

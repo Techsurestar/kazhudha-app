@@ -203,7 +203,7 @@ describe('CardTableComponent', () => {
     expect(component.toastMessage()).toBe('It is not your turn!');
   });
 
-  it('should display showToast messages in the action bar text badge except for Hint: Play message', () => {
+  it('should display showToast messages including Hint: Play message in the action bar text badge', () => {
     // 1. Non-hint message should display in actionBadgeText and inside action bar text badge
     component.showToast('It is not your turn!');
     fixture.detectChanges();
@@ -212,32 +212,70 @@ describe('CardTableComponent', () => {
     const badgeEl = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
     expect(badgeEl?.textContent).toContain('It is not your turn!');
 
-    // 2. Hint: Play message should update toastMessage but NOT actionBadgeText
+    // 2. Hint: Play message should also update actionBadgeText and display inside action bar text badge
     component.currentTurnPlayerId.set('human');
     component.humanCards.set([{ rank: 'ACE', suit: 'SPADES' }]);
     component.onHintClick();
     fixture.detectChanges();
 
     expect(component.toastMessage()).toContain('Hint: Play');
-    expect(component.actionBadgeText()).not.toContain('Hint: Play');
+    expect(component.actionBadgeText()).toContain('Hint: Play');
 
-    // Action bar badge does not contain the hint play message
+    // Action bar badge contains the hint play message
     const badgeAfterHint = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
-    expect(badgeAfterHint?.textContent).not.toContain('Hint: Play');
+    expect(badgeAfterHint?.textContent).toContain('Hint: Play');
+
+    // Toast banner element should not be present in card table
+    const hintBanner = fixture.nativeElement.querySelector('.top-16');
+    expect(hintBanner).toBeNull();
   });
 
   it('should display vettuAlertMessage in the action bar text badge', () => {
-    component.vettuAlertMessage.set('💥 Vettu! Jenny cut the trick!');
+    component.vettuAlertMessage.set('💥 Vettu! Jenny strikes! Leo will lead the next turn!');
     fixture.detectChanges();
 
-    expect(component.actionBadgeText()).toBe('💥 Vettu! Jenny cut the trick!');
+    expect(component.actionBadgeText()).toBe('💥 Vettu! Jenny strikes! Leo will lead the next turn!');
     const badgeEl = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
-    expect(badgeEl?.textContent).toContain('💥 Vettu! Jenny cut the trick!');
+    expect(badgeEl?.textContent).toContain('💥 Vettu! Jenny strikes! Leo will lead the next turn!');
 
     component.vettuAlertMessage.set(null);
     fixture.detectChanges();
     expect(component.actionBadgeText()).toBe('');
     expect(badgeEl?.textContent?.trim()).toBe('');
+  });
+
+  it('should not display the badge text in the action bar text badge when info button is toggled off', () => {
+    component.showToast('It is not your turn!');
+    fixture.detectChanges();
+
+    const badgeEl = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
+    expect(badgeEl?.textContent).toContain('It is not your turn!');
+
+    // Click Info button on the action bar to toggle it off
+    const infoBtn = fixture.nativeElement.querySelector('app-action-bar button[aria-label="Information"]') as HTMLButtonElement;
+    infoBtn.click();
+    fixture.detectChanges();
+
+    // Text area badge should not display the info message now
+    expect(badgeEl?.textContent?.trim()).toBe('');
+  });
+
+  it('should display the hint message in the action bar text badge even when info button is toggled off', () => {
+    // Click Info button on the action bar to toggle it off
+    const infoBtn = fixture.nativeElement.querySelector('app-action-bar button[aria-label="Information"]') as HTMLButtonElement;
+    infoBtn.click();
+    fixture.detectChanges();
+
+    // Trigger hint on human turn
+    component.currentTurnPlayerId.set('human');
+    component.humanCards.set([{ rank: 'ACE', suit: 'SPADES' }]);
+    component.onHintClick();
+    fixture.detectChanges();
+
+    expect(component.actionBadgeText()).toContain('Hint: Play');
+
+    const badgeEl = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
+    expect(badgeEl?.textContent).toContain('Hint: Play');
   });
 
   it('should correctly identify red vs black suits', () => {
@@ -330,8 +368,8 @@ describe('CardTableComponent', () => {
 
     // Vettu flash and message should be set for human
     expect(component.isVettuFlashing()).toBe(true);
-    expect(component.vettuAlertMessage()).toBe('💥 Vettu! You cut the trick!');
-    expect(component.actionBadgeText()).toBe('💥 Vettu! You cut the trick!');
+    expect(component.vettuAlertMessage()).toBe('💥 Vettu! You strikes! Jenny will lead the next turn!');
+    expect(component.actionBadgeText()).toBe('💥 Vettu! You strikes! Jenny will lead the next turn!');
 
     // Wait for the vettu animation delay via fake timers
     await vi.advanceTimersByTimeAsync(1700);
@@ -340,6 +378,48 @@ describe('CardTableComponent', () => {
     // Center cards should be cleared after Vettu finishes
     expect(component.centerCards().length).toBe(0);
 
+    vi.useRealTimers();
+  });
+
+  it('should display You will lead the next turn when human played highest lead card before Vettu', async () => {
+    vi.useFakeTimers();
+    component.centerCards.set([
+      { playerId: 'human', rank: 'ACE', suit: 'CLUBS', position: 'bottom' },
+      { playerId: 'bot1', rank: 'KING', suit: 'CLUBS', position: 'left' }
+    ]);
+    const fakeState: any = {
+      sessionId: 'test',
+      currentTurnPlayerId: 'human',
+      humanHand: [],
+      otherPlayers: [
+        { id: 'bot1', name: 'Jenny', handSize: 10, hasGottenAway: false },
+        { id: 'bot2', name: 'Leo', handSize: 10, hasGottenAway: false },
+        { id: 'bot3', name: 'Sofia', handSize: 10, hasGottenAway: false }
+      ],
+      tablePile: [],
+      kazhudhaPlayerId: null,
+      gameOver: false,
+      events: []
+    };
+    (component as any).eventQueue = [
+      {
+        eventType: 'VETTU',
+        playerId: 'bot2',
+        card: { rank: '2', suit: 'HEARTS' }
+      }
+    ];
+
+    const flightSpy = vi.fn().mockResolvedValue(undefined);
+    (component as any).flightLayer = () => ({ triggerFlight: flightSpy });
+
+    const eventPromise = (component as any).runNextEvent(fakeState);
+    await vi.advanceTimersByTimeAsync(600);
+
+    expect(component.vettuAlertMessage()).toBe('💥 Vettu! Leo strikes! You will lead the next turn!');
+    expect(component.actionBadgeText()).toBe('💥 Vettu! Leo strikes! You will lead the next turn!');
+
+    await vi.advanceTimersByTimeAsync(1700);
+    await eventPromise;
     vi.useRealTimers();
   });
 });
