@@ -142,9 +142,9 @@
             </div>
             @for (player of [
               { id: 'human', name: 'You' },
-              { id: 'bot1', name: 'Jenny' },
-              { id: 'bot2', name: 'Leo' },
-              { id: 'bot3', name: 'Sofia' }
+              { id: 'bot1', name: getPlayerName('bot1') },
+              { id: 'bot2', name: getPlayerName('bot2') },
+              { id: 'bot3', name: getPlayerName('bot3') }
             ]; track player.id) {
               <div class="flex justify-between items-center py-1 text-xs">
                 <span class="font-medium" [class.text-amber-300]="player.id === 'human'" [class.text-slate-200]="player.id !== 'human'">

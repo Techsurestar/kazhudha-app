@@ -113,30 +113,30 @@ export class CardTableComponent implements AfterViewInit {
   private eventQueue: GameEvent[] = [];
   private lastProcessedState: GameViewDTO | null = null;
 
-  /** Top player (Opponent: Leo - bot2) */
+  /** Top player (Opponent: bot2) */
   readonly topPlayer = computed<PlayerSeatState>(() => ({
     id: 'bot2',
-    name: 'Leo',
+    name: this.getPlayerName('bot2'),
     score: this.getPlayerTotalScore('bot2'),
     cardCount: this.visualCardCounts()['bot2'] ?? 0,
     isCurrentTurn: this.currentTurnPlayerId() === 'bot2',
     position: 'top'
   }));
 
-  /** Left player (Opponent: Jenny - bot1) */
+  /** Left player (Opponent: bot1) */
   readonly leftPlayer = computed<PlayerSeatState>(() => ({
     id: 'bot1',
-    name: 'Jenny',
+    name: this.getPlayerName('bot1'),
     score: this.getPlayerTotalScore('bot1'),
     cardCount: this.visualCardCounts()['bot1'] ?? 0,
     isCurrentTurn: this.currentTurnPlayerId() === 'bot1',
     position: 'left'
   }));
 
-  /** Right player (Opponent: Sofia - bot3) */
+  /** Right player (Opponent: bot3) */
   readonly rightPlayer = computed<PlayerSeatState>(() => ({
     id: 'bot3',
-    name: 'Sofia',
+    name: this.getPlayerName('bot3'),
     score: this.getPlayerTotalScore('bot3'),
     cardCount: this.visualCardCounts()['bot3'] ?? 0,
     isCurrentTurn: this.currentTurnPlayerId() === 'bot3',
@@ -170,8 +170,12 @@ export class CardTableComponent implements AfterViewInit {
   }
 
   getPlayerName(id: string): string {
+    if (id === 'human') return 'You';
+    const player = this.gameState()?.otherPlayers?.find((p) => p.id === id);
+    if (player && player.name && !player.name.startsWith('Bot ')) {
+      return player.name;
+    }
     switch (id) {
-      case 'human': return 'You';
       case 'bot1': return 'Jenny';
       case 'bot2': return 'Leo';
       case 'bot3': return 'Sofia';

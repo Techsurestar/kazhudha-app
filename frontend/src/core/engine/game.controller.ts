@@ -17,6 +17,7 @@ import {
   SessionNotFoundException,
   RANK_VALUES,
   isGameOver,
+  shuffleBotSeats,
 } from './index.js';
 import { GameSession, GameSessionManager } from './session-manager.js';
 
@@ -64,10 +65,11 @@ export class GameController {
       return this.mapToView(session, executionEvents);
     }
 
+    const botSeats = shuffleBotSeats();
     const p1 = new Player('human', 'Player 1 (You)', false);
-    const p2 = new Player('bot1', 'Bot 1', true);
-    const p3 = new Player('bot2', 'Bot 2', true);
-    const p4 = new Player('bot3', 'Bot 3', true);
+    const p2 = new Player('bot1', botSeats[0], true);
+    const p3 = new Player('bot2', botSeats[1], true);
+    const p4 = new Player('bot3', botSeats[2], true);
 
     const players = [p1, p2, p3, p4];
     this.dealerService.shuffleAndDeal(players);
@@ -221,11 +223,14 @@ export class GameController {
       return;
     }
 
-    const activePlayersCount = state
+    const playedPlayerIds = new Set(
+      state.getTablePile().map((pc) => pc.playerId)
+    );
+    const unplayedActivePlayers = state
       .getPlayers()
-      .filter((p) => !p.hasGottenAway()).length;
+      .filter((p) => !p.hasGottenAway() && !playedPlayerIds.has(p.getId()));
 
-    if (state.getTablePile().length === activePlayersCount) {
+    if (unplayedActivePlayers.length === 0) {
       this.resolveCompletedTrick(state, discardedHistory);
     } else {
       this.gameRuleEngine.advanceTurn(state, state.getPlayers());
