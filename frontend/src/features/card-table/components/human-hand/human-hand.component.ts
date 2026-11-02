@@ -37,6 +37,9 @@ export class HumanHandComponent {
   /** Emitted when the user taps/clicks a playable card */
   readonly cardPlay = output<HandCard>();
 
+  /** Emitted when the user taps/clicks the Skip Game button when hand is empty */
+  readonly skipGame = output<void>();
+
   readonly effectiveName = computed(() => this.player()?.name ?? this.name());
   readonly effectiveScore = computed(() => this.player()?.score ?? this.score());
   readonly effectiveCardCount = computed(() => {
@@ -78,5 +81,9 @@ export class HumanHandComponent {
   onCardClick(card: HandCard): void {
     if (this.disabled()) return;
     this.cardPlay.emit(card);
+  }
+
+  onSkipGameClick(): void {
+    this.skipGame.emit();
   }
 }

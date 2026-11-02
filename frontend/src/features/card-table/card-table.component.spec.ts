@@ -82,8 +82,18 @@ describe('CardTableComponent', () => {
     const humanHand = el.querySelector('app-human-hand');
     expect(humanHand).not.toBeNull();
 
-    const cardButtons = humanHand?.querySelectorAll('button');
-    expect(cardButtons?.length).toBe(component.humanCards().length);
+    // When cards are empty, Skip Game button is rendered
+    expect(humanHand?.querySelector('.skip-game-btn')).not.toBeNull();
+
+    // When cards are populated, card elements match humanCards count
+    component.humanCards.set([
+      { rank: 'ACE', suit: 'SPADES' },
+      { rank: 'KING', suit: 'HEARTS' }
+    ]);
+    fixture.detectChanges();
+
+    const cardElements = humanHand?.querySelectorAll('app-card');
+    expect(cardElements?.length).toBe(2);
   });
 
   it('should render the bottom action bar with Hint button', () => {
@@ -193,6 +203,47 @@ describe('CardTableComponent', () => {
 
     component.onHintClick();
     expect(component.toastMessage()).toContain('Hint: Play');
+  });
+
+  it('should recommend advanced safe dump (highest undercard) when an opponent already played a high card', () => {
+    // P1 played 2 of Diamonds, P2 played K of Diamonds
+    component.centerCards.set([
+      { playerId: 'bot1', rank: '2', suit: 'DIAMONDS', position: 'left' },
+      { playerId: 'bot2', rank: 'K', suit: 'DIAMONDS', position: 'top' }
+    ]);
+    component.currentTurnPlayerId.set('human');
+
+    // Human holds 3, 9, and J of Diamonds
+    component.humanCards.set([
+      { rank: '3', suit: 'DIAMONDS' },
+      { rank: '9', suit: 'DIAMONDS' },
+      { rank: 'J', suit: 'DIAMONDS' }
+    ]);
+
+    component.onHintClick();
+
+    // With K of Diamonds on the pile, J of Diamonds is the highest safe under-card!
+    expect(component.toastMessage()).toBe('💡 Hint: Play J of DIAMONDS');
+  });
+
+  it('should recommend lowest overcard when forced to play higher than current pile', () => {
+    // P1 played 2 of Diamonds, P2 played 4 of Diamonds
+    component.centerCards.set([
+      { playerId: 'bot1', rank: '2', suit: 'DIAMONDS', position: 'left' },
+      { playerId: 'bot2', rank: '4', suit: 'DIAMONDS', position: 'top' }
+    ]);
+    component.currentTurnPlayerId.set('human');
+
+    // Human holds 9 and J of Diamonds (both higher than 4)
+    component.humanCards.set([
+      { rank: '9', suit: 'DIAMONDS' },
+      { rank: 'J', suit: 'DIAMONDS' }
+    ]);
+
+    component.onHintClick();
+
+    // Forced to play higher; recommends lowest over-card (9) to minimize waste
+    expect(component.toastMessage()).toBe('💡 Hint: Play 9 of DIAMONDS');
   });
 
   it('should warn when human attempts to play out of turn', () => {
@@ -421,5 +472,38 @@ describe('CardTableComponent', () => {
     await vi.advanceTimersByTimeAsync(1700);
     await eventPromise;
     vi.useRealTimers();
+  });
+
+  it('should immediately flush event queue and open game over modal when onSkipGame is called on a finished game', () => {
+    (component as any).eventQueue = [
+      { eventType: 'PLAY', playerId: 'bot1', card: { rank: '2', suit: 'SPADES' } },
+      { eventType: 'PLAY', playerId: 'bot2', card: { rank: '3', suit: 'SPADES' } }
+    ];
+    (component as any).isReplaying.set(true);
+
+    const fakeFinishedState: any = {
+      sessionId: 'test',
+      currentTurnPlayerId: '',
+      humanHand: [],
+      otherPlayers: [
+        { id: 'bot1', name: 'Jenny', handSize: 0, hasGottenAway: true },
+        { id: 'bot2', name: 'Leo', handSize: 0, hasGottenAway: true },
+        { id: 'bot3', name: 'Sofia', handSize: 5, hasGottenAway: false }
+      ],
+      tablePile: [],
+      kazhudhaPlayerId: 'bot3',
+      gameOver: true,
+      events: []
+    };
+    (component as any).lastProcessedState = fakeFinishedState;
+
+    component.onSkipGame();
+
+    expect((component as any).eventQueue.length).toBe(0);
+    expect(component.isReplaying()).toBe(false);
+    expect(component.showGameOverModal()).toBe(true);
+    expect(component.escapedOrder()).toContain('human');
+    expect(component.escapedOrder()).toContain('bot1');
+    expect(component.escapedOrder()).toContain('bot2');
   });
 });

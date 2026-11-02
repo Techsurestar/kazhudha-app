@@ -122,11 +122,22 @@ describe('HumanHandComponent', () => {
     expect(emitted).toBe(false);
   });
 
-  it('should show empty state message when cards array is empty', () => {
+  it('should show Skip Game button when cards array is empty and emit skipGame on click', () => {
     fixture.componentRef.setInput('cards', []);
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.textContent).toContain('Hand Empty');
+    expect(el.textContent).toContain('Skip Game');
+
+    let skipped = false;
+    component.skipGame.subscribe(() => {
+      skipped = true;
+    });
+
+    const skipButton = el.querySelector('button.skip-game-btn') as HTMLButtonElement;
+    expect(skipButton).not.toBeNull();
+    skipButton.click();
+
+    expect(skipped).toBe(true);
   });
 });

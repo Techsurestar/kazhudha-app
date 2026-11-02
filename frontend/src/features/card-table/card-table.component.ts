@@ -302,6 +302,156 @@ export class CardTableComponent implements AfterViewInit {
     this.startNewGameDeal(true);
   }
 
+  onSkipGame(): void {
+    if (this.isDealing() || this.isDestroyed) return;
+
+    // Clear active playback queue and reset animations
+    this.eventQueue = [];
+    this.centerCards.set([]);
+    this.isVettuFlashing.set(false);
+    this.vettuAlertMessage.set(null);
+    this.isReplaying.set(false);
+
+    // Apply latest game state from backend
+    const finalState = this.lastProcessedState || this.gameState();
+    if (finalState) {
+      this.currentTurnPlayerId.set(finalState.currentTurnPlayerId);
+      this.humanCards.set(this.sortCards(finalState.humanHand as HandCard[]));
+
+      const finalCounts: Record<string, number> = {
+        human: finalState.humanHand.length,
+        bot1: finalState.otherPlayers.find(p => p.id === 'bot1')?.handSize ?? 0,
+        bot2: finalState.otherPlayers.find(p => p.id === 'bot2')?.handSize ?? 0,
+        bot3: finalState.otherPlayers.find(p => p.id === 'bot3')?.handSize ?? 0
+      };
+      this.visualCardCounts.set(finalCounts);
+
+      for (const bot of finalState.otherPlayers) {
+        if (bot.hasGottenAway && !this.escapedOrder().includes(bot.id)) {
+          this.escapedOrder.update(order => [...order, bot.id]);
+        }
+      }
+      if (
+        finalState.humanHand.length === 0 &&
+        finalState.kazhudhaPlayerId !== 'human' &&
+        !this.escapedOrder().includes('human')
+      ) {
+        this.escapedOrder.update(order => [...order, 'human']);
+      }
+
+      if (finalState.gameOver) {
+        this.showGameOverModal.set(true);
+      }
+    }
+  }
+
+  getCardRankValue(rank: string): number {
+    const rankMap: Record<string, number> = {
+      '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
+      'J': 11, 'Q': 12, 'K': 13, 'A': 14,
+      'TWO': 2, 'THREE': 3, 'FOUR': 4, 'FIVE': 5, 'SIX': 6, 'SEVEN': 7, 'EIGHT': 8,
+      'NINE': 9, 'TEN': 10, 'JACK': 11, 'QUEEN': 12, 'KING': 13, 'ACE': 14
+    };
+    return rankMap[rank?.toUpperCase()] ?? 0;
+  }
+
+  getRecommendedMove(cards: HandCard[]): HandCard | null {
+    if (cards.length === 0) return null;
+
+    const pile = this.centerCards();
+    const leadSuit = (this.activeRoundSuit() || pile[0]?.suit) as any || null;
+
+    // 1. LEADING TURN (Empty Table Pile)
+    if (pile.length === 0 || !leadSuit) {
+      // Avoid leading high honour cards (rank > 10: J, Q, K, A) if safe low cards exist
+      const lowCards = cards.filter(c => this.getCardRankValue(c.rank) <= 10);
+      const pool = lowCards.length > 0 ? lowCards : cards;
+      return pool.reduce((min, c) =>
+        this.getCardRankValue(c.rank) < this.getCardRankValue(min.rank) ? c : min
+      );
+    }
+
+    // 2. FOLLOWING SUIT (Active Round Suit on Pile)
+    const matching = cards.filter(c => c.suit === leadSuit);
+
+    if (matching.length > 0) {
+      // Find the highest card of the lead suit currently on the pile
+      const pileMatching = pile.filter(c => c.suit === leadSuit);
+      let maxPileValue = 0;
+      for (const pc of pileMatching) {
+        const val = this.getCardRankValue(pc.rank);
+        if (val > maxPileValue) maxPileValue = val;
+      }
+
+      const underCards = matching.filter(c => this.getCardRankValue(c.rank) < maxPileValue);
+      const overCards = matching.filter(c => this.getCardRankValue(c.rank) > maxPileValue);
+
+      // ADVANCED SAFE DUMPING (Ducking under winning card):
+      // If holding cards lower than the current highest pile card, playing any under-card is 100% safe
+      // from winning the trick, and liability stays with the higher card.
+      // Playing the HIGHEST under-card dumps high/middle rank liability while preserving
+      // low cards (like 2, 3) as vital emergency exits for future tricks.
+      if (underCards.length > 0) {
+        return underCards.reduce((max, c) =>
+          this.getCardRankValue(c.rank) > this.getCardRankValue(max.rank) ? c : max
+        );
+      }
+
+      // Forced Over-play:
+      // All matching cards are higher than the current pile max; play the LOWEST over-card
+      // to minimize waste and avoid burning unnecessarily high honours.
+      return overCards.reduce((min, c) =>
+        this.getCardRankValue(c.rank) < this.getCardRankValue(min.rank) ? c : min
+      );
+    }
+
+    // 3. VETTU / STRIKE (Void in Active Suit)
+    // Check if the current trick leader/taker is vulnerable (<= 3 cards)
+    const highestPileCard = pile
+      .filter(c => c.suit === leadSuit)
+      .reduce((max, c) => (this.getCardRankValue(c.rank) > this.getCardRankValue(max.rank) ? c : max), pile[0]);
+
+    const targetPlayerCount = highestPileCard ? (this.visualCardCounts()[highestPileCard.playerId] ?? 99) : 99;
+
+    // If target player is vulnerable (<= 3 cards), dump the highest card overall to penalize them heavily!
+    if (targetPlayerCount <= 3) {
+      return cards.reduce((max, c) =>
+        this.getCardRankValue(c.rank) > this.getCardRankValue(max.rank) ? c : max
+      );
+    }
+
+    // Strategic Void Creation / Short-Suit Slimming:
+    const suitCounts = new Map<string, HandCard[]>();
+    for (const c of cards) {
+      const list = suitCounts.get(c.suit) || [];
+      list.push(c);
+      suitCounts.set(c.suit, list);
+    }
+
+    // Singletons: Dump highest singleton to create an instant void
+    const singletons = Array.from(suitCounts.values()).filter(list => list.length === 1).map(list => list[0]);
+    if (singletons.length > 0) {
+      return singletons.reduce((max, c) =>
+        this.getCardRankValue(c.rank) > this.getCardRankValue(max.rank) ? c : max
+      );
+    }
+
+    // Doubletons: Dump highest card from a 2-card suit to slim it to a singleton
+    const doubletons = Array.from(suitCounts.values()).filter(list => list.length === 2).flat();
+    if (doubletons.length > 0) {
+      return doubletons.reduce((max, c) =>
+        this.getCardRankValue(c.rank) > this.getCardRankValue(max.rank) ? c : max
+      );
+    }
+
+    // Fallback: Dump highest card from shortest suit
+    const sortedSuits = Array.from(suitCounts.values()).sort((a, b) => a.length - b.length);
+    const shortestSuitCards = sortedSuits[0];
+    return shortestSuitCards.reduce((max, c) =>
+      this.getCardRankValue(c.rank) > this.getCardRankValue(max.rank) ? c : max
+    );
+  }
+
   onHintClick(): void {
     if (this.isDealing() || this.isReplaying()) return;
 
@@ -313,19 +463,15 @@ export class CardTableComponent implements AfterViewInit {
     const cards = this.humanCards();
     if (cards.length === 0) return;
 
-    const leadSuit = this.activeRoundSuit();
-    let playable = cards;
-    if (this.centerCards().length > 0 && leadSuit) {
-      const matching = cards.filter(c => c.suit === leadSuit);
-      if (matching.length > 0) {
-        playable = matching;
-      }
-    }
+    const recommended = this.getRecommendedMove(cards);
+    if (!recommended) return;
 
-    // Recommend lowest card from playable pool
-    const sorted = this.sortCards(playable);
-    const recommended = sorted[0];
-    const rankDisplay = recommended.rank.length > 2 ? recommended.rank.charAt(0) : recommended.rank;
+    const rankSymbols: Record<string, string> = {
+      'TWO': '2', 'THREE': '3', 'FOUR': '4', 'FIVE': '5', 'SIX': '6',
+      'SEVEN': '7', 'EIGHT': '8', 'NINE': '9', 'TEN': '10',
+      'JACK': 'J', 'QUEEN': 'Q', 'KING': 'K', 'ACE': 'A'
+    };
+    const rankDisplay = rankSymbols[recommended.rank.toUpperCase()] || recommended.rank;
     this.showToast(`💡 Hint: Play ${rankDisplay} of ${recommended.suit}`);
   }
 

@@ -82,7 +82,8 @@
         [player]="humanPlayer()"
         [cards]="humanCards()"
         [disabled]="isDealing() || isReplaying() || currentTurnPlayerId() !== 'human'"
-        (cardPlay)="onCardPlayed($event)">
+        (cardPlay)="onCardPlayed($event)"
+        (skipGame)="onSkipGame()">
       </app-human-hand>
     </div>
 
