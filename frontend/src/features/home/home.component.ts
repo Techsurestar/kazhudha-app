@@ -54,6 +54,11 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     this.activeTab.set('home');
   }
 
+  continueWithGoogle(): void {
+    // Placeholder for Google OAuth sign-in integration
+    console.log('Continue with Google clicked');
+  }
+
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.initWebGL();
