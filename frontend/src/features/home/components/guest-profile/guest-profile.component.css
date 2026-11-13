@@ -1,0 +1,133 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.guest-profile-screen {
+  background-color: #062613;
+  background-image: 
+    radial-gradient(circle at 50% 25%, rgba(16, 75, 40, 0.45) 0%, rgba(3, 20, 10, 0.98) 100%),
+    url("https://www.transparenttextures.com/patterns/felt.png");
+  background-attachment: fixed;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Background Watermark Playing Cards */
+.watermark-card {
+  opacity: 0.14;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.9));
+}
+
+/* Central Comparison Card */
+.comparison-card {
+  background: radial-gradient(circle at 50% 12%, rgba(13, 50, 28, 0.98) 0%, rgba(3, 20, 11, 0.99) 100%);
+  border: 1.5px solid rgba(229, 193, 88, 0.45);
+  box-shadow: 
+    0 16px 40px rgba(0, 0, 0, 0.8),
+    0 0 24px rgba(233, 195, 73, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Shimmer Highlight on the Top Border of Comparison Card */
+.comparison-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 235, 160, 0.9) 50%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Comparison Table Grid */
+.comparison-table {
+  border-collapse: collapse;
+}
+
+/* Free Account Header Badge in Column 3 */
+.free-account-header-badge {
+  background: linear-gradient(180deg, #4d3607 0%, #261b02 100%);
+  border: 1.5px solid #d4af37;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.7),
+    0 0 12px rgba(245, 197, 24, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+/* Status Indicators in Table */
+.comparison-minus-badge {
+  background: linear-gradient(180deg, #a8b2bc 0%, #7e8a96 60%, #5d6773 100%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.comparison-check-badge {
+  background: linear-gradient(180deg, #6ee236 0%, #46ba15 55%, #2c8e0a 100%);
+  border: 1px solid #9ef06b;
+  box-shadow: 0 0 8px rgba(82, 196, 26, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+/* Avatar Cards Fan in Right Column */
+.avatar-fan-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.avatar-fan-card:hover {
+  transform: translateY(-4px) scale(1.08);
+  z-index: 30;
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav-bar {
+  background: linear-gradient(180deg, rgba(8, 18, 12, 0.94) 0%, rgba(3, 10, 6, 0.98) 100%);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(233, 195, 73, 0.18);
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
+}
+
+/* Modal Styling */
+.modal-overlay {
+  background: rgba(2, 12, 6, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.modal-card {
+  background: #021208;
+  border: 1px solid rgba(229, 193, 88, 0.6);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(233, 195, 73, 0.15);
+}
+
+.gold-gradient-btn {
+  background: linear-gradient(180deg, #fceabb 0%, #f3cf65 30%, #d4a329 70%, #a87910 100%);
+  transition: all 0.25s ease;
+}
+
+.gold-gradient-btn:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fceabb 25%, #e5b842 65%, #b88616 100%);
+}
+
+.gold-gradient-btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* Bottom Banner Reward Icons Cluster & Glow */
+.reward-cluster-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.reward-icons-group {
+  position: relative;
+  z-index: 1;
+}
+
+.reward-trophy-icon {
+  filter: drop-shadow(0 0 14px rgba(255, 215, 0, 0.8)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+}

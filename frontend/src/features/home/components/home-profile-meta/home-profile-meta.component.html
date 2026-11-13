@@ -1,0 +1,54 @@
+<div
+  class="home-profile-meta flex items-center gap-3.5 sm:gap-4 p-2 sm:p-2.5 rounded-2xl transition-all duration-200 select-none"
+  [class.is-clickable]="clickable()"
+  [class.cursor-pointer]="clickable()"
+  (click)="onCardClick($event)"
+  role="region"
+  aria-label="Player profile summary"
+>
+  <!-- Circular Avatar with Gold Metallic Ring -->
+  <div
+    class="avatar-gold-ring"
+    (click)="onAvatarClick($event)"
+    [class.cursor-pointer]="clickable()"
+  >
+    <img
+      [src]="displayAvatarSrc()"
+      [alt]="avatarAlt()"
+      class="w-full h-full rounded-full object-cover select-none pointer-events-none"
+      loading="eager"
+      (error)="onAvatarError($event)"
+    />
+  </div>
+
+  <!-- Player Meta Stack (Name, Mode Pill, Subtitle) -->
+  <div class="flex flex-col justify-center items-start text-left gap-1 sm:gap-1.5 min-w-0">
+    <!-- Row 1: Player Name -->
+    <h2 class="profile-player-name text-white font-bold text-lg sm:text-xl md:text-2xl tracking-tight leading-tight truncate max-w-[220px] sm:max-w-[260px]">
+      {{ displayName() }}
+    </h2>
+
+    <!-- Row 2: Mode Badge Pill -->
+    <div
+      class="mode-badge-pill inline-flex items-center gap-1.5 px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-[13px] font-semibold text-slate-100 tracking-normal leading-none"
+      (click)="onBadgeClick($event)"
+      [class.cursor-pointer]="clickable()"
+    >
+      <!-- Amber User Silhouette Icon -->
+      <svg
+        class="w-3.5 h-3.5 text-[#f5c518] fill-current flex-shrink-0 drop-shadow-sm"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+      </svg>
+      <span class="truncate max-w-[150px]">{{ displayMode() }}</span>
+    </div>
+
+    <!-- Row 3: Subtitle / Description -->
+    <p class="profile-subtitle text-xs sm:text-sm text-slate-300 sm:text-slate-200/90 font-medium tracking-normal leading-tight truncate max-w-[220px] sm:max-w-[280px]">
+      {{ displaySubtitle() }}
+    </p>
+  </div>
+</div>

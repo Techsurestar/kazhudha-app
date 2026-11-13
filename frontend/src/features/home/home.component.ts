@@ -6,12 +6,14 @@ import { BookOpenIconComponent } from '../shared/icon/book-open-icon.component';
 import { LeadboardIconComponent } from '../shared/icon/leadboard-icon.component';
 import { UserIconComponent } from '../shared/icon/user-icon.component';
 import { ChevronsRightComponent } from '../shared/icon/chevrons-right.component';
+import { HomeProfileMetaComponent } from './components/home-profile-meta/home-profile-meta.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, RouterLink, HomeIconComponent, BookOpenIconComponent, 
-            LeadboardIconComponent, UserIconComponent, ChevronsRightComponent ],
+            LeadboardIconComponent, UserIconComponent, ChevronsRightComponent,
+            HomeProfileMetaComponent ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -40,7 +42,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     } else if (tab === 'leaderboard') {
       this.showLeaderboardModal.set(true);
     } else if (tab === 'profile') {
-      this.showProfileModal.set(true);
+      this.router.navigate(['/profile']);
     }
   }
 

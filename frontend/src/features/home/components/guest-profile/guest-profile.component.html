@@ -1,0 +1,449 @@
+<div class="guest-profile-screen min-h-screen text-slate-100 flex flex-col justify-between overflow-x-hidden relative selection:bg-[#e9c349]/30">
+
+  <!-- Watermark Playing Card (Top Left - Ace of Spades) -->
+  <div class="watermark-card absolute -top-4 -left-6 w-24 h-36 bg-slate-100 rounded-lg -rotate-25 shadow-2xl flex flex-col justify-between p-2">
+    <div class="text-slate-900 font-bold text-base leading-none">
+      A<br/><span class="text-lg">♠</span>
+    </div>
+    <div class="text-center text-2xl text-slate-900">♠</div>
+    <div class="text-slate-900 font-bold text-base leading-none self-end rotate-180">
+      A<br/><span class="text-lg">♠</span>
+    </div>
+  </div>
+
+  <!-- Watermark Playing Card (Top Right - Ace of Hearts) -->
+  <div class="watermark-card absolute -top-4 -right-6 w-24 h-36 bg-slate-100 rounded-lg rotate-25 shadow-2xl flex flex-col justify-between p-2">
+    <div class="text-rose-600 font-bold text-base leading-none">
+      A<br/><span class="text-lg">♥</span>
+    </div>
+    <div class="text-center text-2xl text-rose-600">♥</div>
+    <div class="text-rose-600 font-bold text-base leading-none self-end rotate-180">
+      A<br/><span class="text-lg">♥</span>
+    </div>
+  </div>
+
+  <!-- Subtle Suit Watermarks (Club & Diamond) -->
+  <div class="absolute top-24 left-6 text-3xl text-emerald-400/10 select-none pointer-events-none">♣</div>
+  <div class="absolute top-20 right-28 text-3xl text-emerald-400/10 select-none pointer-events-none">♦</div>
+
+  <!-- Main Content Centered Container (Max Width Matches App Mobile Frame) -->
+  <div class="w-full max-w-md mx-auto min-h-screen flex flex-col justify-between relative z-10 overflow-hidden">
+
+    <!-- Scrollable Content Container -->
+    <div class="flex-1 flex flex-col justify-between px-4 pt-3 pb-1 overflow-y-auto">
+      <!-- 1. Home Profile Meta Component (Current Guest Summary) -->
+      <section class="py-1 flex-shrink-0" aria-label="Current guest status">
+      <app-home-profile-meta
+        [playerName]="playerName()"
+        [avatarSrc]="avatarSrc()"
+        badgeText="Guest Mode"
+        subtitle="You're playing as a guest"
+      />
+    </section>
+
+    <!-- 3. Central Comparison Card (Guest vs Free Account) -->
+    <section class="my-auto py-2 flex-shrink-0" aria-label="Guest vs Free Account comparison">
+      <div class="comparison-card relative rounded-2xl sm:rounded-3xl p-3.5 sm:p-4.5 overflow-hidden">
+
+        <!-- Title -->
+        <div class="flex items-center justify-center gap-2 sm:gap-2.5 mb-3 sm:mb-4 select-none">
+          <!-- Title Text: "Guest vs Free Account" -->
+          <h2 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-1.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            <span>Guest vs</span>
+            <span class="text-amber-300">Free Account</span>
+          </h2>
+        </div>
+
+        <!-- Comparison Table -->
+        <table class="w-full border-collapse comparison-table">
+          <thead>
+            <tr>
+              <th scope="col" class="text-left text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase tracking-wider py-2 px-2 sm:px-2.5">
+              </th>
+              <th scope="col" class="text-center text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase tracking-wider py-2 px-1 w-16 sm:w-20">
+                GUEST
+              </th>
+              <th scope="col" class="text-center py-1.5 px-1 sm:px-2 w-32 sm:w-36">
+                <!-- Free Account Badge -->
+                <div class="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl shadow-lg">
+                  <svg class="w-3.5 h-3.5 text-amber-300 flex-shrink-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2 19h20v2H2v-2zM2 7l5 5 5-8 5 8 5-8v10H2V7z"/>
+                  </svg>
+                  <span class="text-[10px] sm:text-[11px] font-black tracking-wider text-amber-300 uppercase leading-none whitespace-nowrap">
+                    FREE ACCOUNT
+                  </span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1: XP & Rank Progress -->
+            <tr>
+              <td class="py-2.5 sm:px-2.5 align-middle">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                  <!-- XP Shield Icon -->
+                  <img
+                    src="/assets/xp_shield.webp"
+                    alt="XP Shield"
+                    class="w-8 h-8 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                  />
+                  <span class="text-xs sm:text-sm font-semibold text-white leading-tight">XP Progress</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-minus-badge shadow-[0_1px_3px_rgba(0,0,0,0.5)]" aria-label="Not available in Guest">
+                  <div class="w-2.5 sm:w-3 h-[3px] rounded-full bg-slate-900"></div>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-check-badge shadow-[0_0_8px_rgba(82,196,26,0.5)]" aria-label="Available in Free Account">
+                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 font-black" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: Coin Rewards -->
+            <tr>
+              <td class="py-2.5 sm:px-2.5 align-middle">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                  <!-- Coin Rewards Icon -->
+                  <img
+                    src="assets/mini-coin-bundle.webp"
+                    alt="Coin Rewards"
+                    class="w-8 h-8 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                  />
+                  <span class="text-xs sm:text-sm font-semibold text-white leading-tight">Coin Rewards</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-minus-badge shadow-[0_1px_3px_rgba(0,0,0,0.5)]" aria-label="Not available in Guest">
+                  <div class="w-2.5 sm:w-3 h-[3px] rounded-full bg-slate-900"></div>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-check-badge shadow-[0_0_8px_rgba(82,196,26,0.5)]" aria-label="Available in Free Account">
+                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 font-black" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3: Leaderboard -->
+            <tr>
+              <td class="py-2.5 sm:px-2.5 align-middle">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                  <!-- Leaderboard Trophy Icon -->
+                  <img
+                    src="assets/trophy.webp"
+                    alt="Trophy"
+                    class="w-8 h-8 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                  />
+                  <span class="text-xs sm:text-sm font-semibold text-white leading-tight">Leaderboard</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-minus-badge shadow-[0_1px_3px_rgba(0,0,0,0.5)]" aria-label="Not available in Guest">
+                  <div class="w-2.5 sm:w-3 h-[3px] rounded-full bg-slate-900"></div>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-check-badge shadow-[0_0_8px_rgba(82,196,26,0.5)]" aria-label="Available in Free Account">
+                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 font-black" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4: Track Your Progress -->
+            <tr>
+              <td class="py-2.5 sm:px-2.5 align-middle">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                  <!-- Cloud Upload Icon -->
+                  <img
+                    src="assets/cloud-upload.webp"
+                    alt="Cloud Upload"
+                    class="w-8 h-8 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                  />
+                  <span class="text-xs sm:text-sm font-semibold text-white leading-tight">Track Progress</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-minus-badge shadow-[0_1px_3px_rgba(0,0,0,0.5)]" aria-label="Not available in Guest">
+                  <div class="w-2.5 sm:w-3 h-[3px] rounded-full bg-slate-900"></div>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-check-badge shadow-[0_0_8px_rgba(82,196,26,0.5)]" aria-label="Available in Free Account">
+                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 font-black" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5: Achievements -->
+            <tr>
+              <td class="py-2.5 sm:px-2.5 align-middle">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                  <!-- Achievements Medal Icon -->
+                  <img
+                    src="assets/achievement.webp"
+                    alt="Achievement"
+                    class="w-8 h-8 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                  />
+                  <span class="text-xs sm:text-sm font-semibold text-white leading-tight">Achievements</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-minus-badge shadow-[0_1px_3px_rgba(0,0,0,0.5)]" aria-label="Not available in Guest">
+                  <div class="w-2.5 sm:w-3 h-[3px] rounded-full bg-slate-900"></div>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-check-badge shadow-[0_0_8px_rgba(82,196,26,0.5)]" aria-label="Available in Free Account">
+                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 font-black" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6: Exclusive Avatars -->
+            <tr>
+              <td class="py-2.5 sm:px-2.5 align-middle">
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                  <!-- 3 Fanned Avatar Cards Icon -->
+                  <img
+                    src="assets/exclusive_avatars.webp"
+                    alt="Exclusive Avatars"
+                    class="w-8 h-8 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                  />
+                  <span class="text-xs sm:text-sm font-semibold text-white leading-tight">Royal Avatars</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-minus-badge shadow-[0_1px_3px_rgba(0,0,0,0.5)]" aria-label="Not available in Guest">
+                  <div class="w-2.5 sm:w-3 h-[3px] rounded-full bg-slate-900"></div>
+                </div>
+              </td>
+              <td class="py-2.5 px-2 text-center align-middle">
+                <div class="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full mx-auto flex items-center justify-center comparison-check-badge shadow-[0_0_8px_rgba(82,196,26,0.5)]" aria-label="Available in Free Account">
+                  <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 font-black" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3.5 8.5 6.5 11.5 12.5 4.5"/>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Bottom Banner (Coins, Trophy & XP Shield Artwork + Divider + Benefits Text) -->
+        <div class="flex items-center justify-center pt-3 sm:pt-4 pb-0.5 select-none">
+          <!-- Left Artwork: Clustered Reward Icons (Coins, Trophy, XP Shield) with Golden Glow -->
+          <div class="reward-cluster-wrapper relative flex items-center justify-center flex-shrink-0">
+            <!-- Golden Glow Backdrop -->
+            <div class="reward-cluster-glow-bg" aria-hidden="true"></div>
+
+            <!-- Overlapping Clubbed Reward Icons -->
+            <div class="reward-icons-group relative flex items-center justify-center -space-x-2.5 sm:-space-x-3 z-10">
+              <!-- Left: Coin Bundle -->
+              <img
+                src="assets/mini-coin-bundle.webp"
+                alt="Coin Rewards"
+                class="w-8 h-8 sm:w-9 sm:h-9 object-contain flex-shrink-0 select-none pointer-events-none z-10 -translate-y-0.5"
+              />
+
+              <!-- Center: Trophy (Larger, elevated) -->
+              <img
+                src="assets/trophy.webp"
+                alt="Trophy"
+                class="reward-trophy-icon w-11 h-11 sm:w-13 sm:h-13 object-contain flex-shrink-0 select-none pointer-events-none z-20 -translate-y-1.5"
+              />
+
+              <!-- Right: XP Shield with Laurel Leaves -->
+              <img
+                src="assets/xp_with_laurel.webp"
+                alt="xp Shield with Laurel Leaves"
+                class="w-9 h-9 sm:w-10 sm:h-10 object-contain flex-shrink-0 select-none pointer-events-none z-10 -translate-y-0.5"
+              />
+            </div>
+          </div>
+
+          <!-- Vertical Divider Line -->
+          <div class="h-10 sm:h-12 w-px bg-gradient-to-b from-transparent via-amber-400/35 to-transparent mx-3 sm:mx-4 flex-shrink-0"></div>
+
+          <!-- Right Callout Text -->
+          <div class="text-left">
+            <p class="text-white font-semibold text-xs sm:text-sm leading-snug drop-shadow-sm">
+              Create a free account to<br />
+              unlock all benefits!
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. Action Buttons Container -->
+    <footer class="pt-3 pb-2 space-y-2.5 flex-shrink-0">
+      <!-- Continue with Google Button -->
+      <button
+        type="button"
+        (click)="onGoogleSignIn()"
+        class="gold-gradient-btn google-btn w-full text-slate-950 font-black text-sm sm:text-base py-2 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none"
+      >
+        <svg viewBox="0 0 48 48" width="28" height="28" class="flex-shrink-0">
+          <!-- White Circular Background -->
+          <circle cx="24" cy="24" r="24" fill="#FFFFFF"/>
+          <!-- Google "G" Logo -->
+          <g transform="matrix(0.55 0 0 0.55 10.8 10.8)">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </g>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <!-- Play as Guest Button -->
+      <button
+        type="button"
+        (click)="onPlayAsGuest()"
+        class="gold-gradient-btn w-full text-slate-950 font-black text-sm sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none"
+      >
+        <span>Play as Guest</span>
+        <chevrons-right-icon [size]="20" />
+      </button>
+    </footer>
+
+    </div>
+
+    <!-- Bottom Navigation Bar (Persistent Across App) -->
+    <nav class="bottom-nav-bar w-full pt-2 pb-2.5 sm:pb-3 px-3 flex-shrink-0 z-20" aria-label="Bottom Navigation">
+      <div class="grid grid-cols-4 items-center text-center">
+
+        <!-- 1. Home -->
+        <button type="button"
+                (click)="setActiveTab('home')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
+                aria-label="Home Tab">
+          <home-icon [size]="20" />
+          <span class="text-[10.5px] font-medium tracking-tight">Home</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
+        </button>
+
+        <!-- 2. Rules -->
+        <button type="button"
+                (click)="setActiveTab('rules')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
+                aria-label="Rules Tab">
+          <book-open-icon [size]="20" />
+          <span class="text-[10.5px] font-medium tracking-tight">Rules</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
+        </button>
+
+        <!-- 3. Leaderboard -->
+        <button type="button"
+                (click)="setActiveTab('leaderboard')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
+                aria-label="Leaderboard Tab">
+          <leaderboard-icon [size]="20" />
+          <span class="text-[10.5px] font-medium tracking-tight">Leaderboard</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
+        </button>
+
+        <!-- 4. Profile (Active) -->
+        <button type="button"
+                (click)="setActiveTab('profile')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-[#f5c518]"
+                aria-label="Profile Tab">
+          <user-icon [size]="20" />
+          <span class="text-[10.5px] font-bold tracking-tight">Profile</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100"></div>
+        </button>
+
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- Leaderboard Modal Dialog -->
+  @if (showLeaderboardModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🏆</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Leaderboard</h3>
+          </div>
+          <button type="button"
+                  (click)="closeLeaderboard()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <!-- Rank 1 -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-amber-950/30 border border-amber-400/40">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-base">🥇</span>
+              <div>
+                <div class="font-bold text-slate-100">CardMaster</div>
+                <div class="text-[10px] text-amber-300 font-medium">Grandmaster</div>
+              </div>
+            </div>
+            <span class="font-black text-[#f5c518]">1,420 pts</span>
+          </div>
+
+          <!-- Rank 2 -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/10">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-base">🥈</span>
+              <div>
+                <div class="font-bold text-slate-200">AceSpade</div>
+                <div class="text-[10px] text-slate-400">Elite</div>
+              </div>
+            </div>
+            <span class="font-bold text-slate-200">980 pts</span>
+          </div>
+
+          <!-- Rank 3 -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/10">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-base">🥉</span>
+              <div>
+                <div class="font-bold text-slate-200">DonkeyKing</div>
+                <div class="text-[10px] text-amber-600">Veteran</div>
+              </div>
+            </div>
+            <span class="font-bold text-amber-500">750 pts</span>
+          </div>
+
+          <!-- You -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-emerald-950/40 border border-emerald-500/40 mt-3">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-xs font-bold text-emerald-400">#4</span>
+              <div>
+                <div class="font-bold text-emerald-300">{{ playerName() }} (You)</div>
+                <div class="text-[10px] text-slate-400">Guest Mode</div>
+              </div>
+            </div>
+            <span class="font-bold text-emerald-300">320 pts</span>
+          </div>
+        </div>
+
+        <button type="button"
+                (click)="closeLeaderboard()"
+                class="gold-gradient-btn w-full text-slate-950 font-bold text-xs py-2.5 rounded-xl cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  }
+</div>
