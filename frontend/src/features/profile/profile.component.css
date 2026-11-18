@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.profile-screen {
+  background-color: #062613;
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(16, 75, 40, 0.45) 0%, rgba(3, 20, 10, 0.98) 100%),
+    url("https://www.transparenttextures.com/patterns/felt.png");
+  background-attachment: fixed;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Background Watermark Playing Cards */
+.watermark-card {
+  opacity: 0.15;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.9));
+}
+
+/* Gold Metallic Text */
+.gold-metallic-text {
+  background: linear-gradient(180deg, #fff7d6 0%, #f5d475 35%, #cf9c2e 70%, #996e14 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+/* Avatar Gold Ring */
+.avatar-gold-ring {
+  background: linear-gradient(135deg, #fceabb 0%, #f8b500 25%, #fceabb 50%, #d4af37 75%, #fceabb 100%);
+  padding: 3.5px;
+  border-radius: 9999px;
+  box-shadow: 
+    0 0 25px rgba(245, 212, 117, 0.45),
+    0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Card Surface Styling */
+.profile-card-surface {
+  background: radial-gradient(circle at 50% 0%, rgba(14, 52, 28, 0.92) 0%, rgba(4, 24, 13, 0.96) 100%);
+  border: 1px solid rgba(82, 196, 26, 0.2);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav-bar {
+  background: linear-gradient(180deg, rgba(8, 20, 12, 0.96) 0%, rgba(3, 10, 6, 0.99) 100%);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(233, 195, 73, 0.18);
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
+}
+
+/* Modal Styling */
+.modal-overlay {
+  background: rgba(2, 12, 6, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.modal-card {
+  background: radial-gradient(circle at 50% 10%, rgba(14, 52, 28, 0.98) 0%, rgba(3, 18, 10, 0.99) 100%);
+  border: 1px solid rgba(229, 193, 88, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+}
+
+/* Sign Out Button */
+.signout-btn {
+  background: rgba(45, 18, 18, 0.55);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #fca5a5;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.signout-btn:hover {
+  background: rgba(65, 24, 24, 0.75);
+  border-color: rgba(248, 113, 113, 0.6);
+  color: #fecaca;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

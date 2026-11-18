@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HomeProfileMetaComponent } from './home-profile-meta.component';
 import { Component, signal } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 
 describe('HomeProfileMetaComponent', () => {
   let component: HomeProfileMetaComponent;
@@ -117,5 +118,84 @@ describe('HomeProfileMetaComponent', () => {
     imgEl.dispatchEvent(errorEvent);
 
     expect(imgEl.src).toContain('assets/app-logo.png');
+  });
+
+  describe('when user is logged in', () => {
+    let loggedInFixture: ComponentFixture<HomeProfileMetaComponent>;
+    let loggedInComponent: HomeProfileMetaComponent;
+    let mockAuthService: {
+      isAuthenticated: any;
+      displayName: any;
+      avatarUrl: any;
+      currentUser: any;
+      client: any;
+      waitForAuthReady?: any;
+    };
+
+    beforeEach(async () => {
+      mockAuthService = {
+        isAuthenticated: signal(true),
+        displayName: signal('Google Name'),
+        avatarUrl: signal('/avatar/guest_avatar.webp'),
+        currentUser: signal({ id: 'user-abc-123' }),
+        client: {
+          from: vi.fn().mockReturnValue({
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            maybeSingle: vi.fn().mockResolvedValue({
+              data: {
+                username: 'GoldenFalcon99',
+                avatar_url: 'avatar.jpeg'
+              },
+              error: null
+            })
+          })
+        },
+        waitForAuthReady: vi.fn().mockResolvedValue(true)
+      };
+
+      await TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({
+        imports: [HomeProfileMetaComponent],
+        providers: [
+          { provide: AuthService, useValue: mockAuthService }
+        ]
+      }).compileComponents();
+
+      loggedInFixture = TestBed.createComponent(HomeProfileMetaComponent);
+      loggedInComponent = loggedInFixture.componentInstance;
+      await loggedInComponent.fetchProfile();
+      loggedInFixture.detectChanges();
+    });
+
+    it('should wire player name to username in profiles table', () => {
+      const el = loggedInFixture.nativeElement as HTMLElement;
+      expect(loggedInComponent.displayName()).toBe('GoldenFalcon99');
+      expect(el.querySelector('.profile-player-name')?.textContent?.trim()).toBe('GoldenFalcon99');
+    });
+
+    it('should wire avatar to avatar_url in profiles table and resolve via avatar folder', () => {
+      const el = loggedInFixture.nativeElement as HTMLElement;
+      expect(loggedInComponent.displayAvatarSrc()).toBe('/avatar/avatar.jpeg');
+      const img = el.querySelector('.avatar-gold-ring img') as HTMLImageElement;
+      expect(img.getAttribute('src')).toBe('/avatar/avatar.jpeg');
+      expect(img.getAttribute('alt')).toBe('GoldenFalcon99 Avatar');
+    });
+
+    it('should fall back to Google auth name if profiles table has no custom username', async () => {
+      mockAuthService.client.from.mockReturnValue({
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({
+          data: { username: '', avatar_url: null },
+          error: null
+        })
+      });
+      loggedInComponent.profileUsername.set('');
+      await loggedInComponent.fetchProfile();
+      loggedInFixture.detectChanges();
+
+      expect(loggedInComponent.displayName()).toBe('Google Name');
+    });
   });
 });

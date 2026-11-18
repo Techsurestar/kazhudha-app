@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, PLATFORM_ID, Inject, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, PLATFORM_ID, Inject, signal, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { HomeIconComponent } from '../shared/icon/home-icon.component';
@@ -7,6 +7,7 @@ import { LeadboardIconComponent } from '../shared/icon/leadboard-icon.component'
 import { UserIconComponent } from '../shared/icon/user-icon.component';
 import { ChevronsRightComponent } from '../shared/icon/chevrons-right.component';
 import { HomeProfileMetaComponent } from './components/home-profile-meta/home-profile-meta.component';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   readonly activeTab = signal<'home' | 'rules' | 'leaderboard' | 'profile'>('home');
   readonly showLeaderboardModal = signal<boolean>(false);
   readonly showProfileModal = signal<boolean>(false);
+  readonly isSigningIn = signal<boolean>(false);
+  readonly signInError = signal<string | null>(null);
+
+  readonly authService = inject(AuthService);
 
   private gl: WebGLRenderingContext | null = null;
   private animationFrameId: number | null = null;
@@ -42,7 +47,11 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     } else if (tab === 'leaderboard') {
       this.showLeaderboardModal.set(true);
     } else if (tab === 'profile') {
-      this.router.navigate(['/profile']);
+      if (this.authService.isAuthenticated()) {
+        this.router.navigate(['/profile']);
+      } else {
+        this.router.navigate(['/guest-profile']);
+      }
     }
   }
 
@@ -56,9 +65,26 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     this.activeTab.set('home');
   }
 
-  continueWithGoogle(): void {
-    // Placeholder for Google OAuth sign-in integration
-    console.log('Continue with Google clicked');
+  async continueWithGoogle(): Promise<void> {
+    try {
+      this.isSigningIn.set(true);
+      this.signInError.set(null);
+      await this.authService.signInWithGoogle();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to connect with Google';
+      console.error('HomeComponent: Google Sign-In error', err);
+      this.signInError.set(message);
+    } finally {
+      this.isSigningIn.set(false);
+    }
+  }
+
+  async signOut(): Promise<void> {
+    try {
+      await this.authService.signOut();
+    } catch (err) {
+      console.error('HomeComponent: Sign-Out error', err);
+    }
   }
 
   ngAfterViewInit() {
@@ -90,6 +116,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
 
   private initScrollObserver() {
+    if (typeof IntersectionObserver === 'undefined') return;
     const observerOptions = { threshold: 0.1 };
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -109,7 +136,8 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   }
 
   private initWebGL() {
-    const canvas = this.canvasRef.nativeElement;
+    const canvas = this.canvasRef?.nativeElement;
+    if (!canvas) return;
     this.gl = canvas.getContext('webgl');
     if (!this.gl) return;
 

@@ -1,0 +1,706 @@
+<div class="profile-screen min-h-screen text-slate-100 flex flex-col justify-between overflow-x-hidden relative selection:bg-[#e9c349]/30">
+
+  <!-- Background Watermark Playing Cards -->
+  <!-- Top Left - Ace of Spades -->
+  <div class="watermark-card absolute -top-4 -left-6 w-24 h-36 bg-slate-100 rounded-lg -rotate-25 shadow-2xl flex flex-col justify-between p-2">
+    <div class="text-slate-900 font-bold text-base leading-none">
+      A<br/><span class="text-lg">♠</span>
+    </div>
+    <div class="text-center text-2xl text-slate-900">♠</div>
+    <div class="text-slate-900 font-bold text-base leading-none self-end rotate-180">
+      A<br/><span class="text-lg">♠</span>
+    </div>
+  </div>
+
+  <!-- Top Right - Ace of Hearts -->
+  <div class="watermark-card absolute -top-4 -right-6 w-24 h-36 bg-slate-100 rounded-lg rotate-25 shadow-2xl flex flex-col justify-between p-2">
+    <div class="text-rose-600 font-bold text-base leading-none">
+      A<br/><span class="text-lg">♥</span>
+    </div>
+    <div class="text-center text-2xl text-rose-600">♥</div>
+    <div class="text-rose-600 font-bold text-base leading-none self-end rotate-180">
+      A<br/><span class="text-lg">♥</span>
+    </div>
+  </div>
+
+  <!-- Subtle Suit Watermarks (Club & Diamond) -->
+  <div class="absolute top-8 left-1/2 -translate-x-1/2 text-4xl text-emerald-400/10 select-none pointer-events-none">♣</div>
+  <div class="absolute top-28 right-24 text-4xl text-emerald-400/10 select-none pointer-events-none">♦</div>
+  <div class="absolute top-36 left-8 text-3xl text-emerald-400/10 select-none pointer-events-none">♠</div>
+
+  <!-- Main Mobile App Frame Container (Max Width Matches App Mobile Frame) -->
+  <div class="w-full max-w-md mx-auto min-h-screen flex flex-col justify-between relative z-10 overflow-hidden">
+
+    <!-- Scrollable Content Container -->
+    <div class="flex-1 flex flex-col justify-between px-4 pt-3 pb-2 overflow-y-auto">
+      <div class="flex flex-col space-y-1">
+
+      <!-- 1. Header Bar (Back button, Title, Kazhudha Club Badge) -->
+      <header class="flex items-center justify-between py-1.5 flex-shrink-0">
+        <!-- Left: Back button & Title -->
+        <div class="flex items-center gap-2">
+          <button type="button"
+                  (click)="goBack()"
+                  class="p-1 -ml-1 text-white hover:text-[#f5d475] transition-colors cursor-pointer focus:outline-none"
+                  aria-label="Back to home">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+          <h1 class="text-xl font-bold text-white tracking-tight leading-none">Profile</h1>
+        </div>
+
+        <!-- Right: Kazhudha Club Badge -->
+        <div class="kazhudha-header-badge flex flex-col items-center justify-center px-2.5 py-1 rounded-lg bg-gradient-to-b from-[#2a1708] to-[#120a03] border border-[#d4af37] shadow-[0_2px_8px_rgba(0,0,0,0.8),0_0_10px_rgba(212,175,55,0.35)] select-none">
+          <span class="text-[10px] font-black tracking-widest text-[#f5d475] leading-none drop-shadow">KAZHUDHA</span>
+          <span class="text-[8px] font-bold tracking-wider text-emerald-400 leading-none mt-0.5">✦ CLUB ✦</span>
+        </div>
+      </header>
+
+      <!-- 2. User Profile Summary (Avatar + Camera + Details) -->
+      <section class="flex items-center gap-4 pt-3 pb-3 px-1 flex-shrink-0" aria-label="User details">
+        <!-- Circular Avatar with Gold Metallic Ring -->
+        <div class="relative flex-shrink-0 cursor-pointer" (click)="openAvatars()" title="Change Avatar">
+          <div class="avatar-gold-ring w-24 h-24 sm:w-26 sm:h-26">
+            <img [src]="avatarUrl()" alt="User Avatar" class="w-full h-full rounded-full object-cover select-none pointer-events-none" />
+          </div>
+          <!-- Camera Icon Badge at bottom right of avatar -->
+          <button type="button"
+                  (click)="openAvatars(); $event.stopPropagation()"
+                  class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-gradient-to-b from-[#fceabb] via-[#f3cf65] to-[#d4a329] border border-amber-200/90 shadow-md flex items-center justify-center text-slate-950 hover:brightness-110 active:scale-90 transition-all cursor-pointer focus:outline-none"
+                  aria-label="Change Avatar">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+              <path d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- User Details Stack -->
+        <div class="flex flex-col items-start gap-1.5 min-w-0">
+          <!-- Row 1: Player Name + Edit Pencil -->
+          <div class="flex items-center gap-2">
+            <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight truncate max-w-[160px] sm:max-w-[190px]">
+              {{ displayName() }}
+            </h2>
+            <button type="button"
+                    (click)="openEditName()"
+                    class="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer focus:outline-none"
+                    aria-label="Edit Name">
+              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Row 2: Rank Badge Pill -->
+          <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-black/45 border border-white/15 text-xs font-semibold text-slate-200">
+            <!-- Crown Icon in Gold -->
+            <svg class="w-3.5 h-3.5 text-[#f5d475] fill-current" viewBox="0 0 24 24">
+              <path d="M2 19h20v2H2v-2zM2 7l5 5 5-8 5 8 5-8v10H2V7z"/>
+            </svg>
+            <span>{{ userRank() }}</span>
+          </div>
+
+          <!-- Row 3: Joined Date -->
+          <span class="text-xs text-slate-400 font-medium tracking-tight">
+            {{ joinedDate() }}
+          </span>
+        </div>
+      </section>
+
+      <!-- 3. Stat Cards Panel (Games Played, Wins, Win Rate, Coins) -->
+      <section class="profile-card-surface rounded-2xl p-3 my-1.5 shadow-xl flex-shrink-0" aria-label="Game statistics">
+        <div class="grid grid-cols-4 divide-x divide-emerald-500/15 text-center">
+          <!-- 1. Games Played -->
+          <div class="flex flex-col items-center justify-center px-1">
+            <div class="w-6 h-6 flex items-center justify-center mb-1">
+              <svg class="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 24 24">
+                <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
+              </svg>
+            </div>
+            <span class="text-base sm:text-lg font-black text-white leading-tight">{{ gamesPlayed() }}</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5">Games Played</span>
+          </div>
+
+          <!-- 2. Wins -->
+          <div class="flex flex-col items-center justify-center px-1">
+            <div class="w-6 h-6 flex items-center justify-center mb-1">
+              <svg class="w-5 h-5 text-emerald-400 fill-current" viewBox="0 0 24 24">
+                <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
+              </svg>
+            </div>
+            <span class="text-base sm:text-lg font-black text-white leading-tight">{{ wins() }}</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5">Wins</span>
+          </div>
+
+          <!-- 3. Win Rate -->
+          <div class="flex flex-col items-center justify-center px-1">
+            <div class="w-6 h-6 flex items-center justify-center mb-1">
+              <svg class="w-5 h-5 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+              </svg>
+            </div>
+            <span class="text-base sm:text-lg font-black text-white leading-tight">{{ winRate() }}</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5">Win Rate</span>
+          </div>
+
+          <!-- 4. Coins -->
+          <div class="flex flex-col items-center justify-center px-1">
+            <div class="w-6 h-6 flex items-center justify-center mb-1">
+              <!-- Stack of Coins -->
+              <svg class="w-5 h-5 text-amber-400 fill-current drop-shadow" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 3.34 2 5v14c0 1.66 4.48 3 10 3s10-1.34 10-3V5c0-1.66-4.48-3-10-3zm0 2c4.42 0 8 .9 8 2s-3.58 2-8 2-8-.9-8-2 3.58-2 8-2zm0 5c4.42 0 8 .9 8 2v1.13c-1.92.85-4.78 1.37-8 1.37-3.22 0-6.08-.52-8-1.37V11c0-1.1 3.58-2 8-2zm0 5c4.42 0 8 .9 8 2v1.13c-1.92.85-4.78 1.37-8 1.37-3.22 0-6.08-.52-8-1.37V16c0-1.1 3.58-2 8-2zm0 5c4.42 0 8 .9 8 2v.13c-1.92.85-4.78 1.37-8 1.37-3.22 0-6.08-.52-8-1.37V21c0-1.1 3.58-2 8-2z"/>
+              </svg>
+            </div>
+            <span class="text-base sm:text-lg font-black text-white leading-tight">{{ coins() }}</span>
+            <span class="text-[10px] sm:text-[11px] text-slate-300 font-medium mt-0.5">Coins</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upcoming Features (Rank Progress & Menu Options: Hidden for current release) -->
+      @if (showUpcomingFeatures()) {
+        <!-- 4. Rank Progress Card -->
+        <section class="profile-card-surface rounded-2xl p-3 sm:p-3.5 my-1.5 shadow-xl flex-shrink-0 cursor-pointer"
+                 (click)="openRankInfo()"
+                 aria-label="Rank progress details">
+          <!-- Top row: Rank label & Next rank -->
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              <!-- Crown Icon -->
+              <svg class="w-4 h-4 text-amber-300 fill-current" viewBox="0 0 24 24">
+                <path d="M2 19h20v2H2v-2zM2 7l5 5 5-8 5 8 5-8v10H2V7z"/>
+              </svg>
+              <span class="text-sm font-bold text-white tracking-tight">Rank Progress</span>
+            </div>
+            <div class="flex items-center gap-1 text-slate-300 hover:text-white text-xs font-semibold">
+              <span>{{ userRank() }}</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Progress bar track -->
+          <div class="h-3 w-full bg-black/75 rounded-full p-0.5 border border-white/10 overflow-hidden mb-1.5">
+            <div class="h-full rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 shadow-[0_0_10px_rgba(245,197,24,0.7)] transition-all duration-500"
+                 [style.width.%]="xpProgressPercent()"></div>
+          </div>
+
+          <!-- XP hint text -->
+          <div class="text-center text-[11px] sm:text-xs font-bold text-[#ccee66] tracking-wide">
+            {{ xpRemaining() }} XP to reach {{ nextRank() }}
+          </div>
+        </section>
+
+        <!-- 5. Action Menu List Card (My Avatars, Statistics, Achievements, Game Settings, Help & Rules) -->
+        <section class="profile-card-surface rounded-2xl my-1.5 divide-y divide-emerald-500/15 overflow-hidden shadow-xl flex-shrink-0"
+                 aria-label="Profile navigation options">
+          <!-- Row 1: My Avatars -->
+          <button type="button"
+                  (click)="openAvatars()"
+                  class="w-full flex items-center justify-between p-3.5 text-left hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors cursor-pointer focus:outline-none">
+            <div class="flex items-center gap-3">
+              <span class="text-lg leading-none">🐰</span>
+              <span class="text-sm font-bold text-white">My Avatars</span>
+            </div>
+            <div class="flex items-center gap-1 text-xs font-bold text-amber-300">
+              <span>{{ unlockedAvatarsCount() }} Unlocked</span>
+              <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </button>
+
+          <!-- Row 2: Statistics -->
+          <button type="button"
+                  (click)="openStatistics()"
+                  class="w-full flex items-center justify-between p-3.5 text-left hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors cursor-pointer focus:outline-none">
+            <div class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 24 24">
+                <path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/>
+              </svg>
+              <span class="text-sm font-bold text-white">Statistics</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <!-- Row 3: Achievements -->
+          <button type="button"
+                  (click)="openAchievements()"
+                  class="w-full flex items-center justify-between p-3.5 text-left hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors cursor-pointer focus:outline-none">
+            <div class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-amber-300 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2l2.4 5.3 5.6.8-4.1 4 1 5.9-4.9-2.8-4.9 2.8 1-5.9-4.1-4 5.6-.8z"/>
+                <path d="M8 15.5L7 22l5-3 5 3-1-6.5"/>
+              </svg>
+              <span class="text-sm font-bold text-white">Achievements</span>
+            </div>
+            <div class="flex items-center gap-2">
+              @if (hasUnclaimedAchievements()) {
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.9)] animate-pulse"></span>
+              }
+              <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </button>
+
+          <!-- Row 4: Game Settings -->
+          <button type="button"
+                  (click)="openSettings()"
+                  class="w-full flex items-center justify-between p-3.5 text-left hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors cursor-pointer focus:outline-none">
+            <div class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-slate-200 fill-current" viewBox="0 0 24 24">
+                <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+              </svg>
+              <span class="text-sm font-bold text-white">Game Settings</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <!-- Row 5: Help & Rules -->
+          <button type="button"
+                  (click)="openHelpRules()"
+                  class="w-full flex items-center justify-between p-3.5 text-left hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors cursor-pointer focus:outline-none">
+            <div class="flex items-center gap-3">
+              <svg class="w-5 h-5 text-slate-200 fill-current" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+              </svg>
+              <span class="text-sm font-bold text-white">Help & Rules</span>
+            </div>
+            <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </section>
+      }
+      </div>
+
+      <!-- 6. Sign Out Button -->
+      <div class="pt-6 pb-2 text-center flex-shrink-0 mt-auto">
+        <button type="button"
+                (click)="signOut()"
+                class="signout-btn px-8 py-2.5 rounded-full inline-flex items-center justify-center gap-2 text-sm font-bold tracking-wide transition-all transform active:scale-95 cursor-pointer focus:outline-none"
+                aria-label="Sign Out">
+          <!-- Salmon Logout Arrow Icon -->
+          <svg class="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Sign Out</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 7. Persistent Bottom Navigation Bar (Home, Play, Leaderboard, Profile) -->
+    <nav class="bottom-nav-bar w-full pt-2 pb-2.5 sm:pb-3 px-3 flex-shrink-0 z-20" aria-label="Bottom Navigation">
+      <div class="grid grid-cols-4 items-center text-center">
+
+        <!-- 1. Home -->
+        <button type="button"
+                (click)="setActiveTab('home')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
+                aria-label="Home Tab">
+          <home-icon [size]="20" />
+          <span class="text-[10.5px] font-medium tracking-tight">Home</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
+        </button>
+
+        <!-- 2. Play -->
+        <button type="button"
+                (click)="setActiveTab('play')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
+                aria-label="Play Tab">
+          <!-- Gamepad Icon -->
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+          </svg>
+          <span class="text-[10.5px] font-medium tracking-tight">Play</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
+        </button>
+
+        <!-- 3. Leaderboard -->
+        <button type="button"
+                (click)="setActiveTab('leaderboard')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
+                aria-label="Leaderboard Tab">
+          <leaderboard-icon [size]="20" />
+          <span class="text-[10.5px] font-medium tracking-tight">Leaderboard</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
+        </button>
+
+        <!-- 4. Profile (Active) -->
+        <button type="button"
+                (click)="setActiveTab('profile')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-[#f5c518]"
+                aria-label="Profile Tab">
+          <user-icon [size]="20" />
+          <span class="text-[10.5px] font-bold tracking-tight">Profile</span>
+          <!-- Active Golden Indicator Bar -->
+          <div class="h-[2px] w-6 rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100 transition-all duration-300 mt-0.5"></div>
+        </button>
+
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Edit Name Modal -->
+  @if (showEditNameModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">✏️</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Edit Player Name</h3>
+          </div>
+          <button type="button"
+                  (click)="closeEditName()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs text-slate-300 font-medium">New Display Name</label>
+          <input type="text"
+                 [ngModel]="editNameInput()"
+                 (ngModelChange)="editNameInput.set($event)"
+                 maxlength="20"
+                 placeholder="Enter name"
+                 class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-emerald-500/40 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-[#f5d475]" />
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button type="button"
+                  (click)="closeEditName()"
+                  class="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-300 font-bold text-xs transition-colors cursor-pointer">
+            Cancel
+          </button>
+          <button type="button"
+                  (click)="saveName()"
+                  class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs shadow-lg transition-transform active:scale-95 cursor-pointer">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Avatars Modal -->
+  @if (showAvatarsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🐰</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Choose Avatar</h3>
+          </div>
+          <button type="button"
+                  (click)="closeAvatars()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 py-1">
+          @for (avatar of availableAvatars(); track avatar.id) {
+            <button type="button"
+                    (click)="selectAvatar(avatar)"
+                    [disabled]="!avatar.unlocked"
+                    class="p-3 rounded-xl border flex flex-col items-center gap-2 transition-all cursor-pointer relative"
+                    [ngClass]="avatar.src === avatarUrl() ? 'bg-amber-950/40 border-amber-400 shadow-[0_0_12px_rgba(245,197,24,0.3)]' : 'bg-black/40 border-white/10 hover:border-white/30'">
+              <img [src]="avatar.src" [alt]="avatar.name" class="w-16 h-16 rounded-full object-cover border border-amber-300/40" />
+              <span class="text-xs font-bold text-white">{{ avatar.name }}</span>
+              @if (!avatar.unlocked) {
+                <div class="absolute inset-0 bg-black/70 rounded-xl flex items-center justify-center">
+                  <span class="text-xs text-amber-300 font-bold">🔒 Locked</span>
+                </div>
+              }
+            </button>
+          }
+        </div>
+
+        <button type="button"
+                (click)="closeAvatars()"
+                class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-300 font-bold text-xs transition-colors cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Statistics Modal -->
+  @if (showStatsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">📊</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Player Statistics</h3>
+          </div>
+          <button type="button"
+                  (click)="closeStatistics()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-center text-xs">
+          <div class="p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Matches</div>
+            <div class="text-base font-bold text-white mt-0.5">{{ gamesPlayed() }}</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Wins</div>
+            <div class="text-base font-bold text-[#f5c518] mt-0.5">{{ wins() }}</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Win Rate</div>
+            <div class="text-base font-bold text-emerald-400 mt-0.5">{{ winRate() }}</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">Kazhudha Rate</div>
+            <div class="text-base font-bold text-rose-400 mt-0.5">8%</div>
+          </div>
+        </div>
+
+        <button type="button"
+                (click)="closeStatistics()"
+                class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Achievements Modal -->
+  @if (showAchievementsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🎖️</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Achievements</h3>
+          </div>
+          <button type="button"
+                  (click)="closeAchievements()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-amber-950/30 border border-amber-400/40">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">🏆</span>
+              <div>
+                <div class="text-xs font-bold text-white">First Blood</div>
+                <div class="text-[10px] text-amber-300">Win your very first match</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-emerald-400">Claimed</span>
+          </div>
+
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">👑</span>
+              <div>
+                <div class="text-xs font-bold text-white">Master of Escape</div>
+                <div class="text-[10px] text-slate-400">Escape 5 times in a row</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-amber-300">3/5</span>
+          </div>
+
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <div class="flex items-center gap-2.5">
+              <span class="text-xl">💰</span>
+              <div>
+                <div class="text-xs font-bold text-white">High Roller</div>
+                <div class="text-[10px] text-slate-400">Collect 5,000 coins</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold text-amber-300">2,450/5,000</span>
+          </div>
+        </div>
+
+        <button type="button"
+                (click)="closeAchievements()"
+                class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Game Settings Modal -->
+  @if (showSettingsModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">⚙️</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Game Settings</h3>
+          </div>
+          <button type="button"
+                  (click)="closeSettings()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-3 py-1 text-sm">
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <span class="font-bold text-white">Sound Effects</span>
+            <button type="button"
+                    (click)="soundEnabled.set(!soundEnabled())"
+                    class="w-11 h-6 rounded-full transition-colors relative cursor-pointer"
+                    [ngClass]="soundEnabled() ? 'bg-emerald-500' : 'bg-slate-700'">
+              <div class="w-4 h-4 rounded-full bg-white transition-transform absolute top-1"
+                   [style.left.px]="soundEnabled() ? 24 : 4"></div>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-black/40 border border-white/10">
+            <span class="font-bold text-white">Haptic Feedback</span>
+            <button type="button"
+                    (click)="hapticsEnabled.set(!hapticsEnabled())"
+                    class="w-11 h-6 rounded-full transition-colors relative cursor-pointer"
+                    [ngClass]="hapticsEnabled() ? 'bg-emerald-500' : 'bg-slate-700'">
+              <div class="w-4 h-4 rounded-full bg-white transition-transform absolute top-1"
+                   [style.left.px]="hapticsEnabled() ? 24 : 4"></div>
+            </button>
+          </div>
+        </div>
+
+        <button type="button"
+                (click)="closeSettings()"
+                class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs cursor-pointer">
+          Done
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Rank Progress Modal -->
+  @if (showRankModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">👑</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Rank Details</h3>
+          </div>
+          <button type="button"
+                  (click)="closeRankInfo()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="text-center py-2 space-y-2">
+          <div class="text-2xl font-black text-[#f5d475]">{{ userRank() }}</div>
+          <p class="text-xs text-slate-300">
+            You currently have <span class="font-bold text-amber-300">{{ currentXp() }} XP</span>. Reach <span class="font-bold text-amber-300">{{ targetXp() }} XP</span> to unlock <span class="font-bold text-emerald-400">{{ nextRank() }}</span> rank!
+          </p>
+        </div>
+
+        <button type="button"
+                (click)="closeRankInfo()"
+                class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs cursor-pointer">
+          Got it
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Leaderboard Modal Dialog -->
+  @if (showLeaderboardModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🏆</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Leaderboard</h3>
+          </div>
+          <button type="button"
+                  (click)="closeLeaderboard()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
+            ✕
+          </button>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <!-- Rank 1 -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-amber-950/30 border border-amber-400/40">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-base">🥇</span>
+              <div>
+                <div class="font-bold text-slate-100">CardMaster</div>
+                <div class="text-[10px] text-amber-300 font-medium">Grandmaster</div>
+              </div>
+            </div>
+            <span class="font-black text-[#f5c518]">1,420 pts</span>
+          </div>
+
+          <!-- Rank 2 -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/10">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-base">🥈</span>
+              <div>
+                <div class="font-bold text-slate-200">AceSpade</div>
+                <div class="text-[10px] text-slate-400">Elite</div>
+              </div>
+            </div>
+            <span class="font-bold text-slate-200">980 pts</span>
+          </div>
+
+          <!-- Rank 3 -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/10">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-base">🥉</span>
+              <div>
+                <div class="font-bold text-slate-200">DonkeyKing</div>
+                <div class="text-[10px] text-amber-600">Veteran</div>
+              </div>
+            </div>
+            <span class="font-bold text-amber-500">750 pts</span>
+          </div>
+
+          <!-- You -->
+          <div class="flex items-center justify-between p-2 rounded-xl bg-emerald-950/40 border border-emerald-500/40 mt-3">
+            <div class="flex items-center space-x-2.5">
+              <span class="text-xs font-bold text-emerald-400">#4</span>
+              <div>
+                <div class="font-bold text-emerald-300">{{ displayName() }} (You)</div>
+                <div class="text-[10px] text-slate-400">{{ userRank() }}</div>
+              </div>
+            </div>
+            <span class="font-bold text-emerald-300">320 pts</span>
+          </div>
+        </div>
+
+        <button type="button"
+                (click)="closeLeaderboard()"
+                class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs cursor-pointer">
+          Close
+        </button>
+      </div>
+    </div>
+  }
+
+</div>

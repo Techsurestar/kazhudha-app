@@ -1,9 +1,40 @@
-import { Routes } from '@angular/router';
+import { Routes, Router } from '@angular/router';
+import { inject } from '@angular/core';
 import { HomeComponent } from '../features/home/home.component';
 import { GameTableComponent } from '../features/game-table/game-table.component';
 import { HowToPlayComponent } from '../features/how-to-play/how-to-play.component';
 import { CardTableComponent } from '../features/card-table/card-table.component';
 import { GuestProfileComponent } from '../features/home/components/guest-profile/guest-profile.component';
+import { ProfileComponent } from '../features/profile/profile.component';
+import { AuthService } from '../core/services/auth.service';
+
+/**
+ * Route guard for /profile:
+ * Unauthenticated or signed-out users are automatically redirected to /guest-profile.
+ */
+export const authProfileGuard = async () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  await auth.waitForAuthReady();
+  if (!auth.isAuthenticated()) {
+    return router.parseUrl('/guest-profile');
+  }
+  return true;
+};
+
+/**
+ * Route guard for /guest-profile:
+ * Authenticated users are automatically redirected to /profile.
+ */
+export const guestProfileGuard = async () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  await auth.waitForAuthReady();
+  if (auth.isAuthenticated()) {
+    return router.parseUrl('/profile');
+  }
+  return true;
+};
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -11,5 +42,6 @@ export const routes: Routes = [
   { path: 'card-table', component: CardTableComponent },
   { path: 'table', redirectTo: 'card-table', pathMatch: 'full' },
   { path: 'how-to-play', component: HowToPlayComponent },
-  { path: 'profile', component: GuestProfileComponent }
+  { path: 'profile', component: ProfileComponent, canActivate: [authProfileGuard] },
+  { path: 'guest-profile', component: GuestProfileComponent, canActivate: [guestProfileGuard] }
 ];

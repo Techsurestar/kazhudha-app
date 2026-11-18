@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { GuestProfileComponent } from './guest-profile.component';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 describe('GuestProfileComponent', () => {
   let component: GuestProfileComponent;
@@ -13,7 +15,19 @@ describe('GuestProfileComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GuestProfileComponent],
       providers: [
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        {
+          provide: AuthService,
+          useValue: {
+            isAuthenticated: signal(false),
+            displayName: signal('Guest Player'),
+            avatarUrl: signal('/avatar/guest_avatar.webp'),
+            currentUser: signal(null),
+            client: null,
+            signInWithGoogle: vi.fn().mockResolvedValue(undefined),
+            signOut: vi.fn().mockResolvedValue(undefined)
+          }
+        }
       ]
     }).compileComponents();
 
@@ -47,18 +61,17 @@ describe('GuestProfileComponent', () => {
     // Header & Table title
     expect(el.textContent).toContain('Guest vs');
     expect(el.textContent).toContain('Free Account');
-    expect(el.textContent).toContain('FEATURE');
     expect(el.textContent).toContain('GUEST');
     expect(el.textContent).toContain('FREE ACCOUNT');
 
     // Feature rows
-    expect(el.textContent).toContain('XP & Rank Progress');
+    expect(el.textContent).toContain('XP Progress');
     expect(el.querySelector('img[src*="xp_shield.webp"]')).not.toBeNull();
     expect(el.textContent).toContain('Coin Rewards');
     expect(el.textContent).toContain('Leaderboard');
-    expect(el.textContent).toContain('Save Your Progress');
+    expect(el.textContent).toContain('Track Progress');
     expect(el.textContent).toContain('Achievements');
-    expect(el.textContent).toContain('Exclusive Avatars');
+    expect(el.textContent).toContain('Royal Avatars');
 
     // Bottom banner text
     expect(el.textContent).toContain('Create a free account to');

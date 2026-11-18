@@ -20,7 +20,13 @@
 
     <!-- Home Profile Meta Widget -->
     <section class="px-4 py-1 flex-shrink-0" aria-label="Profile summary">
-      <app-home-profile-meta [clickable]="true" (profileClick)="setActiveTab('profile')" />
+      <app-home-profile-meta
+        [clickable]="true"
+        [playerName]="authService.displayName()"
+        [avatarUrl]="authService.avatarUrl()"
+        [badgeText]="authService.isAuthenticated() ? 'Online' : 'Guest Mode'"
+        [subtitle]="authService.isAuthenticated() ? 'Logged in via Google' : 'You\'re playing as a guest'"
+        (profileClick)="setActiveTab('profile')" />
     </section>
 
     <!-- Main Content Area (Vertically Centered in Screen) -->
@@ -45,30 +51,58 @@
 
       <!-- Action Buttons Container -->
       <div class="w-full space-y-2.5 pt-5 sm:pt-6 flex-shrink-0 max-w-[300px] mx-auto">
-        <!-- Play as Guest Button -->
-        <button routerLink="/game"
-                class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
-          <span>Play as Guest</span>
-          <chevrons-right-icon [size]="20" />
-        </button>
+        @if (signInError()) {
+          <div class="text-xs text-rose-300 bg-rose-950/60 border border-rose-500/40 rounded-xl px-3 py-2 text-center animate-fadeIn">
+            {{ signInError() }}
+          </div>
+        }
 
-        <!-- Continue with Google Button -->
-        <button type="button"
-                (click)="continueWithGoogle()"
-                class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
-          <svg viewBox="0 0 48 48" width="28" height="28">
-            <!-- White Circular Background -->
-            <circle cx="24" cy="24" r="24" fill="#FFFFFF"/>
-            <!-- Google "G" Logo -->
-            <g transform="matrix(0.55 0 0 0.55 10.8 10.8)">
-            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            </g>
-          </svg>
-          <span>Continue with Google</span>
-        </button>
+        @if (authService.isAuthenticated()) {
+          <!-- Play Game Button -->
+          <button routerLink="/game"
+                  class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
+            <span>Play Game</span>
+            <chevrons-right-icon [size]="20" />
+          </button>
+
+          <!-- Sign Out Button -->
+          <button type="button"
+                  (click)="signOut()"
+                  class="w-full bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer">
+            <span>Sign Out</span>
+          </button>
+        } @else {
+          <!-- Play as Guest Button -->
+          <button routerLink="/game"
+                  class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
+            <span>Play as Guest</span>
+            <chevrons-right-icon [size]="20" />
+          </button>
+
+          <!-- Continue with Google Button -->
+          <button type="button"
+                  (click)="continueWithGoogle()"
+                  [disabled]="isSigningIn()"
+                  class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed">
+            @if (isSigningIn()) {
+              <div class="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
+              <span>Connecting to Google...</span>
+            } @else {
+              <svg viewBox="0 0 48 48" width="28" height="28">
+                <!-- White Circular Background -->
+                <circle cx="24" cy="24" r="24" fill="#FFFFFF"/>
+                <!-- Google "G" Logo -->
+                <g transform="matrix(0.55 0 0 0.55 10.8 10.8)">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </g>
+              </svg>
+              <span>Continue with Google</span>
+            }
+          </button>
+        }
       </div>
     </main>
 
@@ -227,11 +261,13 @@
 
         <div class="flex flex-col items-center text-center space-y-2 py-1">
           <div class="w-16 h-16 rounded-full border-2 border-[#f5c518] p-1 bg-black/60 shadow-[0_0_15px_rgba(245,197,24,0.4)] overflow-hidden">
-            <img src="/avatar/guest_avatar.webp" alt="Avatar" class="w-full h-full object-cover rounded-full" />
+            <img [src]="authService.avatarUrl()" alt="Avatar" class="w-full h-full object-cover rounded-full" />
           </div>
           <div>
-            <div class="text-base font-bold text-white">Guest Player</div>
-            <div class="text-xs text-amber-300 font-medium">👑 Guest Mode</div>
+            <div class="text-base font-bold text-white">{{ authService.displayName() }}</div>
+            <div class="text-xs font-medium" [ngClass]="authService.isAuthenticated() ? 'text-emerald-400' : 'text-amber-300'">
+              {{ authService.isAuthenticated() ? '🟢 Google Account' : '👑 Guest Mode' }}
+            </div>
           </div>
         </div>
 

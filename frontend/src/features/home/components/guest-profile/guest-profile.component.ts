@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HomeProfileMetaComponent } from '../home-profile-meta/home-profile-meta.component';
@@ -7,6 +7,7 @@ import { BookOpenIconComponent } from '../../../shared/icon/book-open-icon.compo
 import { LeadboardIconComponent } from '../../../shared/icon/leadboard-icon.component';
 import { UserIconComponent } from '../../../shared/icon/user-icon.component';
 import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.component';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-guest-profile, guest-profile',
@@ -26,6 +27,9 @@ import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.comp
 })
 export class GuestProfileComponent {
   private router = inject(Router);
+  readonly authService = inject(AuthService);
+
+  readonly isSigningIn = signal<boolean>(false);
 
   /** Active navigation tab (defaults to 'profile') */
   readonly activeTab = signal<'home' | 'rules' | 'leaderboard' | 'profile'>('profile');
@@ -38,6 +42,16 @@ export class GuestProfileComponent {
 
   /** Avatar image URL (defaults to '/avatar/guest_avatar.webp') */
   readonly avatarSrc = input<string>('/avatar/guest_avatar.webp');
+
+  /** Dynamic display name reflecting auth status if available */
+  readonly effectiveDisplayName = computed(() => {
+    return this.authService.isAuthenticated() ? this.authService.displayName() : this.playerName();
+  });
+
+  /** Dynamic avatar URL reflecting auth status if available */
+  readonly effectiveAvatarUrl = computed(() => {
+    return this.authService.isAuthenticated() ? this.authService.avatarUrl() : this.avatarSrc();
+  });
 
   /** Whether the component is rendered inside a modal wrapper */
   readonly isModal = input<boolean>(false);
@@ -62,6 +76,10 @@ export class GuestProfileComponent {
       this.router.navigate(['/how-to-play']);
     } else if (tab === 'leaderboard') {
       this.showLeaderboardModal.set(true);
+    } else if (tab === 'profile') {
+      if (this.authService.isAuthenticated()) {
+        this.router.navigate(['/profile']);
+      }
     }
   }
 
@@ -84,8 +102,24 @@ export class GuestProfileComponent {
     }
   }
 
-  onGoogleSignIn(): void {
+  async onGoogleSignIn(): Promise<void> {
     this.continueWithGoogle.emit();
+    try {
+      this.isSigningIn.set(true);
+      await this.authService.signInWithGoogle();
+    } catch (err) {
+      console.error('GuestProfileComponent: Google Sign-In error', err);
+    } finally {
+      this.isSigningIn.set(false);
+    }
+  }
+
+  async onSignOut(): Promise<void> {
+    try {
+      await this.authService.signOut();
+    } catch (err) {
+      console.error('GuestProfileComponent: Sign-Out error', err);
+    }
   }
 
   onEmailSignIn(): void {
