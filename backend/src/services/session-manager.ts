@@ -95,7 +95,7 @@ export class GameSession {
         totals[playerId] = (totals[playerId] || 0) + score;
       }
     }
-    return Object.values(totals).some((total) => total > TOURNAMENT_THRESHOLD);
+    return Object.values(totals).some((total) => total >= TOURNAMENT_THRESHOLD);
   }
 
   public resetForNextHand(dealerService: DealerService): void {

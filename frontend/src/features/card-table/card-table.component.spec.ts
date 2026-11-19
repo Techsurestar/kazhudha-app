@@ -159,9 +159,9 @@ describe('CardTableComponent', () => {
     expect(keys.size).toBe(52);
   });
 
-  it('should trigger startNewGameDeal when onNewGameClick is called', () => {
+  it('should trigger startNewGameDeal when starting new game', () => {
     expect(component.isDealing()).toBe(false);
-    component.onNewGameClick();
+    component.startNewGameDeal(true);
     fixture.detectChanges();
     expect(component.isDealing()).toBe(true);
     expect(component.remainingDeck()).toBeLessThanOrEqual(52);
@@ -474,7 +474,7 @@ describe('CardTableComponent', () => {
     vi.useRealTimers();
   });
 
-  it('should immediately flush event queue and open game over modal when onSkipGame is called on a finished game', () => {
+  it('should immediately flush event queue and update state when onSkipGame is called on a finished game', () => {
     (component as any).eventQueue = [
       { eventType: 'PLAY', playerId: 'bot1', card: { rank: '2', suit: 'SPADES' } },
       { eventType: 'PLAY', playerId: 'bot2', card: { rank: '3', suit: 'SPADES' } }
@@ -501,9 +501,84 @@ describe('CardTableComponent', () => {
 
     expect((component as any).eventQueue.length).toBe(0);
     expect(component.isReplaying()).toBe(false);
-    expect(component.showGameOverModal()).toBe(true);
+    expect(component.showGameResultModal()).toBe(true);
     expect(component.escapedOrder()).toContain('human');
     expect(component.escapedOrder()).toContain('bot1');
     expect(component.escapedOrder()).toContain('bot2');
+  });
+
+  describe('Game Result Modal integration', () => {
+    it('should not display app-game-result by default when showGameResultModal is false', () => {
+      expect(component.showGameResultModal()).toBe(false);
+      const modal = fixture.nativeElement.querySelector('app-game-result');
+      expect(modal).toBeNull();
+    });
+
+    it('should display app-game-result and pass playersList, hands, tournamentOver and kazhudhaPlayerId when showGameResultModal is true', () => {
+      component.showGameResultModal.set(true);
+      fixture.detectChanges();
+
+      const modal = fixture.nativeElement.querySelector('app-game-result');
+      expect(modal).not.toBeNull();
+      expect(component.playersList().length).toBe(4);
+      expect(component.playersList().map(p => p.id)).toEqual(['human', 'bot1', 'bot2', 'bot3']);
+    });
+
+    it('should continue existing match session when onRestartGame is triggered between hands (!tournamentOver)', () => {
+      component.showGameResultModal.set(true);
+      const originalSessionId = component.sessionId;
+      fixture.detectChanges();
+
+      component.onRestartGame();
+      fixture.detectChanges();
+
+      expect(component.showGameResultModal()).toBe(false);
+      expect(component.isDealing()).toBe(true);
+      // sessionId must be preserved to continue match towards 100 points
+      expect(component.sessionId).toBe(originalSessionId);
+    });
+
+    it('should create a fresh session when onRestartGame is triggered after tournament completion (tournamentOver)', () => {
+      component.showGameResultModal.set(true);
+      const initialSessionId = 'old_session_123';
+      component.sessionId = initialSessionId;
+      // Mock gameState with tournamentOver = true
+      vi.spyOn(component, 'tournamentOver').mockReturnValue(true);
+      fixture.detectChanges();
+
+      component.onRestartGame();
+      fixture.detectChanges();
+
+      expect(component.showGameResultModal()).toBe(false);
+      expect(component.isDealing()).toBe(true);
+      // Fresh session ID must be generated when starting new tournament
+      expect(component.sessionId).not.toBe(initialSessionId);
+      expect(component.sessionId).toContain('session_');
+    });
+
+    it('should show game result modal when runNextEvent finishes with gameOver true', async () => {
+      const gameOverState: any = {
+        sessionId: 'test',
+        currentTurnPlayerId: '',
+        humanHand: [],
+        otherPlayers: [
+          { id: 'bot1', name: 'Jenny', handSize: 0, hasGottenAway: true },
+          { id: 'bot2', name: 'Leo', handSize: 0, hasGottenAway: true },
+          { id: 'bot3', name: 'Sofia', handSize: 4, hasGottenAway: false }
+        ],
+        tablePile: [],
+        kazhudhaPlayerId: 'bot3',
+        gameOver: true,
+        events: []
+      };
+
+      (component as any).eventQueue = [];
+      await (component as any).runNextEvent(gameOverState);
+      fixture.detectChanges();
+
+      expect(component.showGameResultModal()).toBe(true);
+      const modal = fixture.nativeElement.querySelector('app-game-result');
+      expect(modal).not.toBeNull();
+    });
   });
 });

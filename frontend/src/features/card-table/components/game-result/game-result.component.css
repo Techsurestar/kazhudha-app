@@ -1,0 +1,63 @@
+.felt-modal-surface {
+  background-color: #062312;
+  background-image: 
+    radial-gradient(circle at 50% 30%, rgba(13, 61, 33, 0.45) 0%, rgba(4, 25, 12, 0.95) 85%),
+    url('https://www.transparenttextures.com/patterns/felt.png');
+}
+
+.gold-gradient-btn,
+.gold-capsule-button {
+  background: linear-gradient(180deg, #fceabb 0%, #f3cf65 30%, #d4a329 70%, #a87910 100%);
+  transition: all 0.25s ease;
+}
+
+.gold-gradient-btn:hover,
+.gold-capsule-button:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #fceabb 25%, #e5b842 65%, #b88616 100%);
+}
+
+.gold-gradient-btn:active,
+.gold-capsule-button:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.gold-text-glow {
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.45), 0 0 24px rgba(234, 179, 8, 0.25);
+}
+
+/* Custom slim scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(234, 179, 8, 0.35);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(234, 179, 8, 0.6);
+}
+
+@keyframes chipPop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.015);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-chip-pop {
+  animation: chipPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}

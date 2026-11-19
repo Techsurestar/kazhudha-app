@@ -6,6 +6,7 @@ import { HumanHandComponent, HandCard } from './components/human-hand/human-hand
 import { CenterTrickPileComponent, TrickCard } from './components/center-trick-pile/center-trick-pile.component';
 import { ActionBarComponent } from './components/action-bar/action-bar.component';
 import { CardFlightLayerComponent, FlightItem } from './components/card-flight-layer/card-flight-layer.component';
+import { GameResultComponent, GameResultPlayer } from './components/game-result/game-result.component';
 
 export interface PlayerSeatState {
   id: string;
@@ -31,7 +32,8 @@ export interface PlayedCardItem {
     HumanHandComponent,
     CenterTrickPileComponent,
     ActionBarComponent,
-    CardFlightLayerComponent
+    CardFlightLayerComponent,
+    GameResultComponent
   ],
   templateUrl: './card-table.component.html',
   styleUrls: ['./card-table.component.css']
@@ -101,11 +103,28 @@ export class CardTableComponent implements AfterViewInit {
   /** Order of players who have successfully escaped (shed all cards) */
   readonly escapedOrder = signal<string[]>([]);
 
-  /** Whether the game over / round over modal is open */
-  readonly showGameOverModal = signal<boolean>(false);
+  /** Whether the game result modal is visible */
+  readonly showGameResultModal = signal<boolean>(false);
 
   /** Raw reactive game state signal from backend service */
   readonly gameState = computed(() => this.gameStateService.gameState());
+
+  /** Hand history list for results scoreboard */
+  readonly hands = computed(() => this.gameState()?.hands || []);
+
+  /** Whether the tournament has completed */
+  readonly tournamentOver = computed(() => this.gameState()?.tournamentOver || false);
+
+  /** Kazhudha player ID for the round if applicable */
+  readonly kazhudhaPlayerId = computed(() => this.gameState()?.kazhudhaPlayerId || null);
+
+  /** Players list for scoreboard */
+  readonly playersList = computed<GameResultPlayer[]>(() => [
+    { id: 'human', name: 'You' },
+    { id: 'bot1', name: this.getPlayerName('bot1') },
+    { id: 'bot2', name: this.getPlayerName('bot2') },
+    { id: 'bot3', name: this.getPlayerName('bot3') }
+  ]);
 
   /** Leading suit for the active trick */
   readonly activeRoundSuit = computed(() => this.gameState()?.activeRoundSuit || null);
@@ -298,10 +317,6 @@ export class CardTableComponent implements AfterViewInit {
     }, durationMs);
   }
 
-  onNewGameClick(): void {
-    this.startNewGameDeal(true);
-  }
-
   onSkipGame(): void {
     if (this.isDealing() || this.isDestroyed) return;
 
@@ -340,9 +355,16 @@ export class CardTableComponent implements AfterViewInit {
       }
 
       if (finalState.gameOver) {
-        this.showGameOverModal.set(true);
+        this.showGameResultModal.set(true);
       }
     }
+  }
+
+  onRestartGame(): void {
+    this.showGameResultModal.set(false);
+    const isTournamentComplete = this.tournamentOver();
+    // Continue match for next hand if tournament is still ongoing; start fresh tournament only when complete
+    this.startNewGameDeal(isTournamentComplete);
   }
 
   getCardRankValue(rank: string): number {
@@ -492,7 +514,7 @@ export class CardTableComponent implements AfterViewInit {
     this.toastMessage.set(null);
     this.toastBadgeText.set('');
     this.vettuAlertMessage.set(null);
-    this.showGameOverModal.set(false);
+    this.showGameResultModal.set(false);
     this.visualCardCounts.set({ bot1: 0, bot2: 0, bot3: 0, human: 0 });
     this.currentTurnPlayerId.set(null);
 
@@ -750,10 +772,11 @@ export class CardTableComponent implements AfterViewInit {
         this.escapedOrder.update(order => [...order, 'human']);
       }
 
-      // Show Game Over modal if round or tournament is complete
+      // Show Game Result modal if round or tournament is complete
       if (finalState.gameOver) {
-        this.showGameOverModal.set(true);
+        this.showGameResultModal.set(true);
       }
+
       return;
     }
 
