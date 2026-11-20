@@ -19,7 +19,12 @@ import {
   isGameOver,
   shuffleBotSeats,
 } from '@kazhudha/shared';
-import { GameSession, GameSessionManager } from '../services/session-manager.js';
+import {
+  GameSession,
+  GameSessionManager,
+  type UserSessionMetadata,
+} from '../services/session-manager.js';
+import { MatchPersistenceService } from '../services/match-persistence.service.js';
 
 function cardToString(card: Card): string {
   return `${card.rank} of ${card.suit}`;
@@ -30,20 +35,26 @@ export class GameController {
   private readonly gameRuleEngine: GameRuleEngine;
   private readonly botService: BotService;
   private readonly sessionManager: GameSessionManager;
+  private readonly persistenceService: MatchPersistenceService;
 
   constructor(
     dealerService?: DealerService,
     gameRuleEngine?: GameRuleEngine,
     botService?: BotService,
-    sessionManager?: GameSessionManager
+    sessionManager?: GameSessionManager,
+    persistenceService?: MatchPersistenceService
   ) {
     this.dealerService = dealerService ?? new DealerService();
     this.gameRuleEngine = gameRuleEngine ?? new GameRuleEngine();
     this.botService = botService ?? new BotService();
     this.sessionManager = sessionManager ?? new GameSessionManager();
+    this.persistenceService = persistenceService ?? new MatchPersistenceService();
   }
 
-  public startGame(sessionId = 'default'): GameViewDTO {
+  public async startGame(
+    sessionId = 'default',
+    userMetadata?: UserSessionMetadata
+  ): Promise<GameViewDTO> {
     let session: GameSession | null = null;
     let hasExisting = false;
 
@@ -66,7 +77,8 @@ export class GameController {
     }
 
     const botSeats = shuffleBotSeats();
-    const p1 = new Player('human', 'Player 1 (You)', false);
+    const humanName = userMetadata?.displayName || 'Player 1 (You)';
+    const p1 = new Player('human', humanName, false);
     const p2 = new Player('bot1', botSeats[0], true);
     const p3 = new Player('bot2', botSeats[1], true);
     const p4 = new Player('bot3', botSeats[2], true);
@@ -79,13 +91,21 @@ export class GameController {
     state.setCurrentTurnPlayerId(startingPlayerId);
 
     session = this.sessionManager.createSession(sessionId, state, players);
+    session.startingPlayerId = startingPlayerId;
+    session.userMetadata = userMetadata;
+
+    // Persist tournament initialization in database
+    await this.persistenceService.initMatch(session, userMetadata);
 
     const executionEvents: GameEvent[] = [];
     this.runBotTurnsIfApplicable(session, executionEvents);
     return this.mapToView(session, executionEvents);
   }
 
-  public playCard(sessionId: string, request: PlayRequest): GameViewDTO {
+  public async playCard(
+    sessionId: string,
+    request: PlayRequest
+  ): Promise<GameViewDTO> {
     let session: GameSession;
     try {
       session = this.sessionManager.getSession(sessionId);
@@ -97,7 +117,6 @@ export class GameController {
     }
 
     const state = session.getGameState();
-    const discardedHistory = session.getDiscardedHistory();
 
     if (isGameOver(state)) {
       throw new InvalidMoveException('The game is already over.');
@@ -116,8 +135,7 @@ export class GameController {
 
     try {
       this.executePlayStep(
-        state,
-        discardedHistory,
+        session,
         request.playerId,
         card,
         executionEvents
@@ -126,6 +144,13 @@ export class GameController {
 
       if (isGameOver(state)) {
         session.recordCurrentHand();
+        // Persist hand scores
+        await this.persistenceService.recordHandResult(session);
+
+        // If tournament reached threshold, finalize match & profile stats
+        if (session.isTournamentOver()) {
+          await this.persistenceService.completeMatch(session);
+        }
       } else {
         this.sessionManager.updateSession(sessionId, session);
       }
@@ -137,12 +162,13 @@ export class GameController {
   }
 
   private executePlayStep(
-    state: GameState,
-    discardedHistory: Card[],
+    session: GameSession,
     playerId: string,
     card: Card,
     events: GameEvent[]
   ): void {
+    const state = session.getGameState();
+    const discardedHistory = session.getDiscardedHistory();
     const wasEmptyBefore = state.getTablePile().length === 0;
     const activeSuit = state.getActiveRoundSuit();
     let isVettu = false;
@@ -192,6 +218,9 @@ export class GameController {
         card,
         description: desc,
       });
+
+      // Record vettu in session stats
+      session.recordVettu(playerId, highestPlayedBeforeVettu.playerId);
     } else {
       events.push({
         eventType: 'PLAY',
@@ -242,7 +271,6 @@ export class GameController {
     events: GameEvent[]
   ): void {
     const state = session.getGameState();
-    const discardedHistory = session.getDiscardedHistory();
 
     while (!isGameOver(state)) {
       const currentTurnId = state.getCurrentTurnPlayerId();
@@ -255,11 +283,10 @@ export class GameController {
         state,
         currentPlayer,
         state.getPlayers(),
-        discardedHistory
+        session.getDiscardedHistory()
       );
       this.executePlayStep(
-        state,
-        discardedHistory,
+        session,
         currentTurnId,
         botCard,
         events

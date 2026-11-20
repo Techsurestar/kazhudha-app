@@ -4,9 +4,9 @@ import { Player, GameState } from '@kazhudha/shared';
 import { GameSessionManager } from '../services/session-manager.js';
 
 describe('GameController', () => {
-  it('should start a game and return GameViewDTO', () => {
+  it('should start a game and return GameViewDTO', async () => {
     const controller = new GameController();
-    const view = controller.startGame('test-session-1');
+    const view = await controller.startGame('test-session-1');
 
     expect(view).toBeDefined();
     expect(view.humanHand.length).toBeGreaterThan(0);
@@ -15,9 +15,9 @@ describe('GameController', () => {
     expect(view.gameOver).toBe(false);
   });
 
-  it('should execute human play step following active suit rules', () => {
+  it('should execute human play step following active suit rules', async () => {
     const controller = new GameController();
-    const view = controller.startGame('test-session-2');
+    const view = await controller.startGame('test-session-2');
 
     if (view.currentTurnPlayerId === 'human' && !view.gameOver) {
       const activeSuit = view.activeRoundSuit;
@@ -27,7 +27,7 @@ describe('GameController', () => {
         view.humanHand[0];
 
       const initialHandSize = view.humanHand.length;
-      const nextView = controller.playCard('test-session-2', {
+      const nextView = await controller.playCard('test-session-2', {
         playerId: 'human',
         card: validCard,
       });
@@ -37,7 +37,7 @@ describe('GameController', () => {
     }
   });
 
-  it('should not end trick prematurely when a middle bot sheds its last card, yielding turn to human', () => {
+  it('should not end trick prematurely when a middle bot sheds its last card, yielding turn to human', async () => {
     const sessionManager = new GameSessionManager();
     const controller = new GameController(undefined, undefined, undefined, sessionManager);
 
@@ -79,7 +79,7 @@ describe('GameController', () => {
     expect(bot2.hasGottenAway()).toBe(true);
 
     // Human plays their 2 of Spades
-    const nextView = controller.playCard('mid-trick-shed-test', {
+    const nextView = await controller.playCard('mid-trick-shed-test', {
       playerId: 'human',
       card: { suit: 'SPADES', rank: 'TWO' },
     });
@@ -91,7 +91,7 @@ describe('GameController', () => {
     expect(nextView.tablePile.length).toBe(2); // Bot1 lead + Bot3 follow in next trick
   });
 
-  it('should ensure 4th player plays when human in 3rd seat sheds their last card', () => {
+  it('should ensure 4th player plays when human in 3rd seat sheds their last card', async () => {
     const sessionManager = new GameSessionManager();
     const controller = new GameController(undefined, undefined, undefined, sessionManager);
 
@@ -130,7 +130,7 @@ describe('GameController', () => {
     expect(view.tablePile.length).toBe(2);
 
     // 2. Human plays 4 of Spades (their LAST card!)
-    const nextView = controller.playCard('human-3rd-shed-test', {
+    const nextView = await controller.playCard('human-3rd-shed-test', {
       playerId: 'human',
       card: { suit: 'SPADES', rank: 'FOUR' },
     });

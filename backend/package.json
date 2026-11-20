@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@kazhudha/shared": "*",
+    "@supabase/supabase-js": "^2.119.2",
     "cors": "^2.8.5",
     "express": "^4.21.2"
   },

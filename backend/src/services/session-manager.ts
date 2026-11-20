@@ -8,6 +8,12 @@ import {
   TOURNAMENT_THRESHOLD,
 } from '@kazhudha/shared';
 
+export interface UserSessionMetadata {
+  userId?: string;
+  displayName?: string;
+  avatarUrl?: string;
+}
+
 export class GameSession {
   public readonly gameId: string;
   public readonly gameState: GameState;
@@ -15,6 +21,16 @@ export class GameSession {
   public readonly discardedHistory: Card[];
   public readonly hands: HandResult[];
   private lastAccessedTime: number;
+
+  // Persistence metadata
+  public matchId: string | null = null;
+  public participantMap: Map<string, string> = new Map();
+  public userMetadata?: UserSessionMetadata;
+  public startingPlayerId: string | null = null;
+  public handStartTime: number = Date.now();
+  public currentHandVettuCount = 0;
+  public currentHandVettusPerformed: Record<string, number> = {};
+  public currentHandVettusReceived: Record<string, number> = {};
 
   constructor(gameId: string, gameState: GameState, players: readonly Player[]) {
     if (!gameId) throw new Error('Game ID cannot be null');
@@ -27,6 +43,7 @@ export class GameSession {
     this.discardedHistory = [];
     this.hands = [];
     this.lastAccessedTime = Date.now();
+    this.handStartTime = Date.now();
   }
 
   public getGameId(): string {
@@ -55,6 +72,21 @@ export class GameSession {
 
   public touch(): void {
     this.lastAccessedTime = Date.now();
+  }
+
+  public recordVettu(performedBy: string, receivedBy: string): void {
+    this.currentHandVettuCount++;
+    this.currentHandVettusPerformed[performedBy] =
+      (this.currentHandVettusPerformed[performedBy] || 0) + 1;
+    this.currentHandVettusReceived[receivedBy] =
+      (this.currentHandVettusReceived[receivedBy] || 0) + 1;
+  }
+
+  public resetHandStats(): void {
+    this.currentHandVettuCount = 0;
+    this.currentHandVettusPerformed = {};
+    this.currentHandVettusReceived = {};
+    this.handStartTime = Date.now();
   }
 
   public recordCurrentHand(): void {
@@ -105,6 +137,7 @@ export class GameSession {
     }
     dealerService.shuffleAndDeal(this.players);
     const startingPlayerId = dealerService.determineStartingPlayer(this.players);
+    this.startingPlayerId = startingPlayerId;
 
     this.gameState.clearTablePile();
     this.gameState.setActiveRoundSuit(null);
@@ -114,6 +147,7 @@ export class GameSession {
       voidSet.clear();
     }
     this.discardedHistory.length = 0;
+    this.resetHandStats();
     this.lastAccessedTime = Date.now();
   }
 }

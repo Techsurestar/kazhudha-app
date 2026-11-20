@@ -94,7 +94,11 @@
       <!-- Header Ribbon Pill -->
       <div class="absolute -top-1 left-1/2 -translate-x-1/2 z-10 flex items-center">
         <div class="w-44 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow-md border border-yellow-200">
-          Rewards accumulated
+          @if (tournamentOver()) {
+            Rewards earned
+          } @else {
+            Rewards accumulated
+          }
         </div>
       </div>
 
