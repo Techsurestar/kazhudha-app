@@ -45,7 +45,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     if (tab === 'rules') {
       this.router.navigate(['/how-to-play']);
     } else if (tab === 'leaderboard') {
-      this.showLeaderboardModal.set(true);
+      this.router.navigate(['/leaderboard']);
     } else if (tab === 'profile') {
       if (this.authService.isAuthenticated()) {
         this.router.navigate(['/profile']);

@@ -1,0 +1,211 @@
+Is this data structure for table design good for large number of users [for future]?
+
+The short answer: The table structure itself is solid for transactional game storage (OLTP), but querying and aggregating raw rows on the fly in application memory will become a major bottleneck as user volume grows.
+
+Here is an architectural breakdown of what works well, where the system will hit bottlenecks, and how to scale it for high user volumes in the future.
+
+1. What Is Strong in the Current Table Design (Keep This)
+
+The 5-table relational design (006_create_game_results_tables.sql) has good database engineering foundations:
+
+
+  
+Separation of Concerns:
+  
+  
+
+  
+matches tracks high-level match lifecycle.
+
+  
+match_participants tracks player totals and outcomes.
+
+  
+match_hands and match_hand_scores track granular hand-by-hand moves and trick history.
+
+  
+
+  
+Pre-Aggregated Match Totals:
+  
+  
+
+  
+match_participants.final_score stores the participant’s total match score directly. This avoids joining and summing thousands of individual hand scores from match_hand_scores for the leaderboard.
+
+  
+
+  
+Strict Constraints & Integrity:
+  
+  
+
+  
+Foreign key cascades (ON DELETE CASCADE) ensure data cleanup is clean and prevents orphaned records.
+
+  
+Check constraints enforce valid values (player_type IN ('HUMAN', 'BOT', 'GUEST'), score_awarded IN (20, 15, 10, 0)).
+
+  
+
+  
+2. The Bottlenecks You Will Face at Scale
+
+The issue is not the tables; it is how the leaderboard queries them:
+
+[Browser / Node.js] <-- Transmitting thousands of raw rows <-- [PostgreSQL match_participants]
+                    (Memory aggregation, in-memory sorting)
+Bottleneck A: In-Memory Aggregation Over the Wire
+
+  
+Current Approach: The backend (or frontend in Tier 2) queries match_participants, brings hundreds/thousands of JSON rows over the network, and calculates totals using a JavaScript loop (periodScoresByUserId[id] += score).
+
+  
+At Scale (100,000+ players playing 10 matches/week):
+  
+  
+
+  
+That is 1,000,000 participant rows per week.
+
+  
+Pulling 1 million rows into Node.js or browser memory will cause out-of-memory crashes, multi-megabyte network payloads, and 10+ second query timeouts.
+
+  
+
+  
+Bottleneck B: Missing Composite Indexes for Period Lookups
+
+  
+The current index on match_participants is on (user_id) and (match_id).
+
+  
+When querying by time period (created_at >= startDate AND player_type != 'BOT'), Postgres is forced to do a sequential table scan or index filter on high-volume tables.
+
+  
+Bottleneck C: Finding "Your Rank" at Scale
+
+  
+If there are 500,000 players, finding the logged-in user’s exact rank (e.g. Rank #42,810) requires sorting and counting all 500,000 players.
+
+  
+3. The Future-Proof Architecture Roadmap
+
+When your user base grows, here is how you can scale this exact table design:
+
+Stage 1: Scale to ~100k Users (PostgreSQL Push-Down & Stored Functions)
+
+Instead of pulling raw rows into Node.js/Browser, push the aggregation, ranking, and pagination directly inside PostgreSQL using a Database Function (RPC) and composite indexes:
+
+
+  
+
+  
+
+Add a Composite Index:
+
+
+  
+sql
+CREATE INDEX idx_participants_leaderboard 
+ON public.match_participants (player_type, created_at, user_id) 
+INCLUDE (final_score);
+
+  
+
+  
+
+  
+
+Database-level SQL Aggregation:
+Let Postgres compute the rankings and return only the 10 rows for that specific page:
+
+
+  
+sql
+CREATE OR REPLACE FUNCTION get_leaderboard_page(
+    p_period_start TIMESTAMPTZ,
+    p_page INT,
+    p_page_size INT
+)
+RETURNS TABLE (
+    rank BIGINT,
+    user_id UUID,
+    username VARCHAR,
+    avatar_url TEXT,
+    total_score BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        DENSE_RANK() OVER (ORDER BY SUM(mp.final_score) DESC) AS rank,
+        p.id AS user_id,
+        p.username,
+        p.avatar_url,
+        SUM(mp.final_score) AS total_score
+    FROM public.match_participants mp
+    JOIN public.profiles p ON mp.user_id = p.id
+    WHERE mp.player_type = 'HUMAN'
+      AND (p_period_start IS NULL OR mp.created_at >= p_period_start)
+    GROUP BY p.id, p.username, p.avatar_url
+    ORDER BY total_score DESC
+    LIMIT p_page_size OFFSET (p_page - 1) * p_page_size;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+  
+
+  
+Stage 2: Scale to 500k – 1 Million Users (Rollup / Materialized Summary Tables)
+
+When matches reach millions, even GROUP BY across a full month becomes expensive.
+
+Create a dedicated summary table: user_leaderboard_stats:
+
+sql
+CREATE TABLE public.user_leaderboard_stats (
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    period_type VARCHAR(10) NOT NULL, -- 'ALL_TIME', 'MONTHLY', 'WEEKLY'
+    period_key VARCHAR(10) NOT NULL,  -- e.g. '2026-W47', '2026-11', 'ALL'
+    total_score BIGINT NOT NULL DEFAULT 0,
+    matches_played INT NOT NULL DEFAULT 0,
+    last_updated_at TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (user_id, period_type, period_key)
+);
+CREATE INDEX idx_leaderboard_ranking 
+ON public.user_leaderboard_stats (period_type, period_key, total_score DESC);
+
+  
+When a match completes: Increment total_score in user_leaderboard_stats via a database trigger or async background worker.
+
+  
+When loading the leaderboard: The query simply reads SELECT * FROM user_leaderboard_stats WHERE period_key = '2026-W47' ORDER BY total_score DESC LIMIT 10. It runs in 1–2 milliseconds regardless of whether there are 10,000 or 10,000,000 matches.
+
+  
+Stage 3: Scale to Millions of Real-Time Users (Redis Sorted Sets ZSET)
+
+For high-concurrency mobile gaming (like Clash Royale or PUBG):
+
+
+  
+Use Redis Sorted Sets:
+  
+  
+
+  
+Store scores: ZINCRBY leaderboard:2026-W47 <score> <userId>
+
+  
+Fetch Top 10: ZREVRANGE leaderboard:2026-W47 0 9 WITHSCORES (O(log N + M) – instant sub-millisecond retrieval)
+
+  
+Instant User Rank: ZREVRANK leaderboard:2026-W47 <userId> (Tells Rank #42,810 in 1 ms without sorting)
+
+  
+
+  
+Summary Recommendation
+Phase	Volume	Strategy	Action Required Now?
+Current / Beta	1 – 1,000 users	Current schema with clean separation of matches, hands, and participants	Good as-is. Current schema is clean and normalized.
+Growth	1,000 – 100,000 users	Add composite indexes + SQL RPC for pagination inside Postgres	Recommended before public production launch.
+High Scale	100,000+ users	Dedicated user_leaderboard_stats table or Redis ZSET	Implement when weekly match volume exceeds 50k matches.

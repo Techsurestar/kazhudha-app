@@ -6,6 +6,10 @@
 *.ntvs*
 *.njsproj
 *.sln
+.env
+*.env
+creds.txt
+client_secret*.json
 
 # --- Frontend (Angular) Specific ---
 **/node_modules/

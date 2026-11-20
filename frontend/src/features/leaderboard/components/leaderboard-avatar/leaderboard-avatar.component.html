@@ -1,0 +1,89 @@
+<div class="relative inline-flex items-center justify-center select-none">
+  <!-- Encircling Golden Laurel Wreath for Champion (Rank 1) -->
+  @if (hasLaurel() || rank() === 1) {
+    <div class="absolute -inset-3.5 z-0 pointer-events-none flex items-center justify-center">
+      <svg class="w-full h-full text-amber-400 drop-shadow-[0_0_8px_rgba(245,197,24,0.65)]" viewBox="0 0 100 100" fill="currentColor">
+        <!-- Left Laurel Branch -->
+        <g transform="translate(14, 10)">
+          <path d="M 12 70 C 5 50 8 28 24 12 C 22 17 21 23 23 28 C 17 28 13 33 13 38 C 10 43 11 48 14 52 C 11 58 13 63 17 67 Z" opacity="0.95" fill="url(#laurel-gold-grad)" />
+          <path d="M 8 50 C 4 38 12 25 22 18 C 19 23 18 29 20 34 C 15 37 12 43 14 49 Z" opacity="0.8" fill="url(#laurel-gold-grad)" />
+          <path d="M 18 30 C 14 20 22 10 30 6 C 28 11 27 17 30 22 Z" opacity="0.9" fill="url(#laurel-gold-grad)" />
+        </g>
+        <!-- Right Laurel Branch (Mirrored) -->
+        <g transform="translate(86, 10) scale(-1, 1)">
+          <path d="M 12 70 C 5 50 8 28 24 12 C 22 17 21 23 23 28 C 17 28 13 33 13 38 C 10 43 11 48 14 52 C 11 58 13 63 17 67 Z" opacity="0.95" fill="url(#laurel-gold-grad)" />
+          <path d="M 8 50 C 4 38 12 25 22 18 C 19 23 18 29 20 34 C 15 37 12 43 14 49 Z" opacity="0.8" fill="url(#laurel-gold-grad)" />
+          <path d="M 18 30 C 14 20 22 10 30 6 C 28 11 27 17 30 22 Z" opacity="0.9" fill="url(#laurel-gold-grad)" />
+        </g>
+        <defs>
+          <linearGradient id="laurel-gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fff0a8" />
+            <stop offset="50%" stop-color="#f5c518" />
+            <stop offset="100%" stop-color="#b4830c" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  }
+
+  <!-- Perched Golden Crown for Champion (Rank 1 or hasCrown) -->
+  @if (hasCrown() || rank() === 1) {
+    <div class="absolute -top-3 sm:-top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] animate-pulse-gentle">
+      <svg class="w-7 h-7 sm:w-8 sm:h-8 text-amber-300 drop-shadow-[0_0_8px_rgba(245,197,24,0.9)]" viewBox="0 0 24 24" fill="url(#crown-metal-grad)">
+        <path d="M2 4l3 12h14l3-12-5 4-5-6-5 6-5-4z M4.5 18h15a1 1 0 011 1v1a1 1 0 01-1 1h-15a1 1 0 01-1-1v-1a1 1 0 011-1z" />
+        <defs>
+          <linearGradient id="crown-metal-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff" />
+            <stop offset="30%" stop-color="#fde047" />
+            <stop offset="70%" stop-color="#eab308" />
+            <stop offset="100%" stop-color="#a16207" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  }
+
+  <!-- Main Circular Donkey Avatar Image Container -->
+  <div class="relative rounded-full overflow-hidden flex items-center justify-center bg-slate-900 z-10"
+       [ngClass]="resolvedBorderClass()"
+       [style.width.px]="size()"
+       [style.height.px]="size()">
+    <img [src]="avatarUrl()"
+         alt="Donkey Avatar"
+         class="w-full h-full object-cover object-top select-none"
+         loading="lazy" />
+
+    <!-- Stylized Accessory Overlays based on accessoryType -->
+    @switch (accessory()) {
+      @case ('blue-cap') {
+        <div class="absolute -top-1 right-0 text-[11px] sm:text-[13px] drop-shadow-md pointer-events-none">🧢</div>
+      }
+      @case ('purple-fedora') {
+        <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 text-[12px] sm:text-[14px] drop-shadow-md pointer-events-none">🎩</div>
+      }
+      @case ('green-cap') {
+        <div class="absolute -top-1 right-0 text-[10px] sm:text-[12px] drop-shadow-md pointer-events-none">🧢</div>
+      }
+      @case ('headphones') {
+        <div class="absolute top-0 inset-x-0 flex justify-center text-[11px] sm:text-[13px] drop-shadow-md pointer-events-none">🎧</div>
+      }
+      @case ('red-cap') {
+        <div class="absolute -top-1 right-0 text-[10px] sm:text-[12px] drop-shadow-md pointer-events-none">🧢</div>
+      }
+      @case ('purple-hood') {
+        <div class="absolute inset-0 border-2 border-purple-500/50 rounded-full pointer-events-none"></div>
+      }
+      @case ('straw-hat') {
+        <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-[12px] sm:text-[14px] drop-shadow-md pointer-events-none">👒</div>
+      }
+    }
+  </div>
+
+  <!-- Number Badge (#1, #2, #3, etc.) Overlapping Bottom Edge of Avatar -->
+  @if (showRankBadge() && rank()) {
+    <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 z-20 rounded-full w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center font-black text-[10px] sm:text-xs shadow-md select-none"
+         [ngClass]="resolvedBadgeBg()">
+      {{ rank() }}
+    </div>
+  }
+</div>

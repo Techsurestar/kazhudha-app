@@ -1,0 +1,117 @@
+:host {
+  display: block;
+  background-color: #052613;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.felt-texture {
+  background-color: #062613;
+  background-image: 
+      radial-gradient(circle at 50% 15%, rgba(16, 75, 40, 0.45) 0%, rgba(3, 20, 10, 0.98) 100%),
+      url("https://www.transparenttextures.com/patterns/felt.png");
+  background-attachment: fixed;
+}
+
+/* Watermark Playing Cards */
+.watermark-card {
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.9));
+}
+
+/* Gold Metallic Text */
+.gold-metallic-text {
+  background: linear-gradient(180deg, #fff7d6 0%, #f5d475 35%, #cf9c2e 70%, #996e14 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7));
+}
+
+/* Time Filter Pill Capsule */
+.pill-filter-container {
+  backdrop-filter: blur(8px);
+}
+
+.period-tab-btn {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* 3D Metallic Podium Steps */
+.podium-step-1 {
+  height: 58px;
+  background: linear-gradient(180deg, #d4a329 0%, #aa771c 45%, #573706 100%);
+  border-top: 2px solid #fef08a;
+  box-shadow: 
+    0 12px 28px rgba(0, 0, 0, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.podium-step-2 {
+  height: 46px;
+  background: linear-gradient(180deg, #64748b 0%, #334155 45%, #1e293b 100%);
+  border-top: 2px solid #e2e8f0;
+  box-shadow: 
+    0 10px 22px rgba(0, 0, 0, 0.75),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.podium-step-3 {
+  height: 38px;
+  background: linear-gradient(180deg, #b45309 0%, #78350f 45%, #451a03 100%);
+  border-top: 2px solid #f59e0b;
+  box-shadow: 
+    0 8px 18px rgba(0, 0, 0, 0.75),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+
+/* Rankings Table Surface */
+.rankings-table-card {
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Current User Row Highlight Glow */
+.current-user-card {
+  box-shadow: 
+    0 0 16px rgba(234, 179, 8, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.7),
+    inset 0 1px 2px rgba(254, 240, 138, 0.3);
+}
+
+/* Bottom Navigation Bar */
+.bottom-nav-bar {
+  background: linear-gradient(180deg, rgba(8, 20, 12, 0.96) 0%, rgba(3, 10, 6, 0.99) 100%);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(233, 195, 73, 0.18);
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
+}
+
+/* Modal Surface */
+.modal-overlay {
+  background: rgba(2, 12, 6, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.modal-card {
+  background: radial-gradient(circle at 50% 10%, rgba(14, 52, 28, 0.98) 0%, rgba(3, 18, 10, 0.99) 100%);
+  border: 1px solid rgba(229, 193, 88, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(233, 195, 73, 0.25);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(233, 195, 73, 0.45);
+}

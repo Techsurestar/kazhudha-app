@@ -1,0 +1,491 @@
+<div class="felt-texture min-h-[100dvh] max-h-[100dvh] text-slate-100 flex flex-col justify-between overflow-hidden relative selection:bg-[#e9c349]/30">
+
+  <!-- Background Watermark Playing Cards -->
+  <!-- Top Left - Ace of Spades -->
+  <div class="watermark-card absolute -top-4 -left-6 w-24 h-36 bg-slate-100 rounded-lg -rotate-25 shadow-2xl flex flex-col justify-between p-2 select-none pointer-events-none opacity-20 z-0">
+    <div class="text-slate-900 font-bold text-base leading-none">
+      A<br/><span class="text-lg">♠</span>
+    </div>
+    <div class="text-center text-2xl text-slate-900">♠</div>
+    <div class="text-slate-900 font-bold text-base leading-none self-end rotate-180">
+      A<br/><span class="text-lg">♠</span>
+    </div>
+  </div>
+
+  <!-- Top Right - Ace of Hearts -->
+  <div class="watermark-card absolute -top-4 -right-6 w-24 h-36 bg-slate-100 rounded-lg rotate-25 shadow-2xl flex flex-col justify-between p-2 select-none pointer-events-none opacity-20 z-0">
+    <div class="text-rose-600 font-bold text-base leading-none">
+      A<br/><span class="text-lg">♥</span>
+    </div>
+    <div class="text-center text-2xl text-rose-600">♥</div>
+    <div class="text-rose-600 font-bold text-base leading-none self-end rotate-180">
+      A<br/><span class="text-lg">♥</span>
+    </div>
+  </div>
+
+  <!-- Subtle Suit Watermarks Floating in Background -->
+  <div class="absolute top-20 left-10 text-3xl text-emerald-400/10 select-none pointer-events-none">♣</div>
+  <div class="absolute top-36 right-16 text-3xl text-emerald-400/10 select-none pointer-events-none">♦</div>
+  <div class="absolute top-44 left-1/4 text-2xl text-emerald-400/10 select-none pointer-events-none">♠</div>
+
+  <!-- Outer Centering Container (Mobile App Frame on Desktop, Full Viewport on Mobile) -->
+  <div class="w-full max-w-md mx-auto h-full flex flex-col justify-between relative z-10 overflow-hidden">
+
+    <!-- Scrollable Content Viewport -->
+    <div class="flex-1 flex flex-col overflow-y-auto px-3.5 pt-2 pb-1 custom-scrollbar">
+
+      <!-- 1. Top Header Bar -->
+      <header class="flex items-center justify-between py-1.5 flex-shrink-0 relative">
+        <!-- Left: Back Button -->
+        <button type="button"
+                (click)="goBack()"
+                class="p-1 -ml-1 text-white hover:text-[#f5d475] transition-colors cursor-pointer focus:outline-none z-10"
+                aria-label="Back to home">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+
+        <!-- Center: Trophy, Laurels & Title Group -->
+        <div class="flex flex-col items-center justify-center text-center flex-1 -mt-0.5">
+          <div class="flex items-center justify-center space-x-2">
+            <!-- Left Laurel Branch -->
+            <svg class="w-5 h-5 text-amber-400 drop-shadow-[0_0_6px_rgba(245,197,24,0.6)]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.5 2 2 6.5 2 12c0 2.2.7 4.2 2 5.8l1.4-1.4C4.5 15 4 13.6 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8c0 1.6-.5 3-1.4 4.4l1.4 1.4c1.3-1.6 2-3.6 2-5.8 0-5.5-4.5-10-10-10z" opacity="0.3" />
+              <path d="M7.5 15.5c-1-1.2-1.5-2.7-1.5-4.3 0-3.2 2.6-5.8 5.8-5.8.4 0 .7 0 1.1.1l-1.6 1.6c-.9.9-1.4 2.2-1.4 3.5 0 .8.2 1.6.6 2.3l-3 2.6z" />
+              <path d="M4 11c0-1.5.5-2.9 1.4-4.1l2.1 2.1c-.3.6-.5 1.3-.5 2 0 1.1.4 2.1 1.2 2.9l-2.2 2.2C4.8 14.7 4 12.9 4 11z" />
+            </svg>
+
+            <!-- 3D Golden Trophy Asset -->
+            <div class="relative w-7 h-7 flex items-center justify-center">
+              <img src="/assets/trophy.webp"
+                   alt="Trophy"
+                   class="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(245,197,24,0.8)] select-none"
+                   (error)="$any($event.target).style.display='none'" />
+              <span class="text-xl select-none absolute" style="display: none;" [style.display]="'none'">🏆</span>
+            </div>
+
+            <!-- Right Laurel Branch (Mirrored) -->
+            <svg class="w-5 h-5 text-amber-400 drop-shadow-[0_0_6px_rgba(245,197,24,0.6)] scale-x-[-1]" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.5 2 2 6.5 2 12c0 2.2.7 4.2 2 5.8l1.4-1.4C4.5 15 4 13.6 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8c0 1.6-.5 3-1.4 4.4l1.4 1.4c1.3-1.6 2-3.6 2-5.8 0-5.5-4.5-10-10-10z" opacity="0.3" />
+              <path d="M7.5 15.5c-1-1.2-1.5-2.7-1.5-4.3 0-3.2 2.6-5.8 5.8-5.8.4 0 .7 0 1.1.1l-1.6 1.6c-.9.9-1.4 2.2-1.4 3.5 0 .8.2 1.6.6 2.3l-3 2.6z" />
+              <path d="M4 11c0-1.5.5-2.9 1.4-4.1l2.1 2.1c-.3.6-.5 1.3-.5 2 0 1.1.4 2.1 1.2 2.9l-2.2 2.2C4.8 14.7 4 12.9 4 11z" />
+            </svg>
+          </div>
+
+          <!-- Main Heading -->
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight gold-metallic-text leading-tight mt-0.5">
+            Leaderboard
+          </h1>
+
+          <!-- Subtitle -->
+          <p class="text-[11px] sm:text-xs text-emerald-300/80 font-medium tracking-wide leading-tight">
+            Top Kazhudha players
+          </p>
+        </div>
+
+        <!-- Right: Info Button -->
+        <button type="button"
+                (click)="openInfoModal()"
+                class="p-1 -mr-1 text-slate-300 hover:text-[#f5d475] transition-colors cursor-pointer focus:outline-none z-10"
+                aria-label="Leaderboard Information">
+          <info-icon [size]="22" />
+        </button>
+      </header>
+
+      <!-- 2. Time Filter Period Pills -->
+      <section class="mt-2.5 flex-shrink-0" aria-label="Time period selection">
+        <div class="pill-filter-container w-full max-w-[340px] mx-auto p-1 rounded-full bg-black/45 border border-emerald-500/25 grid grid-cols-3 gap-1 shadow-inner">
+          <!-- All Time -->
+          <button type="button"
+                  (click)="setPeriod('all-time')"
+                  class="period-tab-btn py-1.5 px-3 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer focus:outline-none"
+                  [ngClass]="selectedPeriod() === 'all-time' ? 'bg-[#f5c518] text-slate-950 shadow-md font-black' : 'text-slate-300 hover:text-white'">
+            All Time
+          </button>
+
+          <!-- This Week -->
+          <button type="button"
+                  (click)="setPeriod('this-week')"
+                  class="period-tab-btn py-1.5 px-3 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer focus:outline-none"
+                  [ngClass]="selectedPeriod() === 'this-week' ? 'bg-[#f5c518] text-slate-950 shadow-md font-black' : 'text-slate-300 hover:text-white'">
+            This Week
+          </button>
+
+          <!-- This Month -->
+          <button type="button"
+                  (click)="setPeriod('this-month')"
+                  class="period-tab-btn py-1.5 px-3 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer focus:outline-none"
+                  [ngClass]="selectedPeriod() === 'this-month' ? 'bg-[#f5c518] text-slate-950 shadow-md font-black' : 'text-slate-300 hover:text-white'">
+            This Month
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. Top 3 Podium Section -->
+      <section class="mt-4 sm:mt-5 flex-shrink-0 relative" aria-label="Top 3 Podium">
+        <!-- Radial Backlight Glow behind Champion -->
+        <div class="absolute inset-x-0 top-6 bottom-0 flex justify-center pointer-events-none">
+          <div class="w-56 h-44 rounded-full bg-[radial-gradient(circle,rgba(245,197,24,0.22)_0%,transparent_70%)] blur-md"></div>
+        </div>
+
+        <!-- 3 Pedestals Row: Rank 2 (Left), Rank 1 (Center), Rank 3 (Right) -->
+        <div class="grid grid-cols-3 gap-1.5 sm:gap-2 items-end justify-center pt-2 relative z-10">
+
+          <!-- Rank 2: LuckyAce98 (Left Pedestal) -->
+          @if (rankTwoPlayer(); as p2) {
+            <div class="flex flex-col items-center text-center">
+              <!-- Avatar Circle with Rank 2 Badge -->
+              <div class="mb-1.5">
+                <app-leaderboard-avatar
+                  [avatarUrl]="p2.avatarUrl"
+                  [accessory]="p2.accessoryType"
+                  [rank]="2"
+                  [size]="54"
+                  [showRankBadge]="true" />
+              </div>
+
+              <!-- Player Username -->
+              <div class="w-full truncate text-[11px] sm:text-xs font-bold text-white tracking-tight px-1 mb-1">
+                {{ p2.username }}
+              </div>
+
+              <!-- Pedestal Step 2 -->
+              <div class="podium-step-2 w-full pt-2 pb-2.5 px-1 rounded-t-xl flex flex-col items-center justify-start shadow-xl">
+                <!-- Score Pill -->
+                <div class="score-pill px-2 py-0.5 rounded-full bg-black/50 border border-slate-300/40 flex items-center space-x-1 shadow">
+                  <crown-icon [size]="12" />
+                  <span class="text-[11px] sm:text-xs font-black text-white">
+                    {{ p2.points | number }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Rank 1: RoyalDonkey47 (Center Elevated Pedestal - Champion) -->
+          @if (rankOnePlayer(); as p1) {
+            <div class="flex flex-col items-center text-center -mt-4">
+              <!-- Crown & Laurel Avatar with Rank 1 Badge -->
+              <div class="mb-1.5 relative">
+                <app-leaderboard-avatar
+                  [avatarUrl]="p1.avatarUrl"
+                  [accessory]="p1.accessoryType"
+                  [rank]="1"
+                  [size]="68"
+                  [hasLaurel]="true"
+                  [hasCrown]="true"
+                  [showRankBadge]="true" />
+              </div>
+
+              <!-- Player Username -->
+              <div class="w-full truncate text-xs sm:text-[13px] font-black text-white tracking-tight px-1 mb-1">
+                {{ p1.username }}
+              </div>
+
+              <!-- Pedestal Step 1 (Tallest Gold Podium) -->
+              <div class="podium-step-1 w-full pt-3 pb-3.5 px-1 rounded-t-xl flex flex-col items-center justify-start shadow-2xl relative">
+                <!-- Gold Accent Rim Light -->
+                <div class="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200 rounded-t-xl"></div>
+                <!-- Score Pill -->
+                <div class="score-pill px-2.5 py-0.5 rounded-full bg-black/60 border border-amber-300/60 flex items-center space-x-1 shadow-md">
+                  <crown-icon [size]="13" />
+                  <span class="text-xs sm:text-sm font-black text-amber-100">
+                    {{ p1.points | number }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Rank 3: CardMaster21 (Right Pedestal) -->
+          @if (rankThreePlayer(); as p3) {
+            <div class="flex flex-col items-center text-center">
+              <!-- Avatar Circle with Rank 3 Badge -->
+              <div class="mb-1.5">
+                <app-leaderboard-avatar
+                  [avatarUrl]="p3.avatarUrl"
+                  [accessory]="p3.accessoryType"
+                  [rank]="3"
+                  [size]="50"
+                  [showRankBadge]="true" />
+              </div>
+
+              <!-- Player Username -->
+              <div class="w-full truncate text-[11px] sm:text-xs font-bold text-white tracking-tight px-1 mb-1">
+                {{ p3.username }}
+              </div>
+
+              <!-- Pedestal Step 3 -->
+              <div class="podium-step-3 w-full pt-2 pb-2.5 px-1 rounded-t-xl flex flex-col items-center justify-start shadow-xl">
+                <!-- Score Pill -->
+                <div class="score-pill px-2 py-0.5 rounded-full bg-black/50 border border-amber-600/40 flex items-center space-x-1 shadow">
+                  <crown-icon [size]="12" />
+                  <span class="text-[11px] sm:text-xs font-black text-white">
+                    {{ p3.points | number }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          }
+
+        </div>
+      </section>
+
+      <!-- 4. Leaderboard Ranking Table Card -->
+      <section class="mt-2.5 flex-1 flex flex-col flex-shrink-0" aria-label="Player Rankings List">
+        <div class="rankings-table-card rounded-2xl bg-[#062413]/95 border border-[#0e4e2a] p-2.5 sm:p-3 shadow-2xl backdrop-blur-md flex flex-col">
+
+          <!-- Table Column Headers -->
+          <div class="grid grid-cols-12 gap-2 text-xs font-semibold text-slate-300/90 pb-2 px-2 border-b border-white/[0.06] select-none">
+            <div class="col-span-2 text-center">#</div>
+            <div class="col-span-7">Player</div>
+            <div class="col-span-3 text-right pr-1">Points</div>
+          </div>
+
+          <!-- Table Rows (Paginated List) -->
+          <div class="space-y-1.5 pt-2">
+            @for (player of pagePlayers(); track player.id) {
+              <div class="grid grid-cols-12 gap-2 items-center px-2 py-1.5 rounded-xl hover:bg-white/[0.03] transition-colors">
+                <!-- Rank Number -->
+                <div class="col-span-2 text-center text-xs sm:text-sm font-bold text-slate-200">
+                  {{ player.rank }}
+                </div>
+
+                <!-- Player Avatar & Name -->
+                <div class="col-span-7 flex items-center space-x-2.5 min-w-0">
+                  <app-leaderboard-avatar
+                    [avatarUrl]="player.avatarUrl"
+                    [accessory]="player.accessoryType"
+                    [size]="34" />
+                  <span class="truncate text-xs sm:text-sm font-bold text-white tracking-tight">
+                    {{ player.username }}
+                  </span>
+                </div>
+
+                <!-- Points with Crown -->
+                <div class="col-span-3 flex items-center justify-end space-x-1 pr-1 text-right">
+                  <crown-icon [size]="14" />
+                  <span class="text-xs sm:text-sm font-black text-white">
+                    {{ player.points | number }}
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- 5. Current User Highlighted Row ("You") -->
+          @if (currentUser(); as user) {
+            <div class="current-user-card mt-3 px-3 py-2 rounded-2xl border-2 border-[#eab308] bg-[#031c0e]/95 shadow-[0_0_15px_rgba(234,179,8,0.35)] flex items-center justify-between">
+              <!-- Left: Rank Number -->
+              <div class="w-8 text-center text-sm font-extrabold text-white">
+                {{ user.rank }}
+              </div>
+
+              <!-- Center: Avatar + Name + "You" Badge -->
+              <div class="flex-1 flex items-center space-x-2.5 min-w-0 px-2">
+                <app-leaderboard-avatar
+                  [avatarUrl]="user.avatarUrl"
+                  [accessory]="user.accessoryType"
+                  [size]="36" />
+                <span class="truncate text-xs sm:text-sm font-black text-white tracking-tight">
+                  {{ user.username }}
+                </span>
+                <!-- "You" Green Badge Pill -->
+                <span class="flex-shrink-0 px-2.5 py-0.5 rounded-full bg-[#10b981]/25 text-[#34d399] border border-[#10b981]/40 text-[10px] sm:text-[11px] font-black uppercase tracking-wider">
+                  You
+                </span>
+              </div>
+
+              <!-- Right: User Points with Crown -->
+              <div class="flex items-center space-x-1 text-right pl-2">
+                <crown-icon [size]="14" />
+                <span class="text-xs sm:text-sm font-black text-white">
+                  {{ user.points | number }}
+                </span>
+              </div>
+            </div>
+          }
+
+        </div>
+      </section>
+
+      <!-- 6. Pagination Controls Row -->
+      <footer class="mt-3 mb-1 flex items-center justify-between px-1 flex-shrink-0 select-none">
+        <!-- Pagination Buttons Group -->
+        <div class="flex items-center space-x-1 sm:space-x-1.5">
+          <!-- Previous Button -->
+          <button type="button"
+                  (click)="prevPage()"
+                  [disabled]="currentPage() === 1"
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-white/10 bg-black/40 text-slate-300 hover:text-white hover:bg-white/[0.08] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-all cursor-pointer focus:outline-none"
+                  aria-label="Previous Page">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <!-- Page Numbers 1 to 5 -->
+          @for (p of paginationPages; track p) {
+            <button type="button"
+                    (click)="setPage(p)"
+                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-black transition-all cursor-pointer focus:outline-none flex items-center justify-center"
+                    [ngClass]="currentPage() === p ? 'bg-[#f5c518] text-slate-950 shadow-md scale-105' : 'bg-black/40 border border-white/10 text-slate-300 hover:text-white hover:bg-white/[0.08]'">
+              {{ p }}
+            </button>
+          }
+
+          <!-- Ellipsis -->
+          <span class="text-slate-400 text-xs px-0.5">...</span>
+
+          <!-- Last Page (20) -->
+          <button type="button"
+                  (click)="setPage(20)"
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-xs font-black transition-all cursor-pointer focus:outline-none flex items-center justify-center"
+                  [ngClass]="currentPage() === 20 ? 'bg-[#f5c518] text-slate-950 shadow-md scale-105' : 'bg-black/40 border border-white/10 text-slate-300 hover:text-white hover:bg-white/[0.08]'">
+            20
+          </button>
+
+          <!-- Next Button -->
+          <button type="button"
+                  (click)="nextPage()"
+                  [disabled]="currentPage() === leaderboardData().totalPages"
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-white/10 bg-black/40 text-slate-300 hover:text-white hover:bg-white/[0.08] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center transition-all cursor-pointer focus:outline-none"
+                  aria-label="Next Page">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Total Count Summary Text (e.g. 1 - 10 of 200) -->
+        <div class="text-[11px] sm:text-xs text-slate-400 font-medium">
+          {{ leaderboardData().startIndex }} – {{ leaderboardData().endIndex }} of {{ leaderboardData().totalPlayers }}
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- 7. Bottom Navigation Bar -->
+    <nav class="bottom-nav-bar w-full pt-2 pb-2.5 sm:pb-3 px-3 flex-shrink-0 z-20" aria-label="Bottom Navigation">
+      <div class="grid grid-cols-4 items-center text-center">
+
+        <!-- 1. Home -->
+        <button type="button"
+                (click)="onNavTabClick('home')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none"
+                [ngClass]="activeNavTab() === 'home' ? 'text-[#f5c518]' : 'text-slate-400 hover:text-slate-200'"
+                aria-label="Home Tab">
+          <home-icon [size]="20" />
+          <span class="text-[10.5px] font-bold tracking-tight">Home</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5"
+               [ngClass]="activeNavTab() === 'home' ? 'bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100' : 'opacity-0'"></div>
+        </button>
+
+        <!-- 2. Play -->
+        <button type="button"
+                (click)="onNavTabClick('play')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none"
+                [ngClass]="activeNavTab() === 'play' ? 'text-[#f5c518]' : 'text-slate-400 hover:text-slate-200'"
+                aria-label="Play Tab">
+          <gamepad-icon [size]="20" />
+          <span class="text-[10.5px] font-medium tracking-tight">Play</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5"
+               [ngClass]="activeNavTab() === 'play' ? 'bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100' : 'opacity-0'"></div>
+        </button>
+
+        <!-- 3. Leaderboard (Active) -->
+        <button type="button"
+                (click)="onNavTabClick('leaderboard')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none"
+                [ngClass]="activeNavTab() === 'leaderboard' ? 'text-[#f5c518]' : 'text-slate-400 hover:text-slate-200'"
+                aria-label="Leaderboard Tab">
+          <leaderboard-icon [size]="20" />
+          <span class="text-[10.5px] font-bold tracking-tight">Leaderboard</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5"
+               [ngClass]="activeNavTab() === 'leaderboard' ? 'bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100' : 'opacity-0'"></div>
+        </button>
+
+        <!-- 4. Profile -->
+        <button type="button"
+                (click)="onNavTabClick('profile')"
+                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none"
+                [ngClass]="activeNavTab() === 'profile' ? 'text-[#f5c518]' : 'text-slate-400 hover:text-slate-200'"
+                aria-label="Profile Tab">
+          <user-icon [size]="20" />
+          <span class="text-[10.5px] font-medium tracking-tight">Profile</span>
+          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5"
+               [ngClass]="activeNavTab() === 'profile' ? 'bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100' : 'opacity-0'"></div>
+        </button>
+
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- 8. Leaderboard Rules & Scoring Information Modal -->
+  @if (showInfoModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
+      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🏆</span>
+            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Leaderboard Scoring</h3>
+          </div>
+          <button type="button"
+                  (click)="closeInfoModal()"
+                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg font-bold leading-none p-1">
+            ✕
+          </button>
+        </div>
+
+        <!-- Modal Content Body -->
+        <div class="space-y-3 text-xs text-slate-200 leading-relaxed max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
+          <p>
+            Leaderboard points measure skill, consistency, and tactical play across Kazhudha tournament matches.
+          </p>
+
+          <div class="bg-black/40 rounded-xl p-3 border border-amber-400/20 space-y-2">
+            <div class="font-bold text-amber-300 uppercase tracking-wider text-[11px]">How Points are Awarded:</div>
+            <ul class="space-y-1.5 text-slate-300">
+              <li class="flex items-start space-x-1.5">
+                <span class="text-amber-400 font-bold">🥇</span>
+                <span><strong>Tournament 1st Place:</strong> +100 Points</span>
+              </li>
+              <li class="flex items-start space-x-1.5">
+                <span class="text-slate-300 font-bold">🥈</span>
+                <span><strong>Tournament 2nd Place:</strong> +60 Points</span>
+              </li>
+              <li class="flex items-start space-x-1.5">
+                <span class="text-amber-600 font-bold">🥉</span>
+                <span><strong>Tournament 3rd Place:</strong> +30 Points</span>
+              </li>
+              <li class="flex items-start space-x-1.5">
+                <span class="text-emerald-400 font-bold">⚡</span>
+                <span><strong>Successful Vettu:</strong> +20 Bonus Points</span>
+              </li>
+              <li class="flex items-start space-x-1.5">
+                <span class="text-red-400 font-bold">⚠️</span>
+                <span><strong>Becoming Kazhudha:</strong> -40 Penalty Points</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="text-[11px] text-slate-400 italic">
+            * Leaderboard periods: "This Week" resets every Monday at 00:00 UTC. "This Month" resets on the 1st of every month.
+          </div>
+        </div>
+
+        <!-- Modal Close Button -->
+        <button type="button"
+                (click)="closeInfoModal()"
+                class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer">
+          Got It!
+        </button>
+      </div>
+    </div>
+  }
+
+</div>

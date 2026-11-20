@@ -258,7 +258,7 @@ export class ProfileComponent implements OnInit {
     } else if (tab === 'play') {
       this.router.navigate(['/game']);
     } else if (tab === 'leaderboard') {
-      this.showLeaderboardModal.set(true);
+      this.router.navigate(['/leaderboard']);
     } else if (tab === 'profile') {
       if (!this.authService.isAuthenticated()) {
         this.router.navigate(['/guest-profile']);
