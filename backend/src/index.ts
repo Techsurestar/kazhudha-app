@@ -21,7 +21,7 @@ app.use('/api/game/leaderboard', createLeaderboardRoutes(leaderboardController))
 
 app.use(errorHandler);
 
-const host = process.env.HOST || '127.0.0.1';
+const host = process.env.HOST || '0.0.0.0';
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(Number(port), host, () => {
