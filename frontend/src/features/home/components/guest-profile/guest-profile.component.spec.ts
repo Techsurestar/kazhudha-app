@@ -152,13 +152,9 @@ describe('GuestProfileComponent', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/how-to-play']);
   });
 
-  it('should open leaderboard modal when Leaderboard tab is clicked in bottom navigation', () => {
+  it('should navigate to leaderboard when Leaderboard tab is clicked in bottom navigation', () => {
     component.setActiveTab('leaderboard');
-    expect(component.showLeaderboardModal()).toBe(true);
-
-    component.closeLeaderboard();
-    expect(component.showLeaderboardModal()).toBe(false);
-    expect(component.activeTab()).toBe('profile');
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/leaderboard']);
   });
 
   it('should respect custom playerName and avatarSrc inputs', () => {
