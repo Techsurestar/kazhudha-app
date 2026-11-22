@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "prebuild": "npm run build --workspace=@kazhudha/shared",
     "build": "tsc",
+    "prestart": "npm run build --workspace=@kazhudha/shared",
     "start": "node dist/index.js",
     "test": "vitest run"
   },
