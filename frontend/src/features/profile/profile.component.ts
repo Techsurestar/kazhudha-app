@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { BottomNavComponent } from '../shared/bottom-nav/bottom-nav.component';
+import { ButtonComponent } from '../shared/button/button.component';
 
 export interface ProfileStat {
   iconType: 'goldTrophy' | 'greenTrophy' | 'target' | 'coins';
@@ -44,7 +45,8 @@ import { resolveAvatarUrl } from '../../core/utils/avatar.util';
   imports: [
     CommonModule,
     FormsModule,
-    BottomNavComponent
+    BottomNavComponent,
+    ButtonComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],

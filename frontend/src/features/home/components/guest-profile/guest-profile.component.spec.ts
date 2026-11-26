@@ -116,7 +116,7 @@ describe('GuestProfileComponent', () => {
     let emitted = false;
     component.continueWithGoogle.subscribe(() => { emitted = true; });
 
-    const googleBtn = fixture.nativeElement.querySelector('.google-btn') as HTMLElement;
+    const googleBtn = (fixture.nativeElement.querySelector('.google-btn button') || fixture.nativeElement.querySelector('.google-btn')) as HTMLElement;
     googleBtn.click();
     expect(emitted).toBe(true);
   });

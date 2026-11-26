@@ -1,0 +1,114 @@
+:host {
+  display: block;
+}
+
+:host([fullWidth="false"]) {
+  display: inline-block;
+}
+
+/* Base button transitions */
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.app-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Primary (Gold Metallic Gradient) */
+.btn-primary {
+  background: linear-gradient(180deg, #fceabb 0%, #f3cf65 30%, #d4a329 70%, #a87910 100%);
+  color: #020617;
+  font-weight: 900;
+  box-shadow: 0 4px 15px rgba(212, 163, 41, 0.35);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff 0%, #fceabb 25%, #e5b842 65%, #b88616 100%);
+  box-shadow: 0 6px 20px rgba(212, 163, 41, 0.5);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Secondary (Dark Slate-Green with Gold Border) */
+.btn-secondary {
+  background: rgba(30, 41, 35, 0.95);
+  border: 1.5px solid rgba(233, 195, 73, 0.7);
+  color: #e9c349;
+  font-weight: 700;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(40, 56, 47, 0.98);
+  border-color: rgba(233, 195, 73, 0.95);
+  color: #fceabb;
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Outline (Dark Green with Ornate Gold Border) */
+.btn-outline {
+  background: #0e4b27;
+  border: 1.5px solid rgba(233, 195, 73, 0.45);
+  color: #f5d475;
+  font-weight: 700;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: #135930;
+  border-color: rgba(233, 195, 73, 0.7);
+  color: #ffffff;
+}
+
+.btn-outline:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Sizing */
+.btn-sm {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.625rem;
+}
+
+.btn-md {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  min-height: 3.125rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .btn-md {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    min-height: 3.375rem;
+    padding: 0.875rem 1.25rem;
+  }
+}
+
+.btn-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  min-height: 3.75rem;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+}

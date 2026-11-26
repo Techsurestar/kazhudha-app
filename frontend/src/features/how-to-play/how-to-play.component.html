@@ -843,41 +843,41 @@
       <!-- Step 1: Home & Next Buttons -->
       @if (currentStep() === 1) {
         <div class="grid grid-cols-2 gap-2 sm:gap-2.5">
-          <button
-            type="button"
-            (click)="goHome()"
-            class="dark-outline-btn font-semibold text-xs py-2.5 sm:py-2.5 rounded-xl flex items-center justify-center space-x-1.5 cursor-pointer active:scale-[0.98] transition-all"
+          <app-button
+            variant="secondary"
+            size="sm"
+            (clicked)="goHome()"
             aria-label="Go to Home">
             <home-icon [size]="20" />
             <span>Home</span>
-          </button>
-          <button
-            type="button"
-            (click)="nextStep()"
-            class="gold-gradient-btn text-slate-950 font-bold text-xs py-2.5 sm:py-2.5 rounded-xl shadow-md flex items-center justify-center space-x-1.5 cursor-pointer active:scale-[0.98] transition-all">
+          </app-button>
+          <app-button
+            variant="primary"
+            size="sm"
+            (clicked)="nextStep()">
             <span>Next</span>
-             <chevrons-right-icon [size]="20" />
-          </button>
+            <chevrons-right-icon [size]="20" />
+          </app-button>
         </div>
       }
 
       <!-- Steps 2, 3, 4: Back & Next Buttons -->
       @if (currentStep() > 1 && currentStep() < 5) {
         <div class="grid grid-cols-2 gap-2 sm:gap-2.5">
-          <button
-            type="button"
-            (click)="prevStep()"
-            class="dark-outline-btn font-semibold text-xs py-2 sm:py-2.5 rounded-xl flex items-center justify-center space-x-1 cursor-pointer">
+          <app-button
+            variant="secondary"
+            size="sm"
+            (clicked)="prevStep()">
             <chevrons-left-icon [size]="20" />
             <span>Back</span>
-          </button>
-          <button
-            type="button"
-            (click)="nextStep()"
-            class="gold-gradient-btn text-slate-950 font-bold text-xs py-2 sm:py-2.5 rounded-xl shadow-md flex items-center justify-center space-x-1 cursor-pointer">
+          </app-button>
+          <app-button
+            variant="primary"
+            size="sm"
+            (clicked)="nextStep()">
             <span>Next</span>
             <chevrons-right-icon [size]="20" />
-          </button>
+          </app-button>
         </div>
       }
 
@@ -885,13 +885,13 @@
       @if (currentStep() === 5) {
         <div class="space-y-1">
           <!-- Big Play Now Button -->
-          <button
-            type="button"
-            (click)="playNow()"
-            class="w-full gold-gradient-btn text-slate-950 font-black text-xs py-2.5 sm:py-3 rounded-xl shadow-xl flex items-center justify-center space-x-1.5 cursor-pointer">
+          <app-button
+            variant="primary"
+            size="md"
+            (clicked)="playNow()">
             <span>Play Now</span>
             <chevrons-right-icon [size]="20" />
-          </button>
+          </app-button>
 
           <!-- Back and Review All Rules -->
           <div class="flex items-center justify-between pt-0.5 text-[11px]">
@@ -1003,19 +1003,21 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="p-3 border-t border-[#e9c349]/20 bg-black/30 flex justify-between items-center">
-          <button
-            type="button"
-            (click)="closeRulesModal()"
-            class="dark-outline-btn px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer">
-            Close
-          </button>
-          <button
-            type="button"
-            (click)="playNow()"
-            class="gold-gradient-btn text-slate-950 font-bold px-4 py-1.5 rounded-lg text-xs cursor-pointer shadow">
-            Start Game →
-          </button>
+        <div class="p-3 border-t border-[#e9c349]/20 bg-black/30 flex justify-between items-center gap-2">
+          <app-button
+            variant="secondary"
+            size="sm"
+            [fullWidth]="false"
+            (clicked)="closeRulesModal()">
+            <span>Close</span>
+          </app-button>
+          <app-button
+            variant="primary"
+            size="sm"
+            [fullWidth]="false"
+            (clicked)="playNow()">
+            <span>Start Game →</span>
+          </app-button>
         </div>
 
       </div>

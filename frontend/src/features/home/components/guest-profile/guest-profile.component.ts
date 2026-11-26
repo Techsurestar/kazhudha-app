@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HomeProfileMetaComponent } from '../home-profile-meta/home-profile-meta.component';
 import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.component';
 import { BottomNavComponent } from '../../../shared/bottom-nav/bottom-nav.component';
+import { ButtonComponent } from '../../../shared/button/button.component';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
@@ -13,7 +14,8 @@ import { AuthService } from '../../../../core/services/auth.service';
     CommonModule,
     HomeProfileMetaComponent,
     ChevronsRightComponent,
-    BottomNavComponent
+    BottomNavComponent,
+    ButtonComponent
   ],
   templateUrl: './guest-profile.component.html',
   styleUrls: ['./guest-profile.component.css'],

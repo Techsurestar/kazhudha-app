@@ -292,36 +292,20 @@
     <footer class="pt-3 pb-2 space-y-2.5 flex-shrink-0">
       @if (authService.isAuthenticated()) {
         <!-- Play Game Button -->
-        <button
-          type="button"
-          (click)="onPlayAsGuest()"
-          class="gold-gradient-btn w-full text-slate-950 font-black text-sm sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none"
-        >
+        <app-button (clicked)="onPlayAsGuest()">
           <span>Play Game</span>
           <chevrons-right-icon [size]="20" />
-        </button>
+        </app-button>
 
         <!-- Sign Out Button -->
-        <button
-          type="button"
-          (click)="onSignOut()"
-          class="w-full bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/10 font-bold text-xs py-2.5 rounded-xl transition-all cursor-pointer"
-        >
+        <app-button variant="secondary" (clicked)="onSignOut()">
           <span>Sign Out</span>
-        </button>
+        </app-button>
       } @else {
         <!-- Continue with Google Button -->
-        <button
-          type="button"
-          (click)="onGoogleSignIn()"
-          [disabled]="isSigningIn()"
-          class="gold-gradient-btn google-btn w-full text-slate-950 font-black text-sm sm:text-base py-2 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          @if (isSigningIn()) {
-            <div class="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
-            <span>Connecting to Google...</span>
-          } @else {
-            <svg viewBox="0 0 48 48" width="28" height="28" class="flex-shrink-0">
+        <app-button class="google-btn" (clicked)="onGoogleSignIn()" [loading]="isSigningIn()">
+          @if (!isSigningIn()) {
+            <svg viewBox="0 0 48 48" width="22" height="22" class="flex-shrink-0">
               <!-- White Circular Background -->
               <circle cx="24" cy="24" r="24" fill="#FFFFFF"/>
               <!-- Google "G" Logo -->
@@ -332,19 +316,15 @@
                 <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
               </g>
             </svg>
-            <span>Continue with Google</span>
           }
-        </button>
+          <span>{{ isSigningIn() ? 'Connecting to Google...' : 'Continue with Google' }}</span>
+        </app-button>
 
         <!-- Play as Guest Button -->
-        <button
-          type="button"
-          (click)="onPlayAsGuest()"
-          class="gold-gradient-btn w-full text-slate-950 font-black text-sm sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none"
-        >
+        <app-button (clicked)="onPlayAsGuest()">
           <span>Play as Guest</span>
           <chevrons-right-icon [size]="20" />
-        </button>
+        </app-button>
       }
     </footer>
 

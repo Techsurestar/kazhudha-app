@@ -5,6 +5,7 @@ import { CardComponent } from '../shared/card/card.component';
 import { ChevronsRightComponent } from "../shared/icon/chevrons-right.component";
 import { ChevronsLeftComponent } from '../shared/icon/chevrons-left.component';
 import { HomeIconComponent } from '../shared/icon/home-icon.component';
+import { ButtonComponent } from '../shared/button/button.component';
 
 export interface CardRankInfo {
   rank: string;
@@ -22,7 +23,7 @@ export interface PlayingCard {
 @Component({
   selector: 'app-how-to-play',
   standalone: true,
-  imports: [CommonModule, ChevronsRightComponent, ChevronsLeftComponent, HomeIconComponent, CardComponent],
+  imports: [CommonModule, ChevronsRightComponent, ChevronsLeftComponent, HomeIconComponent, CardComponent, ButtonComponent],
   templateUrl: './how-to-play.component.html',
   styleUrls: ['./how-to-play.component.css']
 })

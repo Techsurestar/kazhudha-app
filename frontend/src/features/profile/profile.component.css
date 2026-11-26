@@ -68,19 +68,10 @@
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9);
 }
 
-/* Sign Out Button */
+/* Sign Out Button Container */
 .signout-btn {
-  background: rgba(45, 18, 18, 0.55);
-  border: 1px solid rgba(248, 113, 113, 0.35);
-  color: #fca5a5;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-}
-
-.signout-btn:hover {
-  background: rgba(65, 24, 24, 0.75);
-  border-color: rgba(248, 113, 113, 0.6);
-  color: #fecaca;
-  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.25);
+  display: inline-block;
+  min-width: 180px;
 }
 
 /* Animations */
