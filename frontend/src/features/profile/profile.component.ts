@@ -268,10 +268,6 @@ export class ProfileComponent implements OnInit {
   }
 
   // Navigation handlers
-  goBack(): void {
-    this.router.navigate(['/']);
-  }
-
   setActiveTab(tab: 'home' | 'play' | 'leaderboard' | 'profile'): void {
     this.activeTab.set(tab);
     if (tab === 'home') {

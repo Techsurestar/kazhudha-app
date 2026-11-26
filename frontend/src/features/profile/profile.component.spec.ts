@@ -49,11 +49,10 @@ describe('ProfileComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render header with title "Profile" and Kazhudha Club badge', () => {
+  it('should not render a header bar with back button or Kazhudha Club badge', () => {
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('h1')?.textContent).toContain('Profile');
-    expect(el.querySelector('.kazhudha-header-badge')?.textContent).toContain('KAZHUDHA');
-    expect(el.querySelector('.kazhudha-header-badge')?.textContent).toContain('CLUB');
+    expect(el.querySelector('header')).toBeNull();
+    expect(el.querySelector('.kazhudha-header-badge')).toBeNull();
   });
 
   it('should display default player name "Player123" and rank "Rookie"', () => {
@@ -266,11 +265,6 @@ describe('ProfileComponent', () => {
 
     expect(mockAuthService.signOut).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/guest-profile']);
-  });
-
-  it('should navigate to home when back arrow is clicked', () => {
-    component.goBack();
-    expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 
   it('should navigate to rules when Help & Rules is clicked', () => {
