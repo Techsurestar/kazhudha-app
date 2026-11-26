@@ -514,7 +514,7 @@ describe('CardTableComponent', () => {
       expect(modal).toBeNull();
     });
 
-    it('should display app-game-result and pass playersList, hands, tournamentOver and kazhudhaPlayerId when showGameResultModal is true', () => {
+    it('should display app-game-result and pass playersList, hands, tournamentOver, kazhudhaPlayerId, and isGuest when showGameResultModal is true', () => {
       component.showGameResultModal.set(true);
       fixture.detectChanges();
 
@@ -522,6 +522,7 @@ describe('CardTableComponent', () => {
       expect(modal).not.toBeNull();
       expect(component.playersList().length).toBe(4);
       expect(component.playersList().map(p => p.id)).toEqual(['human', 'bot1', 'bot2', 'bot3']);
+      expect(typeof component.isGuest()).toBe('boolean');
     });
 
     it('should continue existing match session when onRestartGame is triggered between hands (!tournamentOver)', () => {

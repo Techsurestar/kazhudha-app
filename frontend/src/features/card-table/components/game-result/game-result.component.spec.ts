@@ -1,11 +1,17 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { GameResultComponent } from './game-result.component';
 import type { HandResult } from '../../../../core/services/game-state.service';
+import { AuthService } from '../../../../core/services/auth.service';
 
 describe('GameResultComponent', () => {
   let component: GameResultComponent;
   let fixture: ComponentFixture<GameResultComponent>;
+  let mockAuthService: {
+    isAuthenticated: any;
+    currentUser: any;
+  };
 
   const mockHands: HandResult[] = [
     {
@@ -33,8 +39,16 @@ describe('GameResultComponent', () => {
   ];
 
   beforeEach(async () => {
+    mockAuthService = {
+      isAuthenticated: signal(true),
+      currentUser: signal({ id: 'user-1', email: 'test@example.com' })
+    };
+
     await TestBed.configureTestingModule({
-      imports: [GameResultComponent]
+      imports: [GameResultComponent],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(GameResultComponent);
@@ -493,6 +507,55 @@ describe('GameResultComponent', () => {
 
       const closeBtn = fixture.nativeElement.querySelector('button[aria-label="Close"]');
       expect(closeBtn).toBeNull();
+    });
+  });
+
+  describe('guest player rewards card visibility', () => {
+    it('should not display REWARDS ACCUMULATED card if the player is a guest player (isGuest=true)', () => {
+      fixture.componentRef.setInput('hands', mockHands);
+      fixture.componentRef.setInput('isGuest', true);
+      fixture.detectChanges();
+
+      const el: HTMLElement = fixture.nativeElement;
+      expect(component.isGuestPlayer()).toBe(true);
+      expect(el.textContent?.toUpperCase()).not.toContain('REWARDS ACCUMULATED');
+      expect(el.textContent?.toUpperCase()).not.toContain('REWARDS EARNED');
+      expect(el.querySelector('.rewards-accumulated-card')).toBeNull();
+    });
+
+    it('should display REWARDS ACCUMULATED card if the player is not a guest player (isGuest=false)', () => {
+      fixture.componentRef.setInput('hands', mockHands);
+      fixture.componentRef.setInput('isGuest', false);
+      fixture.detectChanges();
+
+      const el: HTMLElement = fixture.nativeElement;
+      expect(component.isGuestPlayer()).toBe(false);
+      expect(el.textContent?.toUpperCase()).toContain('REWARDS ACCUMULATED');
+      expect(el.querySelector('.rewards-accumulated-card')).not.toBeNull();
+    });
+
+    it('should not display REWARDS ACCUMULATED card when unauthenticated (guest) and isGuest input is omitted', () => {
+      mockAuthService.isAuthenticated.set(false);
+      fixture.componentRef.setInput('hands', mockHands);
+      fixture.componentRef.setInput('isGuest', undefined);
+      fixture.detectChanges();
+
+      const el: HTMLElement = fixture.nativeElement;
+      expect(component.isGuestPlayer()).toBe(true);
+      expect(el.textContent?.toUpperCase()).not.toContain('REWARDS ACCUMULATED');
+      expect(el.querySelector('.rewards-accumulated-card')).toBeNull();
+    });
+
+    it('should display REWARDS ACCUMULATED card when authenticated and isGuest input is omitted', () => {
+      mockAuthService.isAuthenticated.set(true);
+      fixture.componentRef.setInput('hands', mockHands);
+      fixture.componentRef.setInput('isGuest', undefined);
+      fixture.detectChanges();
+
+      const el: HTMLElement = fixture.nativeElement;
+      expect(component.isGuestPlayer()).toBe(false);
+      expect(el.textContent?.toUpperCase()).toContain('REWARDS ACCUMULATED');
+      expect(el.querySelector('.rewards-accumulated-card')).not.toBeNull();
     });
   });
 });

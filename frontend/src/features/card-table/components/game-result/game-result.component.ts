@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, input, output, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { HandResult } from '../../../../core/services/game-state.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.component';
 
 export interface GameResultPlayer {
@@ -25,6 +26,8 @@ export type AccumulatedRewards = HandReward;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameResultComponent {
+  private readonly authService = inject(AuthService, { optional: true });
+
   /** List of participating players */
   readonly players = input<GameResultPlayer[]>([]);
 
@@ -37,11 +40,26 @@ export class GameResultComponent {
   /** Kazhudha player ID for the round if applicable */
   readonly kazhudhaPlayerId = input<string | null>(null);
 
+  /** Whether the current player is playing as a guest (if omitted, falls back to AuthService) */
+  readonly isGuest = input<boolean | undefined>(undefined);
+
   /** Emitted when the restart/deal button is triggered */
   readonly restart = output<void>();
 
   /** Emitted for compatibility with GameOverModalComponent onRestart */
   readonly onRestart = output<void>();
+
+  /** Effective guest status (hides rewards accumulated card when true) */
+  readonly isGuestPlayer = computed<boolean>(() => {
+    const explicit = this.isGuest();
+    if (explicit !== undefined) {
+      return explicit;
+    }
+    if (this.authService) {
+      return !this.authService.isAuthenticated();
+    }
+    return false;
+  });
 
   /** Effective list of players (falls back to standard 4-seat setup) */
   readonly playerList = computed<GameResultPlayer[]>(() => {

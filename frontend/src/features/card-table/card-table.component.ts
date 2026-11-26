@@ -7,6 +7,7 @@ import { CenterTrickPileComponent, TrickCard } from './components/center-trick-p
 import { ActionBarComponent } from './components/action-bar/action-bar.component';
 import { CardFlightLayerComponent, FlightItem } from './components/card-flight-layer/card-flight-layer.component';
 import { GameResultComponent, GameResultPlayer } from './components/game-result/game-result.component';
+import { AuthService } from '../../core/services/auth.service';
 
 export interface PlayerSeatState {
   id: string;
@@ -40,10 +41,14 @@ export interface PlayedCardItem {
 })
 export class CardTableComponent implements AfterViewInit {
   private readonly gameStateService = inject(GameStateService);
+  private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private isDestroyed = false;
 
   readonly flightLayer = viewChild(CardFlightLayerComponent);
+
+  /** Whether the active player is playing in guest mode */
+  readonly isGuest = computed<boolean>(() => !this.authService.isAuthenticated());
 
   /** Whether to automatically start dealing cards on page load (defaults to true) */
   readonly autoDeal = input<boolean>(true);
