@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
+import { Router, provideRouter } from '@angular/router';
 import { GameResultComponent } from './game-result.component';
 import type { HandResult } from '../../../../core/services/game-state.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -8,6 +9,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 describe('GameResultComponent', () => {
   let component: GameResultComponent;
   let fixture: ComponentFixture<GameResultComponent>;
+  let router: Router;
   let mockAuthService: {
     isAuthenticated: any;
     currentUser: any;
@@ -47,9 +49,13 @@ describe('GameResultComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GameResultComponent],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: mockAuthService }
       ]
     }).compileComponents();
+
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     fixture = TestBed.createComponent(GameResultComponent);
     component = fixture.componentInstance;
@@ -556,6 +562,79 @@ describe('GameResultComponent', () => {
       expect(component.isGuestPlayer()).toBe(false);
       expect(el.textContent?.toUpperCase()).toContain('REWARDS ACCUMULATED');
       expect(el.querySelector('.rewards-accumulated-card')).not.toBeNull();
+    });
+  });
+
+  describe('tournament completion action buttons', () => {
+    it('should not display secondary home button when tournament is not over (tournamentOver=false)', () => {
+      fixture.componentRef.setInput('tournamentOver', false);
+      fixture.detectChanges();
+
+      const el: HTMLElement = fixture.nativeElement;
+      const homeBtn = el.querySelector('.secondary-home-btn');
+      expect(homeBtn).toBeNull();
+
+      const actionBtn = el.querySelector('.gold-gradient-btn');
+      expect(actionBtn).not.toBeNull();
+      expect(actionBtn?.textContent).toContain('Play next hand');
+    });
+
+    it('should display secondary home button on the left side of Start New Tournament button when tournamentOver=true', () => {
+      fixture.componentRef.setInput('tournamentOver', true);
+      fixture.detectChanges();
+
+      const el: HTMLElement = fixture.nativeElement;
+      const buttonsContainer = el.querySelector('.grid.grid-cols-2');
+      expect(buttonsContainer).not.toBeNull();
+
+      // Check left button: secondary home button
+      const homeBtn = el.querySelector('.secondary-home-btn');
+      expect(homeBtn).not.toBeNull();
+      expect(homeBtn?.textContent).toContain('Home');
+      expect(homeBtn?.querySelector('home-icon')).not.toBeNull();
+
+      // Check right button: Start New Tournament button
+      const startNewBtn = el.querySelector('.gold-gradient-btn');
+      expect(startNewBtn).not.toBeNull();
+      expect(startNewBtn?.textContent).toContain('Start New Tournament');
+      expect(startNewBtn?.querySelector('chevrons-right-icon')).not.toBeNull();
+
+      // Verify DOM ordering: secondary home button is the first child (left side)
+      const children = buttonsContainer?.children;
+      expect(children?.[0].classList.contains('secondary-home-btn')).toBe(true);
+      expect(children?.[1].classList.contains('gold-gradient-btn')).toBe(true);
+    });
+
+    it('should emit home and navigate to "/" when secondary home button is clicked', () => {
+      fixture.componentRef.setInput('tournamentOver', true);
+      fixture.detectChanges();
+
+      const homeSpy = vi.fn();
+      component.home.subscribe(homeSpy);
+
+      const homeBtn = fixture.nativeElement.querySelector('.secondary-home-btn button') as HTMLButtonElement;
+      expect(homeBtn).not.toBeNull();
+      homeBtn.click();
+
+      expect(homeSpy).toHaveBeenCalledOnce();
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
+    });
+
+    it('should emit restart and onRestart when Start New Tournament button is clicked', () => {
+      fixture.componentRef.setInput('tournamentOver', true);
+      fixture.detectChanges();
+
+      const restartSpy = vi.fn();
+      const onRestartSpy = vi.fn();
+      component.restart.subscribe(restartSpy);
+      component.onRestart.subscribe(onRestartSpy);
+
+      const startNewBtn = fixture.nativeElement.querySelector('.gold-gradient-btn') as HTMLButtonElement;
+      expect(startNewBtn).not.toBeNull();
+      startNewBtn.click();
+
+      expect(restartSpy).toHaveBeenCalledOnce();
+      expect(onRestartSpy).toHaveBeenCalledOnce();
     });
   });
 });

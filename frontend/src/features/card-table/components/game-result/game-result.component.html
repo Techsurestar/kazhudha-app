@@ -175,15 +175,40 @@
       </div>
     </div>
 
-    <!-- Action Button -->
+    <!-- Action Buttons -->
     <div class="w-full">
-      <button
-        type="button"
-        (click)="handleRestart()"
-        class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
-        <span>{{ tournamentOver() ? 'Start New Tournament' : 'Play next hand' }}</span>
-        <chevrons-right-icon [size]="20" />
-      </button>
+      @if (tournamentOver()) {
+        <div class="grid grid-cols-2 gap-2.5 sm:gap-3 w-full items-center">
+          <!-- Secondary Home Button (on the left side) -->
+          <app-button
+            variant="secondary"
+            class="secondary-home-btn"
+            [fullWidth]="true"
+            (clicked)="handleHome()"
+            aria-label="Home">
+            <home-icon [size]="20" />
+            <span>Home</span>
+          </app-button>
+
+          <!-- Start New Tournament Button (on the right side) -->
+          <button
+            type="button"
+            (click)="handleRestart()"
+            class="gold-gradient-btn w-full text-slate-950 font-black text-xs sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-1.5 sm:space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
+            <span class="truncate">Start New Tournament</span>
+            <chevrons-right-icon [size]="20" />
+          </button>
+        </div>
+      } @else {
+        <!-- Single Full-Width Play Next Hand Button -->
+        <button
+          type="button"
+          (click)="handleRestart()"
+          class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
+          <span>Play next hand</span>
+          <chevrons-right-icon [size]="20" />
+        </button>
+      }
     </div>
 
   </div>

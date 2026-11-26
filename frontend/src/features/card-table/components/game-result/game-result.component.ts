@@ -1,8 +1,11 @@
 import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import type { HandResult } from '../../../../core/services/game-state.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.component';
+import { ButtonComponent } from '../../../shared/button/button.component';
+import { HomeIconComponent } from '../../../shared/icon/home-icon.component';
 
 export interface GameResultPlayer {
   id: string;
@@ -20,13 +23,14 @@ export type AccumulatedRewards = HandReward;
 @Component({
   selector: 'app-game-result',
   standalone: true,
-  imports: [CommonModule, ChevronsRightComponent],
+  imports: [CommonModule, ChevronsRightComponent, ButtonComponent, HomeIconComponent],
   templateUrl: './game-result.component.html',
   styleUrls: ['./game-result.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameResultComponent {
   private readonly authService = inject(AuthService, { optional: true });
+  private readonly router = inject(Router, { optional: true });
 
   /** List of participating players */
   readonly players = input<GameResultPlayer[]>([]);
@@ -48,6 +52,9 @@ export class GameResultComponent {
 
   /** Emitted for compatibility with GameOverModalComponent onRestart */
   readonly onRestart = output<void>();
+
+  /** Emitted when the home button is clicked upon tournament completion */
+  readonly home = output<void>();
 
   /** Effective guest status (hides rewards accumulated card when true) */
   readonly isGuestPlayer = computed<boolean>(() => {
@@ -209,5 +216,12 @@ export class GameResultComponent {
   handleRestart(): void {
     this.restart.emit();
     this.onRestart.emit();
+  }
+
+  handleHome(): void {
+    this.home.emit();
+    if (this.router) {
+      this.router.navigate(['/']);
+    }
   }
 }

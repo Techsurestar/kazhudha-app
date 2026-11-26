@@ -8,7 +8,15 @@
 .gold-gradient-btn,
 .gold-capsule-button {
   background: linear-gradient(180deg, #fceabb 0%, #f3cf65 30%, #d4a329 70%, #a87910 100%);
+  min-height: 3rem;
   transition: all 0.25s ease;
+}
+
+@media (min-width: 640px) {
+  .gold-gradient-btn,
+  .gold-capsule-button {
+    min-height: 3.25rem;
+  }
 }
 
 .gold-gradient-btn:hover,
@@ -19,6 +27,23 @@
 .gold-gradient-btn:active,
 .gold-capsule-button:active {
   transform: translateY(1px) scale(0.99);
+}
+
+/* Secondary Home Button in Game Result */
+.secondary-home-btn {
+  display: block;
+  width: 100%;
+}
+
+.secondary-home-btn ::ng-deep .app-btn {
+  min-height: 3rem;
+  border-radius: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .secondary-home-btn ::ng-deep .app-btn {
+    min-height: 3.25rem;
+  }
 }
 
 .gold-text-glow {
