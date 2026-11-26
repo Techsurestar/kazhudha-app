@@ -400,6 +400,79 @@ describe('CardTableComponent', () => {
     vi.useRealTimers();
   });
 
+  it('should maintain trick pile synchronization when multiple players escape in the same trick', async () => {
+    vi.useFakeTimers();
+
+    component.centerCards.set([]);
+    component.escapedOrder.set([]);
+    (component as any).updateActiveTrickPlayerCount();
+
+    expect(component.getActivePlayersCount()).toBe(4);
+
+    const flightSpy = vi.fn().mockResolvedValue(undefined);
+    (component as any).flightLayer = () => ({ triggerFlight: flightSpy });
+
+    const fakeState: any = {
+      sessionId: 'test',
+      currentTurnPlayerId: 'human',
+      humanHand: [],
+      otherPlayers: [
+        { id: 'bot1', name: 'Jenny', handSize: 0, hasGottenAway: true },
+        { id: 'bot2', name: 'Leo', handSize: 0, hasGottenAway: true },
+        { id: 'bot3', name: 'Sofia', handSize: 4, hasGottenAway: false }
+      ],
+      tablePile: [],
+      kazhudhaPlayerId: null,
+      gameOver: false,
+      events: []
+    };
+
+    (component as any).eventQueue = [
+      // 1. Human plays lead card
+      { eventType: 'PLAY', playerId: 'human', card: { rank: '7', suit: 'SPADES' } },
+      // 2. Bot 1 plays card and escapes
+      { eventType: 'PLAY', playerId: 'bot1', card: { rank: '9', suit: 'SPADES' } },
+      { eventType: 'ESCAPE', playerId: 'bot1', card: null, description: 'Jenny escaped!' },
+      // 3. Bot 2 plays card and escapes
+      { eventType: 'PLAY', playerId: 'bot2', card: { rank: 'JACK', suit: 'SPADES' } },
+      { eventType: 'ESCAPE', playerId: 'bot2', card: null, description: 'Leo escaped!' },
+      // 4. Bot 3 plays last card of trick
+      { eventType: 'PLAY', playerId: 'bot3', card: { rank: 'ACE', suit: 'SPADES' } }
+    ];
+
+    const runPromise = (component as any).runNextEvent(fakeState);
+
+    // Human plays (immediate)
+    await vi.advanceTimersByTimeAsync(200);
+    expect(component.centerCards().length).toBe(1);
+
+    // Bot 1 plays + escapes
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(component.centerCards().length).toBe(2);
+    expect(component.escapedOrder()).toContain('bot1');
+
+    // Bot 2 plays + escapes (Trick must NOT clear prematurely here despite 2 escapes!)
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(component.centerCards().length).toBe(3);
+    expect(component.escapedOrder()).toContain('bot2');
+
+    // Bot 3 plays 4th card (Now all 4 active players for this trick have played)
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(component.centerCards().length).toBe(4);
+
+    // Allow trick completion pause (1200ms) + buffer to clear pile
+    await vi.advanceTimersByTimeAsync(1500);
+    await runPromise;
+
+    // Center cards must now be cleanly cleared
+    expect(component.centerCards().length).toBe(0);
+
+    // Active players count for the next trick should now reflect the 2 escaped players
+    expect(component.getActivePlayersCount()).toBe(2);
+
+    vi.useRealTimers();
+  });
+
   it('should immediately flush event queue and update state when onSkipGame is called on a finished game', () => {
     (component as any).eventQueue = [
       { eventType: 'PLAY', playerId: 'bot1', card: { rank: '2', suit: 'SPADES' } },

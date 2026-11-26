@@ -235,9 +235,21 @@ export class CardTableComponent implements AfterViewInit {
     return hands.reduce((sum, h) => sum + (h.scores[playerId] || 0), 0);
   }
 
-  getActivePlayersCount(): number {
+  /** Number of active players participating in the currently ongoing trick */
+  private activeTrickPlayerCount: number = 4;
+
+  /** Updates the active trick player count based on players who have already escaped */
+  updateActiveTrickPlayerCount(): void {
     const escaped = this.escapedOrder().length;
-    return Math.max(2, 4 - escaped);
+    this.activeTrickPlayerCount = Math.max(2, 4 - escaped);
+  }
+
+  getActivePlayersCount(): number {
+    if (this.centerCards().length === 0) {
+      const escaped = this.escapedOrder().length;
+      return Math.max(2, 4 - escaped);
+    }
+    return this.activeTrickPlayerCount;
   }
 
   getTrickWinner(cards: PlayedCardItem[]): { playerId: string; name: string } | null {
@@ -340,6 +352,7 @@ export class CardTableComponent implements AfterViewInit {
     this.isVettuFlashing.set(false);
     this.vettuAlertMessage.set(null);
     this.isReplaying.set(false);
+    this.updateActiveTrickPlayerCount();
 
     // Apply latest game state from backend
     const finalState = this.lastProcessedState || this.gameState();
@@ -402,6 +415,7 @@ export class CardTableComponent implements AfterViewInit {
     this.showGameResultModal.set(false);
     this.visualCardCounts.set({ bot1: 0, bot2: 0, bot3: 0, human: 0 });
     this.currentTurnPlayerId.set(null);
+    this.updateActiveTrickPlayerCount();
 
     // Call backend service to start/deal new game
     let initialState: GameViewDTO;
@@ -519,6 +533,9 @@ export class CardTableComponent implements AfterViewInit {
     // Place the card in the center trick pile upon landing
     const currentPile = this.centerCards();
     const alreadyPlayed = currentPile.some(c => c.playerId === 'human');
+    if (currentPile.length === 0 || alreadyPlayed) {
+      this.updateActiveTrickPlayerCount();
+    }
     const nextPile = alreadyPlayed ? [] : [...currentPile];
     nextPile.push({
       playerId: 'human',
@@ -540,6 +557,7 @@ export class CardTableComponent implements AfterViewInit {
       await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
       if (this.isDestroyed) return;
       this.centerCards.set([]);
+      this.updateActiveTrickPlayerCount();
       await new Promise(r => setTimeout(r, 200));
     }
 
@@ -632,12 +650,13 @@ export class CardTableComponent implements AfterViewInit {
         if (this.centerCards().length >= this.getActivePlayersCount()) {
           const winner = this.getTrickWinner(this.centerCards());
           if (winner) {
-            this.showToast(`👑 ${winner.name}  trick!`, 1200);
+            this.showToast(`👑 ${winner.name} will lead the next turn!`, 1200);
           }
           await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
           if (this.isDestroyed) return;
         }
         this.centerCards.set([]);
+        this.updateActiveTrickPlayerCount();
       } else {
         this.centerCards.set(
           finalState.tablePile.map(pc => ({
@@ -677,8 +696,12 @@ export class CardTableComponent implements AfterViewInit {
         // Human card flight was already executed upon user click; ensure pile reflects it
         const currentPile = this.centerCards();
         const alreadyInPile = currentPile.some(c => c.playerId === 'human');
+        if (currentPile.length === 0) {
+          this.updateActiveTrickPlayerCount();
+        }
+        let nextPile = currentPile;
         if (!alreadyInPile) {
-          const nextPile: PlayedCardItem[] = [
+          nextPile = [
             ...currentPile,
             {
               playerId: 'human',
@@ -688,17 +711,18 @@ export class CardTableComponent implements AfterViewInit {
             }
           ];
           this.centerCards.set(nextPile);
+        }
 
-          if (nextPile.length >= this.getActivePlayersCount()) {
-            const winner = this.getTrickWinner(nextPile);
-            if (winner) {
-              this.showToast(`👑 ${winner.name} will lead the next turn!`, 1200);
-            }
-            await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
-            if (this.isDestroyed) return;
-            this.centerCards.set([]);
-            await new Promise(r => setTimeout(r, 200));
+        if (nextPile.length >= this.getActivePlayersCount()) {
+          const winner = this.getTrickWinner(nextPile);
+          if (winner) {
+            this.showToast(`👑 ${winner.name} will lead the next turn!`, 1200);
           }
+          await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
+          if (this.isDestroyed) return;
+          this.centerCards.set([]);
+          this.updateActiveTrickPlayerCount();
+          await new Promise(r => setTimeout(r, 200));
         }
 
         await new Promise(r => setTimeout(r, 150));
@@ -722,6 +746,9 @@ export class CardTableComponent implements AfterViewInit {
         // 3. Add to center trick pile
         const currentPile = this.centerCards();
         const alreadyPlayed = currentPile.some(c => c.playerId === event.playerId);
+        if (currentPile.length === 0 || alreadyPlayed) {
+          this.updateActiveTrickPlayerCount();
+        }
         const nextPile = alreadyPlayed ? [] : [...currentPile];
         nextPile.push({
           playerId: event.playerId,
@@ -746,6 +773,7 @@ export class CardTableComponent implements AfterViewInit {
           await new Promise(r => setTimeout(r, this.TRICK_COMPLETION_PAUSE_MS));
           if (this.isDestroyed) return;
           this.centerCards.set([]);
+          this.updateActiveTrickPlayerCount();
           await new Promise(r => setTimeout(r, 200));
         } else {
           await new Promise(r => setTimeout(r, 250));
@@ -847,6 +875,7 @@ export class CardTableComponent implements AfterViewInit {
       if (this.isDestroyed) return;
 
       this.centerCards.set([]);
+      this.updateActiveTrickPlayerCount();
       this.isVettuFlashing.set(false);
       this.vettuAlertMessage.set(null);
 
