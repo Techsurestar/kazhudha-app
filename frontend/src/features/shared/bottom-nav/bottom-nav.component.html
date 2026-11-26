@@ -19,7 +19,7 @@
             class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none"
             [ngClass]="isTabActive('play') ? 'text-[#f5c518]' : 'text-slate-400 hover:text-slate-200'"
             aria-label="Play Tab">
-      <gamepad-icon [size]="20" />
+      <gameplay-icon [size]="20" />
       <span class="text-[10.5px] font-medium tracking-tight">Play</span>
       <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5"
            [ngClass]="isTabActive('play') ? 'bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100' : 'opacity-0'"></div>

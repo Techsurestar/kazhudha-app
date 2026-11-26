@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, input, output, inject, signal, comp
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HomeProfileMetaComponent } from '../home-profile-meta/home-profile-meta.component';
-import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.component';
+import { GameplayIconComponent } from '../../../shared/icon/gameplay-icon.component';
 import { BottomNavComponent } from '../../../shared/bottom-nav/bottom-nav.component';
 import { ButtonComponent } from '../../../shared/button/button.component';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -13,7 +13,7 @@ import { AuthService } from '../../../../core/services/auth.service';
   imports: [
     CommonModule,
     HomeProfileMetaComponent,
-    ChevronsRightComponent,
+    GameplayIconComponent,
     BottomNavComponent,
     ButtonComponent
   ],

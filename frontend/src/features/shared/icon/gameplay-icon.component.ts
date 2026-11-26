@@ -1,20 +1,20 @@
 import { Component, input } from '@angular/core';
-import { LucideGamepad2 } from '@lucide/angular';
+import { LucidePlayingCardsFan } from '@lucide/angular';
 
 @Component({
-  selector: 'gamepad-icon',
+  selector: 'gameplay-icon',
   standalone: true,
-  imports: [LucideGamepad2],
+  imports: [LucidePlayingCardsFan],
   template: `
     <svg
-      lucideGamepad2
+      lucidePlayingCardsFan
       [size]="size()"
       [strokeWidth]="strokeWidth()"
       aria-hidden="true">
     </svg>
   `
 })
-export class GamepadIconComponent {
+export class GameplayIconComponent {
   size = input<number>(20);
   strokeWidth = input<number>(2);
 }

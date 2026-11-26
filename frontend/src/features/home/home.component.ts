@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetec
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { BookOpenIconComponent } from '../shared/icon/book-open-icon.component';
-import { GamepadIconComponent } from '../shared/icon/gamepad-icon.component';
+import { GameplayIconComponent } from '../shared/icon/gameplay-icon.component';
 import { HomeProfileMetaComponent } from './components/home-profile-meta/home-profile-meta.component';
 import { BottomNavComponent } from '../shared/bottom-nav/bottom-nav.component';
 import { ButtonComponent } from '../shared/button/button.component';
@@ -11,7 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, GamepadIconComponent, BookOpenIconComponent,
+  imports: [CommonModule, RouterLink, GameplayIconComponent, BookOpenIconComponent,
             HomeProfileMetaComponent, BottomNavComponent, ButtonComponent ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',

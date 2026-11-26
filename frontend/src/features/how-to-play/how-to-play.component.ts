@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CardComponent } from '../shared/card/card.component';
 import { ChevronsRightComponent } from "../shared/icon/chevrons-right.component";
 import { ChevronsLeftComponent } from '../shared/icon/chevrons-left.component';
+import { GameplayIconComponent } from '../shared/icon/gameplay-icon.component';
 import { HomeIconComponent } from '../shared/icon/home-icon.component';
 import { ButtonComponent } from '../shared/button/button.component';
 
@@ -23,7 +24,8 @@ export interface PlayingCard {
 @Component({
   selector: 'app-how-to-play',
   standalone: true,
-  imports: [CommonModule, ChevronsRightComponent, ChevronsLeftComponent, HomeIconComponent, CardComponent, ButtonComponent],
+  imports: [CommonModule, ChevronsRightComponent, ChevronsLeftComponent, HomeIconComponent, 
+    GameplayIconComponent, CardComponent, ButtonComponent],
   templateUrl: './how-to-play.component.html',
   styleUrls: ['./how-to-play.component.css']
 })

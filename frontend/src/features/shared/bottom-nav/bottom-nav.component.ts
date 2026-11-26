@@ -4,7 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { HomeIconComponent } from '../icon/home-icon.component';
-import { GamepadIconComponent } from '../icon/gamepad-icon.component';
+import { GameplayIconComponent } from '../icon/gameplay-icon.component';
 import { LeadboardIconComponent } from '../icon/leadboard-icon.component';
 import { UserIconComponent } from '../icon/user-icon.component';
 
@@ -16,7 +16,7 @@ export type NavTab = 'home' | 'play' | 'leaderboard' | 'profile';
   imports: [
     CommonModule,
     HomeIconComponent,
-    GamepadIconComponent,
+    GameplayIconComponent,
     LeadboardIconComponent,
     UserIconComponent
   ],

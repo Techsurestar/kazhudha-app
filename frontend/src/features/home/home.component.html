@@ -60,7 +60,7 @@
         @if (authService.isAuthenticated()) {
           <!-- Play Game Button -->
           <app-button routerLink="/game">
-            <gamepad-icon [size]="20" />
+            <gameplay-icon [size]="20" />
             <span>Play Game</span>
           </app-button>
 
@@ -77,7 +77,7 @@
         } @else {
           <!-- Play as Guest Button -->
           <app-button routerLink="/game">
-            <gamepad-icon [size]="20" />
+            <gameplay-icon [size]="20" />
             <span>Play as Guest</span>
           </app-button>
 

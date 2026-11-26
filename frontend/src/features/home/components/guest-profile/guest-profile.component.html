@@ -293,8 +293,8 @@
       @if (authService.isAuthenticated()) {
         <!-- Play Game Button -->
         <app-button (clicked)="onPlayAsGuest()">
+          <gameplay-icon [size]="20" />
           <span>Play Game</span>
-          <chevrons-right-icon [size]="20" />
         </app-button>
 
         <!-- Sign Out Button -->
@@ -322,8 +322,8 @@
 
         <!-- Play as Guest Button -->
         <app-button (clicked)="onPlayAsGuest()">
+           <gameplay-icon [size]="20" />
           <span>Play as Guest</span>
-          <chevrons-right-icon [size]="20" />
         </app-button>
       }
     </footer>
