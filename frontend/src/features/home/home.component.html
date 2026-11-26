@@ -50,7 +50,7 @@
       </div>
 
       <!-- Action Buttons Container -->
-      <div class="w-full space-y-2.5 pt-5 sm:pt-6 flex-shrink-0 max-w-[300px] mx-auto">
+      <div class="w-full space-y-2 sm:space-y-2.5 pt-3 sm:pt-4 flex-shrink-0 max-w-[300px] mx-auto">
         @if (signInError()) {
           <div class="text-xs text-rose-300 bg-rose-950/60 border border-rose-500/40 rounded-xl px-3 py-2 text-center animate-fadeIn">
             {{ signInError() }}
@@ -60,8 +60,14 @@
         @if (authService.isAuthenticated()) {
           <!-- Play Game Button -->
           <app-button routerLink="/game">
+            <gamepad-icon [size]="20" />
             <span>Play Game</span>
-            <chevrons-right-icon [size]="20" />
+          </app-button>
+
+          <!-- Game Guideline Button -->
+          <app-button routerLink="/how-to-play">
+            <book-open-icon [size]="20" />
+            <span>Game Guideline</span>
           </app-button>
 
           <!-- Sign Out Button -->
@@ -71,8 +77,14 @@
         } @else {
           <!-- Play as Guest Button -->
           <app-button routerLink="/game">
+            <gamepad-icon [size]="20" />
             <span>Play as Guest</span>
-            <chevrons-right-icon [size]="20" />
+          </app-button>
+
+          <!-- Game Guideline Button -->
+          <app-button routerLink="/how-to-play">
+            <book-open-icon [size]="20" />
+            <span>Game Guideline</span>
           </app-button>
 
           <!-- Continue with Google Button -->

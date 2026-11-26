@@ -1,7 +1,8 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, PLATFORM_ID, Inject, signal, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { ChevronsRightComponent } from '../shared/icon/chevrons-right.component';
+import { BookOpenIconComponent } from '../shared/icon/book-open-icon.component';
+import { GamepadIconComponent } from '../shared/icon/gamepad-icon.component';
 import { HomeProfileMetaComponent } from './components/home-profile-meta/home-profile-meta.component';
 import { BottomNavComponent } from '../shared/bottom-nav/bottom-nav.component';
 import { ButtonComponent } from '../shared/button/button.component';
@@ -10,7 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, ChevronsRightComponent,
+  imports: [CommonModule, RouterLink, GamepadIconComponent, BookOpenIconComponent,
             HomeProfileMetaComponent, BottomNavComponent, ButtonComponent ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',

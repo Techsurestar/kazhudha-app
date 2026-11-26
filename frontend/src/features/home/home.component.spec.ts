@@ -45,10 +45,11 @@ describe('HomeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display "Continue with Google" when user is unauthenticated', () => {
+  it('should display "Continue with Google", "Play as Guest", and "Game Guideline" when user is unauthenticated', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.textContent).toContain('Continue with Google');
     expect(el.textContent).toContain('Play as Guest');
+    expect(el.textContent).toContain('Game Guideline');
   });
 
   it('should call authService.signInWithGoogle when Google button is clicked', async () => {
@@ -68,8 +69,16 @@ describe('HomeComponent', () => {
 
     const el = fixture.nativeElement as HTMLElement;
     expect(el.textContent).toContain('Play Game');
+    expect(el.textContent).toContain('Game Guideline');
     expect(el.textContent).toContain('Sign Out');
     expect(el.textContent).not.toContain('Continue with Google');
+  });
+
+  it('should render Game Guideline button wired to /how-to-play', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const buttons = Array.from(el.querySelectorAll('button'));
+    const guidelineButton = buttons.find(b => b.textContent?.includes('Game Guideline'));
+    expect(guidelineButton).toBeTruthy();
   });
 
   it('should call authService.signOut when Sign Out is clicked', () => {
