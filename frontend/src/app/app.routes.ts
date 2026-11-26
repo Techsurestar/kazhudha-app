@@ -6,6 +6,7 @@ import { CardTableComponent } from '../features/card-table/card-table.component'
 import { GuestProfileComponent } from '../features/home/components/guest-profile/guest-profile.component';
 import { ProfileComponent } from '../features/profile/profile.component';
 import { LeaderboardComponent } from '../features/leaderboard/leaderboard.component';
+import { MatchAbandonedComponent } from '../features/card-table/components/match-abandoned/match-abandoned.component';
 import { AuthService } from '../core/services/auth.service';
 
 /**
@@ -44,5 +45,7 @@ export const routes: Routes = [
   { path: 'how-to-play', component: HowToPlayComponent },
   { path: 'leaderboard', component: LeaderboardComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [authProfileGuard] },
-  { path: 'guest-profile', component: GuestProfileComponent, canActivate: [guestProfileGuard] }
+  { path: 'guest-profile', component: GuestProfileComponent, canActivate: [guestProfileGuard] },
+  { path: 'match-abandoned', component: MatchAbandonedComponent },
+  { path: 'abandoned', redirectTo: 'match-abandoned', pathMatch: 'full' }
 ];
