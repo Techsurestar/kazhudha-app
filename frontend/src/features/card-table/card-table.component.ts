@@ -1,4 +1,5 @@
 import { Component, signal, computed, viewChild, input, AfterViewInit, inject, DestroyRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { GameStateService, Card, PlayedCard, GameViewDTO, GameEvent } from '../../core/services/game-state.service';
 import { AdBannerComponent } from '../shared/ad-banner/ad-banner.component';
 import { OpponentSeatComponent, RankChip } from './components/opponent-seat/opponent-seat.component';
@@ -42,6 +43,7 @@ export interface PlayedCardItem {
 export class CardTableComponent implements AfterViewInit {
   private readonly gameStateService = inject(GameStateService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private isDestroyed = false;
 
@@ -412,6 +414,18 @@ export class CardTableComponent implements AfterViewInit {
         this.showGameResultModal.set(true);
       }
     }
+  }
+
+  /**
+   * Handles timeout when the human player fails to play a card within the 20-second turn timer.
+   * Marks the match as abandoned in the backend and navigates to the Match Abandoned page.
+   */
+  onHumanTurnTimeout(): void {
+    if (this.isDestroyed) return;
+    this.gameStateService.abandonMatch(this.sessionId).subscribe({
+      error: (err) => console.warn('Error abandoning match on timeout:', err)
+    });
+    this.router.navigate(['/match-abandoned']);
   }
 
   onRestartGame(): void {

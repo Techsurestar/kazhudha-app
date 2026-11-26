@@ -285,6 +285,26 @@ export class MatchPersistenceService {
     }
   }
 
+  /**
+   * Marks a match as abandoned in public.matches.
+   * Does NOT alter user profile points, XP, or rank.
+   */
+  public async abandonMatch(session: GameSession): Promise<void> {
+    try {
+      if (!session.matchId) return;
+
+      await this.supabase
+        .from('matches')
+        .update({
+          status: 'ABANDONED',
+          completed_at: new Date().toISOString(),
+        })
+        .eq('id', session.matchId);
+    } catch (err) {
+      console.error('MatchPersistenceService.abandonMatch exception:', err);
+    }
+  }
+
   private async updateUserProfile(
     userId: string,
     xpEarned: number,

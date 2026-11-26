@@ -199,4 +199,32 @@ export class GameStateService {
       throw err;
     }
   }
+
+  /**
+   * Marks a match as abandoned in the backend.
+   * Does NOT alter user points, XP, or rank.
+   */
+  abandonMatch(
+    sessionId: string = 'default'
+  ): Observable<{ success: boolean; message: string }> {
+    if (this.useBackend()) {
+      return this.http
+        .post<{ success: boolean; message: string }>(
+          `${this.apiUrl}/abandon?sessionId=${sessionId}`,
+          {},
+          { headers: this.getAuthHeaders() }
+        )
+        .pipe(
+          catchError((err) => {
+            console.warn('Backend API error on abandonMatch:', err);
+            return of({
+              success: false,
+              message: err?.message || 'Error abandoning match',
+            });
+          })
+        );
+    }
+
+    return of({ success: true, message: 'Match abandoned locally' });
+  }
 }

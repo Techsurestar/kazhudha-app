@@ -207,4 +207,37 @@ describe('MatchPersistenceService', () => {
     expect(profile.xp).toBe(250); // was 150, +100
     expect(profile.coins).toBe(100); // was 50, +50
   });
+
+  it('should mark a match as ABANDONED without altering points, XP, or rank', async () => {
+    const { mockClient, tableData } = createMockSupabase();
+    const service = new MatchPersistenceService(mockClient);
+
+    const players = [
+      new Player('human', 'You', false),
+      new Player('bot1', 'Bot 1', true),
+      new Player('bot2', 'Bot 2', true),
+      new Player('bot3', 'Bot 3', true),
+    ];
+    const session = new GameSession('session_abandon_test', new GameState(players), players);
+
+    await service.initMatch(session, {
+      userId: 'test-user-123',
+      displayName: 'TestPlayer',
+    });
+
+    expect(tableData.matches[0].status).toBe('IN_PROGRESS');
+
+    await service.abandonMatch(session);
+
+    // Verify Match status is ABANDONED and completed_at is set
+    expect(tableData.matches[0].status).toBe('ABANDONED');
+    expect(tableData.matches[0].completed_at).toBeDefined();
+
+    // Verify user profile points, XP, rank were NOT changed
+    const profile = tableData.profiles[0];
+    expect(profile.matches_played).toBe(2); // unchanged
+    expect(profile.matches_won).toBe(1); // unchanged
+    expect(profile.xp).toBe(150); // unchanged
+    expect(profile.coins).toBe(50); // unchanged
+  });
 });

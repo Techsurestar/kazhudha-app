@@ -136,13 +136,13 @@
   <div class="w-full space-y-2 sm:space-y-2.5 pt-3 sm:pt-4 flex-shrink-0 max-w-[300px] mx-auto">
 
     <!-- Primary Action: Play Again -->
-    <app-button variant="primary" routerLink="/game">
+    <app-button class="play-again-btn" variant="primary" (clicked)="onPlayAgain()">
         <gameplay-icon [size]="20" />
         <span>Play Again</span>
     </app-button>
 
     <!-- Secondary Action: Back to Home -->
-    <app-button variant="secondary" routerLink="/">
+    <app-button class="back-home-btn" variant="secondary" (clicked)="onBackToHome()">
         <home-icon [size]="20" />
         <span>Back to Home</span>
     </app-button>

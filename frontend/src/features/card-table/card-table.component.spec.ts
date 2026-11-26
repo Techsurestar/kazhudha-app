@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { CardTableComponent } from './card-table.component';
 import { GameStateService } from '../../core/services/game-state.service';
 
@@ -7,10 +8,16 @@ describe('CardTableComponent', () => {
   let component: CardTableComponent;
   let fixture: ComponentFixture<CardTableComponent>;
   let gameStateService: GameStateService;
+  let routerSpy: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
+    routerSpy = { navigate: vi.fn() };
+
     await TestBed.configureTestingModule({
-      imports: [CardTableComponent]
+      imports: [CardTableComponent],
+      providers: [
+        { provide: Router, useValue: routerSpy }
+      ]
     }).compileComponents();
 
     gameStateService = TestBed.inject(GameStateService);
@@ -648,6 +655,15 @@ describe('CardTableComponent', () => {
       expect(component.showGameResultModal()).toBe(true);
       const modal = fixture.nativeElement.querySelector('app-game-result');
       expect(modal).not.toBeNull();
+    });
+
+    it('should mark match as abandoned and navigate to /match-abandoned on human turn timeout', () => {
+      const abandonSpy = vi.spyOn(gameStateService, 'abandonMatch');
+      component.sessionId = 'test_session_timeout';
+      component.onHumanTurnTimeout();
+
+      expect(abandonSpy).toHaveBeenCalledWith('test_session_timeout');
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/match-abandoned']);
     });
   });
 });

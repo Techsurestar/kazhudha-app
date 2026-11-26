@@ -1,4 +1,4 @@
-import { Component, input, output, computed } from '@angular/core';
+import { Component, input, output, computed, signal, effect, untracked, OnDestroy } from '@angular/core';
 import { CardComponent } from '../../../shared/card/card.component';
 
 export interface HandCard {
@@ -20,7 +20,7 @@ export interface HumanPlayerState {
   templateUrl: './human-hand.component.html',
   styleUrls: ['./human-hand.component.css']
 })
-export class HumanHandComponent {
+export class HumanHandComponent implements OnDestroy {
   /** Hand cards available to the human player */
   readonly cards = input<HandCard[]>([]);
 
@@ -37,11 +37,34 @@ export class HumanHandComponent {
   /** Whether the Skip Game button can be displayed when hand is empty */
   readonly canSkip = input<boolean>(true);
 
+  /** Duration of the turn countdown in seconds (default 20 seconds) */
+  readonly timerDuration = input<number>(20);
+
   /** Emitted when the user taps/clicks a playable card */
   readonly cardPlay = output<HandCard>();
 
   /** Emitted when the user taps/clicks the Skip Game button when hand is empty */
   readonly skipGame = output<void>();
+
+  /** Emitted when the turn countdown timer expires (reaches 0) */
+  readonly timeUp = output<void>();
+
+  /** Remaining seconds on the turn timer, or null if timer is inactive */
+  readonly remainingSeconds = signal<number | null>(null);
+
+  /**
+   * Color class for the turn timer badge:
+   * - Remaining > 10s: 'timer-normal'
+   * - Remaining <= 10s and >= 5s: 'timer-orange' (when time goes beyond 10s)
+   * - Remaining < 5s: 'timer-red' (when time goes below 5 seconds)
+   */
+  readonly timerColorClass = computed(() => {
+    const sec = this.remainingSeconds();
+    if (sec === null) return '';
+    if (sec < 5) return 'timer-red';
+    if (sec <= 10) return 'timer-orange';
+    return 'timer-normal';
+  });
 
   readonly effectiveName = computed(() => this.player()?.name ?? this.name());
   readonly effectiveScore = computed(() => this.player()?.score ?? this.score());
@@ -56,6 +79,57 @@ export class HumanHandComponent {
     return this.cardCount();
   });
   readonly effectiveIsTurn = computed(() => this.player()?.isCurrentTurn ?? this.isCurrentTurn());
+
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
+
+  constructor() {
+    effect(() => {
+      const isTurn = this.effectiveIsTurn();
+      const isDisabled = this.disabled();
+      const isActive = isTurn && !isDisabled;
+
+      untracked(() => {
+        if (isActive) {
+          if (this.timerInterval === null) {
+            this.startTimer();
+          }
+        } else {
+          this.stopTimer();
+        }
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.stopTimer();
+  }
+
+  startTimer(): void {
+    this.clearTimerInterval();
+    this.remainingSeconds.set(this.timerDuration());
+    this.timerInterval = setInterval(() => {
+      const current = this.remainingSeconds();
+      if (current === null || current <= 1) {
+        this.remainingSeconds.set(0);
+        this.clearTimerInterval();
+        this.timeUp.emit();
+      } else {
+        this.remainingSeconds.set(current - 1);
+      }
+    }, 1000);
+  }
+
+  private clearTimerInterval(): void {
+    if (this.timerInterval !== null) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  stopTimer(): void {
+    this.clearTimerInterval();
+    this.remainingSeconds.set(null);
+  }
 
   getSuitSymbol(suit: string): string {
     switch (suit?.toUpperCase()) {
@@ -83,10 +157,12 @@ export class HumanHandComponent {
 
   onCardClick(card: HandCard): void {
     if (this.disabled()) return;
+    this.stopTimer();
     this.cardPlay.emit(card);
   }
 
   onSkipGameClick(): void {
+    this.stopTimer();
     this.skipGame.emit();
   }
 }

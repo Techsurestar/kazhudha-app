@@ -1,36 +1,53 @@
 <div class="flex flex-col items-center w-full select-none">
 
-  <!-- Human Gold Nameplate Badge -->
-  <div
-    class="human-nameplate mb-1 flex self-start ml-2 items-center space-x-1.5 p-1 rounded-xl transition-all duration-300"
-    [class.human-turn-active]="effectiveIsTurn()"
-    [class.turn-active]="effectiveIsTurn()">
-    <!-- Left: Square Avatar Frame -->
-    <div class="nameplate-avatar-box">
-      <img
-        src="/avatar/avatar.jpeg"
-        alt="Avatar"
-        class="w-full h-full object-cover rounded-[5px]"
-      />
+  <!-- Top Header Bar: Gold Nameplate (Left) + Turn Countdown Timer (Right) -->
+  <div class="w-full flex items-center justify-between px-2 mb-1">
+    <!-- Human Gold Nameplate Badge -->
+    <div
+      class="human-nameplate flex items-center space-x-1.5 p-1 rounded-xl transition-all duration-300"
+      [class.human-turn-active]="effectiveIsTurn()"
+      [class.turn-active]="effectiveIsTurn()">
+      <!-- Left: Square Avatar Frame -->
+      <div class="nameplate-avatar-box">
+        <img
+          src="/avatar/avatar.jpeg"
+          alt="Avatar"
+          class="w-full h-full object-cover rounded-[5px]"
+        />
+      </div>
+
+      <!-- Right: Username + 2 Stat Rows -->
+      <div class="flex flex-col justify-between h-[42px] sm:h-[46px] w-[48px] sm:w-[84px]">
+        <!-- Row 0: Username -->
+        <div class="nameplate-username-bar">
+          <span class="truncate">{{ effectiveName() }}</span>
+        </div>
+
+        <!-- Row 1: Remaining Cards (Below username) -->
+        <div class="nameplate-stat-bar">
+          <span>{{ effectiveCardCount() }} Cards</span>
+        </div>
+
+        <!-- Row 2: Points -->
+        <div class="nameplate-stat-bar">
+          <span>{{ effectiveScore() }} pts</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Right: Username + 2 Stat Rows -->
-    <div class="flex flex-col justify-between h-[42px] sm:h-[46px] w-[48px] sm:w-[84px]">
-      <!-- Row 0: Username -->
-      <div class="nameplate-username-bar">
-        <span class="truncate">{{ effectiveName() }}</span>
+    <!-- Turn Countdown Timer Badge -->
+    @if (effectiveIsTurn() && !disabled() && remainingSeconds() !== null) {
+      <div
+        class="turn-timer-badge flex items-center space-x-1.5 px-3 py-1.5 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 select-none"
+        [class]="timerColorClass()"
+        aria-label="Turn timer">
+        <svg class="w-4 h-4 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="font-black text-xs sm:text-sm tabular-nums tracking-wider">{{ remainingSeconds() }}s</span>
       </div>
-
-      <!-- Row 1: Remaining Cards (Below username) -->
-      <div class="nameplate-stat-bar">
-        <span>{{ effectiveCardCount() }} Cards</span>
-      </div>
-
-      <!-- Row 2: Points -->
-      <div class="nameplate-stat-bar">
-        <span>{{ effectiveScore() }} pts</span>
-      </div>
-    </div>
+    }
   </div>
 
   <!-- Playable Hand Fan -->

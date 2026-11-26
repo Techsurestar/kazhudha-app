@@ -51,5 +51,19 @@ export function createGameRoutes(
     }
   });
 
+  const handleAbandon = async (req: any, res: any, next: any) => {
+    try {
+      const sessionId =
+        (req.query.sessionId as string) || req.body?.sessionId || 'default';
+      const result = await gameController.abandonGame(sessionId);
+      res.json(result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  router.post('/abandon', handleAbandon);
+  router.get('/abandon', handleAbandon);
+
   return router;
 }

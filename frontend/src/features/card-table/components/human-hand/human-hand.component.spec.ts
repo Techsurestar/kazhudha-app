@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HumanHandComponent, HandCard } from './human-hand.component';
 
@@ -19,6 +19,11 @@ describe('HumanHandComponent', () => {
 
     fixture = TestBed.createComponent(HumanHandComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    fixture.destroy();
   });
 
   it('should create the HumanHandComponent', () => {
@@ -150,5 +155,117 @@ describe('HumanHandComponent', () => {
     expect(el.textContent).not.toContain('Skip Game');
     const skipButton = el.querySelector('button.skip-game-btn');
     expect(skipButton).toBeNull();
+  });
+
+  describe('Turn countdown timer (20 seconds)', () => {
+    it('should start countdown from 20 seconds when active turn and disabled is false', () => {
+      vi.useFakeTimers();
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', false);
+      fixture.detectChanges();
+
+      expect(component.remainingSeconds()).toBe(20);
+      const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
+      expect(timerBadge).not.toBeNull();
+      expect(timerBadge?.textContent).toContain('20s');
+      expect(timerBadge?.classList.contains('timer-normal')).toBe(true);
+    });
+
+    it('should display orange color when time is between 10 and 5 seconds', () => {
+      vi.useFakeTimers();
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', false);
+      fixture.detectChanges();
+
+      // 10s elapsed -> 10s remaining (threshold)
+      vi.advanceTimersByTime(10000);
+      fixture.detectChanges();
+
+      expect(component.remainingSeconds()).toBe(10);
+      expect(component.timerColorClass()).toBe('timer-orange');
+      const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
+      expect(timerBadge?.classList.contains('timer-orange')).toBe(true);
+
+      // Advance to 5s remaining
+      vi.advanceTimersByTime(5000);
+      fixture.detectChanges();
+      expect(component.remainingSeconds()).toBe(5);
+      expect(component.timerColorClass()).toBe('timer-orange');
+      expect(timerBadge?.classList.contains('timer-orange')).toBe(true);
+    });
+
+    it('should display red color when time goes below 5 seconds', () => {
+      vi.useFakeTimers();
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', false);
+      fixture.detectChanges();
+
+      // Advance 16s -> 4s remaining (< 5)
+      vi.advanceTimersByTime(16000);
+      fixture.detectChanges();
+
+      expect(component.remainingSeconds()).toBe(4);
+      expect(component.timerColorClass()).toBe('timer-red');
+      const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
+      expect(timerBadge?.classList.contains('timer-red')).toBe(true);
+    });
+
+    it('should emit timeUp when countdown reaches 0 seconds', () => {
+      vi.useFakeTimers();
+      let timeUpEmitted = false;
+      component.timeUp.subscribe(() => {
+        timeUpEmitted = true;
+      });
+
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', false);
+      fixture.detectChanges();
+
+      // Advance full 20 seconds
+      vi.advanceTimersByTime(20000);
+      fixture.detectChanges();
+
+      expect(component.remainingSeconds()).toBe(0);
+      expect(timeUpEmitted).toBe(true);
+    });
+
+    it('should stop timer when a card is clicked', () => {
+      vi.useFakeTimers();
+      fixture.componentRef.setInput('cards', mockCards);
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', false);
+      fixture.detectChanges();
+
+      expect(component.remainingSeconds()).toBe(20);
+      const cardButtons = fixture.nativeElement.querySelectorAll('button');
+      cardButtons[0].click();
+
+      expect(component.remainingSeconds()).toBeNull();
+    });
+
+    it('should stop timer when skip game is clicked', () => {
+      vi.useFakeTimers();
+      fixture.componentRef.setInput('cards', []);
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', false);
+      fixture.detectChanges();
+
+      expect(component.remainingSeconds()).toBe(20);
+      const skipButton = fixture.nativeElement.querySelector('button.skip-game-btn') as HTMLButtonElement;
+      skipButton.click();
+
+      expect(component.remainingSeconds()).toBeNull();
+    });
+
+    it('should not start timer when disabled is true', () => {
+      vi.useFakeTimers();
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', true);
+      fixture.detectChanges();
+
+      expect(component.remainingSeconds()).toBeNull();
+      const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
+      expect(timerBadge).toBeNull();
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonComponent } from '../../../shared/button/button.component';
@@ -17,5 +17,17 @@ export class MatchAbandonedComponent {
 
   readonly title = input<string>('Match Abandoned');
   readonly subtitle = input<string>('The match was not completed\nand has been abandoned.');
-  
+
+  readonly playAgain = output<void>();
+  readonly backToHome = output<void>();
+
+  onPlayAgain(): void {
+    this.playAgain.emit();
+    this.router.navigate(['/game']);
+  }
+
+  onBackToHome(): void {
+    this.backToHome.emit();
+    this.router.navigate(['/']);
+  }
 }

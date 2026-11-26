@@ -161,6 +161,17 @@ export class GameController {
     return this.mapToView(session, executionEvents);
   }
 
+  public async abandonGame(
+    sessionId: string
+  ): Promise<{ success: boolean; message: string }> {
+    const session = this.sessionManager.getSession(sessionId);
+    if (!session) {
+      return { success: false, message: 'Session not found' };
+    }
+    await this.persistenceService.abandonMatch(session);
+    return { success: true, message: 'Match abandoned successfully' };
+  }
+
   private executePlayStep(
     session: GameSession,
     playerId: string,

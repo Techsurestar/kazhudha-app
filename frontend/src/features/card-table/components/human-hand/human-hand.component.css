@@ -91,3 +91,52 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ==================================================== */
+/* Turn Timer Badge                                     */
+/* ==================================================== */
+.turn-timer-badge {
+  font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Default / Normal (> 10s): Soft Emerald Green */
+.turn-timer-badge.timer-normal {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: #10b981;
+  color: #34d399;
+}
+
+/* Orange (> 10s elapsed / <= 10s remaining): Amber Warning */
+.turn-timer-badge.timer-orange {
+  background: rgba(245, 158, 11, 0.28);
+  border-color: #f59e0b;
+  color: #fbbf24;
+  animation: timerWarning 1s infinite alternate ease-in-out;
+}
+
+/* Red (< 5s remaining): Critical Pulse */
+.turn-timer-badge.timer-red {
+  background: rgba(239, 68, 68, 0.35);
+  border-color: #ef4444;
+  color: #f87171;
+  animation: timerUrgent 0.5s infinite alternate ease-in-out;
+}
+
+@keyframes timerWarning {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes timerUrgent {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.08);
+  }
+}
