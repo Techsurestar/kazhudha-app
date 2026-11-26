@@ -24,14 +24,10 @@ export function createGameRoutes(
         // Authenticated user ID is strictly derived from the verified token
         userId: verifiedUser ? verifiedUser.id : undefined,
         displayName:
-          verifiedUser?.user_metadata?.full_name ||
-          verifiedUser?.user_metadata?.name ||
           req.body?.displayName ||
           (verifiedUser?.email ? verifiedUser.email.split('@')[0] : 'Player 1 (You)'),
         avatarUrl:
-          verifiedUser?.user_metadata?.avatar_url ||
-          verifiedUser?.user_metadata?.picture ||
-          req.body?.avatarUrl,
+          req.body?.avatarUrl || '/avatar/avatar.jpeg',
       };
 
       const view = await gameController.startGame(sessionId, userMetadata);

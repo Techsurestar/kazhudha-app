@@ -32,22 +32,19 @@ export class HomeProfileMetaComponent implements OnInit {
   }
 
   readonly displayName = computed(() => {
-    // For logged-in user: wire to profiles table username
+    // For logged-in user: wire strictly to profiles table username (never Google info)
     if (this.isAuthenticated) {
       if (this.profileUsername()) {
         return this.profileUsername();
       }
+      const authProfile = this.authService && typeof (this.authService as any).userProfile === 'function' ? (this.authService as any).userProfile() : null;
+      if (authProfile?.username) {
+        return authProfile.username;
+      }
       if (this.name()) return this.name();
-      if (this.playerName() && this.playerName() !== 'Guest Player') {
-        return this.playerName();
-      }
-      const authName = typeof this.authService?.displayName === 'function' ? this.authService.displayName() : '';
-      if (authName && authName !== 'Guest Player') {
-        return authName;
-      }
       return 'Player123';
     }
-    // For guest user: no changes, use input properties
+    // For guest user: use input properties
     return this.name() || this.playerName();
   });
 
@@ -66,24 +63,18 @@ export class HomeProfileMetaComponent implements OnInit {
   readonly avatarUrl = input<string>('');
 
   readonly displayAvatarSrc = computed(() => {
-    // For logged-in user: wire to profiles table avatar_url
+    // For logged-in user: wire strictly to profiles table avatar_url (never Google info)
     if (this.isAuthenticated) {
       if (this.profileAvatarUrl()) {
         return resolveAvatarUrl(this.profileAvatarUrl());
       }
-      if (this.avatarUrl() && this.avatarUrl() !== '/avatar/guest_avatar.webp') {
-        return resolveAvatarUrl(this.avatarUrl());
-      }
-      if (this.avatarSrc() && this.avatarSrc() !== '/avatar/guest_avatar.webp') {
-        return resolveAvatarUrl(this.avatarSrc());
-      }
-      const authAvatar = typeof this.authService?.avatarUrl === 'function' ? this.authService.avatarUrl() : '';
-      if (authAvatar && authAvatar !== '/avatar/guest_avatar.webp') {
-        return authAvatar;
+      const authProfile = this.authService && typeof (this.authService as any).userProfile === 'function' ? (this.authService as any).userProfile() : null;
+      if (authProfile?.avatar_url) {
+        return resolveAvatarUrl(authProfile.avatar_url);
       }
       return '/avatar/avatar.jpeg';
     }
-    // For guest user: no changes, use input properties
+    // For guest user: use input properties
     return this.avatarUrl() || this.avatarSrc() || '/avatar/guest_avatar.webp';
   });
 
@@ -113,16 +104,34 @@ export class HomeProfileMetaComponent implements OnInit {
   readonly badgeClick = output<void>();
 
   constructor() {
+    // Immediately seed from AuthService's cached profile (0ms delay)
+    this.seedFromAuthService();
+
     // React to auth state changes to fetch or clear profiles table data
     effect(() => {
       const user = this.currentUser;
       if (user) {
+        this.seedFromAuthService();
         this.fetchProfile();
       } else {
         this.profileUsername.set('');
         this.profileAvatarUrl.set('');
       }
     });
+  }
+
+  private seedFromAuthService(): void {
+    if (this.authService && typeof (this.authService as any).userProfile === 'function') {
+      const p = (this.authService as any).userProfile();
+      if (p) {
+        if (p.username && !this.profileUsername()) {
+          this.profileUsername.set(p.username);
+        }
+        if (p.avatar_url && !this.profileAvatarUrl()) {
+          this.profileAvatarUrl.set(p.avatar_url);
+        }
+      }
+    }
   }
 
   async ngOnInit(): Promise<void> {
@@ -159,6 +168,13 @@ export class HomeProfileMetaComponent implements OnInit {
         }
         if (data.avatar_url) {
           this.profileAvatarUrl.set(data.avatar_url);
+        }
+        if (this.authService && typeof (this.authService as any).setProfile === 'function') {
+          (this.authService as any).setProfile({
+            id: user.id,
+            username: data.username,
+            avatar_url: data.avatar_url
+          });
         }
       }
     } catch (err) {

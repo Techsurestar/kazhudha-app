@@ -33,7 +33,10 @@ describe('GameController', () => {
       });
 
       expect(nextView).toBeDefined();
-      expect(nextView.humanHand.length).toBeLessThan(initialHandSize);
+      const humanPlayedEvent = nextView.events.some(
+        (e) => (e.eventType === 'PLAY' || e.eventType === 'VETTU') && e.playerId === 'human'
+      );
+      expect(humanPlayedEvent).toBe(true);
     }
   });
 

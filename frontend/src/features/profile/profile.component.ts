@@ -171,7 +171,23 @@ export class ProfileComponent implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
+    this.seedFromAuthService();
     await this.fetchProfile();
+  }
+
+  private seedFromAuthService(): void {
+    if (this.authService && typeof (this.authService as any).userProfile === 'function') {
+      const p = (this.authService as any).userProfile();
+      if (p) {
+        if (p.username && !this.profileUsername()) {
+          this.profileUsername.set(p.username);
+        }
+        if (p.avatar_url && !this.profileAvatarUrl()) {
+          this.profileAvatarUrl.set(p.avatar_url);
+          this.selectedAvatarSrc.set(p.avatar_url);
+        }
+      }
+    }
   }
 
   async fetchProfile(): Promise<void> {
@@ -206,6 +222,14 @@ export class ProfileComponent implements OnInit {
         // 2. Avatar_url with avatars present in the assets avatar folder
         if (data.avatar_url) {
           this.profileAvatarUrl.set(data.avatar_url);
+        }
+
+        if (typeof (this.authService as any).setProfile === 'function') {
+          (this.authService as any).setProfile({
+            id: user.id,
+            username: data.username,
+            avatar_url: data.avatar_url
+          });
         }
 
         // 3. Games Played - matches_played
@@ -286,6 +310,13 @@ export class ProfileComponent implements OnInit {
             username: trimmed,
             updated_at: new Date().toISOString()
           }).eq('id', user.id);
+          if (typeof (this.authService as any).setProfile === 'function') {
+            (this.authService as any).setProfile({
+              id: user.id,
+              username: trimmed,
+              avatar_url: this.profileAvatarUrl()
+            });
+          }
         } catch (err) {
           console.warn('ProfileComponent: Could not persist username to Supabase', err);
         }
@@ -316,6 +347,13 @@ export class ProfileComponent implements OnInit {
             avatar_url: avatar.src,
             updated_at: new Date().toISOString()
           }).eq('id', user.id);
+          if (typeof (this.authService as any).setProfile === 'function') {
+            (this.authService as any).setProfile({
+              id: user.id,
+              username: this.profileUsername(),
+              avatar_url: avatar.src
+            });
+          }
         } catch (err) {
           console.warn('ProfileComponent: Could not persist avatar to Supabase', err);
         }

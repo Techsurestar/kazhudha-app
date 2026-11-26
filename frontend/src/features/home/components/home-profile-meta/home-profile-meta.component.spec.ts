@@ -182,7 +182,7 @@ describe('HomeProfileMetaComponent', () => {
       expect(img.getAttribute('alt')).toBe('GoldenFalcon99 Avatar');
     });
 
-    it('should fall back to Google auth name if profiles table has no custom username', async () => {
+    it('should fall back to Player123 if profiles table has no custom username and never use Google name', async () => {
       mockAuthService.client.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
@@ -195,7 +195,7 @@ describe('HomeProfileMetaComponent', () => {
       await loggedInComponent.fetchProfile();
       loggedInFixture.detectChanges();
 
-      expect(loggedInComponent.displayName()).toBe('Google Name');
+      expect(loggedInComponent.displayName()).toBe('Player123');
     });
   });
 });

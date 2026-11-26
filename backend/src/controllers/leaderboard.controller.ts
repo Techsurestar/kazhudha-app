@@ -22,12 +22,9 @@ export class LeaderboardController {
       const verifiedUser = (req as AuthRequest).user;
       const requestUserId = verifiedUser?.id;
       const requestDisplayName =
-        verifiedUser?.user_metadata?.full_name ||
-        verifiedUser?.user_metadata?.name ||
+        (req.query.displayName as string) ||
         (verifiedUser?.email ? verifiedUser.email.split('@')[0] : undefined);
-      const requestAvatarUrl =
-        verifiedUser?.user_metadata?.avatar_url ||
-        verifiedUser?.user_metadata?.picture;
+      const requestAvatarUrl = (req.query.avatarUrl as string) || undefined;
 
       const result = await this.leaderboardService.getLeaderboard(
         period,

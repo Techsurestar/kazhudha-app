@@ -30,7 +30,11 @@ export function resolveAvatarUrl(rawUrl?: string | null): string {
   ) {
     return '/avatar/avatar.jpeg';
   }
-  // External URLs (e.g. Google profile pictures)
+  // Ignore external Google profile picture URLs (do not use Google info)
+  if (trimmed.includes('googleusercontent.com') || trimmed.includes('google.com')) {
+    return '/avatar/avatar.jpeg';
+  }
+  // External URLs (non-Google)
   if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     return trimmed;
   }
