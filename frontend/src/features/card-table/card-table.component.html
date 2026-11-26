@@ -89,13 +89,11 @@
     </div>
 
     <!-- ---------------------------------------- -->
-    <!-- BOTTOM ACTION BUTTON ("Hint")            -->
+    <!-- BOTTOM ACTION BAR                        -->
     <!-- ---------------------------------------- -->
     <div class="absolute bottom-2.5 left-1 right-1 z-30">
       <app-action-bar
-        [isHintDisabled]="isDealing() || isReplaying() || currentTurnPlayerId() !== 'human'"
-        [badgeText]="actionBadgeText()"
-        (hint)="onHintClick()">
+        [badgeText]="actionBadgeText()">
       </app-action-bar>
     </div>
 

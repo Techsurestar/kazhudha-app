@@ -50,24 +50,4 @@
     }
   </div>
 
-  <!-- "Hint" Button -->
-  <button
-    type="button"
-    (click)="onHintClick()"
-    [disabled]="isHintDisabled()"
-    aria-label="Get move hint"
-    class="flex flex-col items-center group focus:outline-none cursor-pointer transition-opacity"
-    [class.opacity-50]="isHintDisabled()"
-    [class.cursor-not-allowed]="isHintDisabled()">
-    <div class="action-circle-btn flex items-center justify-center">
-      <svg class="w-5 h-5 text-amber-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a6 6 0 0 0-6 6c0 2.22 1.2 4.15 3 5.19V17a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-3.81c1.8-1.04 3-2.97 3-5.19a6 6 0 0 0-6-6z"/>
-        <path d="M9 21h6"/>
-      </svg>
-    </div>
-    <span class="text-[11px] font-bold text-amber-200 mt-1 tracking-wide group-hover:text-white transition-colors">
-      Hint
-    </span>
-  </button>
-
 </nav>

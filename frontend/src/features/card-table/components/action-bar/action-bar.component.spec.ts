@@ -20,27 +20,26 @@ describe('ActionBarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the Hint button and Information button', () => {
+  it('should render the Information button and not Hint button', () => {
     const el: HTMLElement = fixture.nativeElement;
     const buttons = el.querySelectorAll('button');
-    expect(buttons.length).toBe(2);
+    expect(buttons.length).toBe(1);
 
-    expect(el.textContent).toContain('Hint');
     expect(el.textContent).toContain('Info');
+    expect(el.textContent).not.toContain('Hint');
     expect(el.textContent).not.toContain('New');
   });
 
-  it('should render the text area badge between the info and hint buttons', () => {
+  it('should render the text area badge next to the info button', () => {
     const el: HTMLElement = fixture.nativeElement;
     const badge = el.querySelector('.text-area-badge');
     expect(badge).not.toBeNull();
 
     const nav = el.querySelector('nav');
     const children = Array.from(nav?.children || []);
-    expect(children.length).toBe(3);
+    expect(children.length).toBe(2);
     expect(children[0].tagName.toLowerCase()).toBe('button'); // Info button on left
     expect(children[1].classList.contains('text-area-badge')).toBe(true); // Badge in middle
-    expect(children[2].tagName.toLowerCase()).toBe('button'); // Hint button on right
   });
 
   it('should display text in the text area badge when badgeText input is provided', () => {
@@ -87,37 +86,6 @@ describe('ActionBarComponent', () => {
     expect(badge?.textContent?.trim()).toBe('');
   });
 
-  it('should display the hint message in the text area badge even if the Information button is in Off state', () => {
-    const hintMsg = '💡 Hint: Play 4 of CLUBS';
-    fixture.componentRef.setInput('badgeText', hintMsg);
-
-    // Turn Information button off
-    const infoBtn = fixture.nativeElement.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
-    infoBtn.click();
-    fixture.detectChanges();
-
-    expect(component.effectiveIsInfoOn()).toBe(false);
-    expect(component.isHintMessage(hintMsg)).toBe(true);
-    expect(component.shouldShowBadge()).toBe(true);
-    expect(component.effectiveBadgeText()).toBe(hintMsg);
-
-    const badge = fixture.nativeElement.querySelector('.text-area-badge');
-    expect(badge?.textContent).toContain(hintMsg);
-  });
-
-  it('should display the hint message in the text area badge when isInfoActive is false', () => {
-    const hintMsg = '💡 Hint: Play A of SPADES';
-    fixture.componentRef.setInput('badgeText', hintMsg);
-    fixture.componentRef.setInput('isInfoActive', false);
-    fixture.detectChanges();
-
-    expect(component.effectiveIsInfoOn()).toBe(false);
-    expect(component.effectiveBadgeText()).toBe(hintMsg);
-
-    const badge = fixture.nativeElement.querySelector('.text-area-badge');
-    expect(badge?.textContent).toContain(hintMsg);
-  });
-
   it('should render the information button with icon and initial on state', () => {
     const el: HTMLElement = fixture.nativeElement;
     const infoBtn = el.querySelector('button[aria-label="Information"]') as HTMLButtonElement;
@@ -158,30 +126,5 @@ describe('ActionBarComponent', () => {
     expect(component.effectiveIsInfoOn()).toBe(false);
     expect(infoBtn.getAttribute('aria-pressed')).toBe('false');
     expect(infoBtn.classList.contains('is-off')).toBe(true);
-  });
-
-  it('should emit hint event when Hint button is clicked', () => {
-    let triggered = false;
-    component.hint.subscribe(() => {
-      triggered = true;
-    });
-
-    const hintBtn = fixture.nativeElement.querySelector('button[aria-label="Get move hint"]') as HTMLButtonElement;
-    hintBtn.click();
-
-    expect(triggered).toBe(true);
-  });
-
-  it('should not emit events when button is disabled', () => {
-    fixture.componentRef.setInput('isHintDisabled', true);
-    fixture.detectChanges();
-
-    let hintEmitted = false;
-    component.hint.subscribe(() => (hintEmitted = true));
-
-    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
-    button.click();
-
-    expect(hintEmitted).toBe(false);
   });
 });

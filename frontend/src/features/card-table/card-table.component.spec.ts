@@ -106,16 +106,16 @@ describe('CardTableComponent', () => {
     expect(humanHand?.querySelector('.skip-game-btn')).not.toBeNull();
   });
 
-  it('should render the bottom action bar with Hint button', () => {
+  it('should render the bottom action bar with Information button', () => {
     const el: HTMLElement = fixture.nativeElement;
     const actionBar = el.querySelector('app-action-bar');
     expect(actionBar).not.toBeNull();
 
     const buttons = actionBar?.querySelectorAll('button');
-    expect(buttons?.length).toBe(2);
+    expect(buttons?.length).toBe(1);
 
     const buttonTexts = Array.from(buttons || []).map(b => b.textContent?.trim());
-    expect(buttonTexts).toContain('Hint');
+    expect(buttonTexts).not.toContain('Hint');
     expect(buttonTexts).toContain('Info');
     expect(buttonTexts).not.toContain('New');
   });
@@ -204,58 +204,6 @@ describe('CardTableComponent', () => {
     expect(component.getRankChip('bot3')).toBeNull();
   });
 
-  it('should give a hint when it is human turn', () => {
-    component.currentTurnPlayerId.set('human');
-    component.humanCards.set([
-      { rank: 'ACE', suit: 'SPADES' },
-      { rank: 'FOUR', suit: 'CLUBS' }
-    ]);
-
-    component.onHintClick();
-    expect(component.toastMessage()).toContain('Hint: Play');
-  });
-
-  it('should recommend advanced safe dump (highest undercard) when an opponent already played a high card', () => {
-    // P1 played 2 of Diamonds, P2 played K of Diamonds
-    component.centerCards.set([
-      { playerId: 'bot1', rank: '2', suit: 'DIAMONDS', position: 'left' },
-      { playerId: 'bot2', rank: 'K', suit: 'DIAMONDS', position: 'top' }
-    ]);
-    component.currentTurnPlayerId.set('human');
-
-    // Human holds 3, 9, and J of Diamonds
-    component.humanCards.set([
-      { rank: '3', suit: 'DIAMONDS' },
-      { rank: '9', suit: 'DIAMONDS' },
-      { rank: 'J', suit: 'DIAMONDS' }
-    ]);
-
-    component.onHintClick();
-
-    // With K of Diamonds on the pile, J of Diamonds is the highest safe under-card!
-    expect(component.toastMessage()).toBe('💡 Hint: Play J of DIAMONDS');
-  });
-
-  it('should recommend lowest overcard when forced to play higher than current pile', () => {
-    // P1 played 2 of Diamonds, P2 played 4 of Diamonds
-    component.centerCards.set([
-      { playerId: 'bot1', rank: '2', suit: 'DIAMONDS', position: 'left' },
-      { playerId: 'bot2', rank: '4', suit: 'DIAMONDS', position: 'top' }
-    ]);
-    component.currentTurnPlayerId.set('human');
-
-    // Human holds 9 and J of Diamonds (both higher than 4)
-    component.humanCards.set([
-      { rank: '9', suit: 'DIAMONDS' },
-      { rank: 'J', suit: 'DIAMONDS' }
-    ]);
-
-    component.onHintClick();
-
-    // Forced to play higher; recommends lowest over-card (9) to minimize waste
-    expect(component.toastMessage()).toBe('💡 Hint: Play 9 of DIAMONDS');
-  });
-
   it('should warn when human attempts to play out of turn', () => {
     component.currentTurnPlayerId.set('bot1');
     component.humanCards.set([{ rank: 'ACE', suit: 'SPADES' }]);
@@ -264,27 +212,13 @@ describe('CardTableComponent', () => {
     expect(component.toastMessage()).toBe('It is not your turn!');
   });
 
-  it('should display showToast messages including Hint: Play message in the action bar text badge', () => {
-    // 1. Non-hint message should display in actionBadgeText and inside action bar text badge
+  it('should display showToast messages in the action bar text badge', () => {
     component.showToast('It is not your turn!');
     fixture.detectChanges();
 
     expect(component.actionBadgeText()).toBe('It is not your turn!');
     const badgeEl = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
     expect(badgeEl?.textContent).toContain('It is not your turn!');
-
-    // 2. Hint: Play message should also update actionBadgeText and display inside action bar text badge
-    component.currentTurnPlayerId.set('human');
-    component.humanCards.set([{ rank: 'ACE', suit: 'SPADES' }]);
-    component.onHintClick();
-    fixture.detectChanges();
-
-    expect(component.toastMessage()).toContain('Hint: Play');
-    expect(component.actionBadgeText()).toContain('Hint: Play');
-
-    // Action bar badge contains the hint play message
-    const badgeAfterHint = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
-    expect(badgeAfterHint?.textContent).toContain('Hint: Play');
 
     // Toast banner element should not be present in card table
     const hintBanner = fixture.nativeElement.querySelector('.top-16');
@@ -319,24 +253,6 @@ describe('CardTableComponent', () => {
 
     // Text area badge should not display the info message now
     expect(badgeEl?.textContent?.trim()).toBe('');
-  });
-
-  it('should display the hint message in the action bar text badge even when info button is toggled off', () => {
-    // Click Info button on the action bar to toggle it off
-    const infoBtn = fixture.nativeElement.querySelector('app-action-bar button[aria-label="Information"]') as HTMLButtonElement;
-    infoBtn.click();
-    fixture.detectChanges();
-
-    // Trigger hint on human turn
-    component.currentTurnPlayerId.set('human');
-    component.humanCards.set([{ rank: 'ACE', suit: 'SPADES' }]);
-    component.onHintClick();
-    fixture.detectChanges();
-
-    expect(component.actionBadgeText()).toContain('Hint: Play');
-
-    const badgeEl = fixture.nativeElement.querySelector('app-action-bar .text-area-badge');
-    expect(badgeEl?.textContent).toContain('Hint: Play');
   });
 
   it('should correctly identify red vs black suits', () => {
