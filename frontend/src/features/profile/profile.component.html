@@ -304,55 +304,7 @@
     </div>
 
     <!-- 7. Persistent Bottom Navigation Bar (Home, Play, Leaderboard, Profile) -->
-    <nav class="bottom-nav-bar w-full pt-2 pb-2.5 sm:pb-3 px-3 flex-shrink-0 z-20" aria-label="Bottom Navigation">
-      <div class="grid grid-cols-4 items-center text-center">
-
-        <!-- 1. Home -->
-        <button type="button"
-                (click)="setActiveTab('home')"
-                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
-                aria-label="Home Tab">
-          <home-icon [size]="20" />
-          <span class="text-[10.5px] font-medium tracking-tight">Home</span>
-          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
-        </button>
-
-        <!-- 2. Play -->
-        <button type="button"
-                (click)="setActiveTab('play')"
-                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
-                aria-label="Play Tab">
-          <!-- Gamepad Icon -->
-          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-            <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
-          </svg>
-          <span class="text-[10.5px] font-medium tracking-tight">Play</span>
-          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
-        </button>
-
-        <!-- 3. Leaderboard -->
-        <button type="button"
-                (click)="setActiveTab('leaderboard')"
-                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-slate-400 hover:text-slate-200"
-                aria-label="Leaderboard Tab">
-          <leaderboard-icon [size]="20" />
-          <span class="text-[10.5px] font-medium tracking-tight">Leaderboard</span>
-          <div class="h-[2px] w-6 rounded-full transition-all duration-300 mt-0.5 opacity-0"></div>
-        </button>
-
-        <!-- 4. Profile (Active) -->
-        <button type="button"
-                (click)="setActiveTab('profile')"
-                class="flex flex-col items-center justify-center space-y-1 py-1 cursor-pointer transition-colors focus:outline-none text-[#f5c518]"
-                aria-label="Profile Tab">
-          <user-icon [size]="20" />
-          <span class="text-[10.5px] font-bold tracking-tight">Profile</span>
-          <!-- Active Golden Indicator Bar -->
-          <div class="h-[2px] w-6 rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,197,24,0.95)] opacity-100 transition-all duration-300 mt-0.5"></div>
-        </button>
-
-      </div>
-    </nav>
+    <app-bottom-nav />
 
   </div>
 
@@ -623,81 +575,6 @@
                 (click)="closeRankInfo()"
                 class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs cursor-pointer">
           Got it
-        </button>
-      </div>
-    </div>
-  }
-
-  <!-- Leaderboard Modal Dialog -->
-  @if (showLeaderboardModal()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay animate-fadeIn">
-      <div class="modal-card w-full max-w-sm rounded-2xl p-5 flex flex-col space-y-4 relative shadow-2xl">
-        <div class="flex items-center justify-between border-b border-[#e9c349]/20 pb-2">
-          <div class="flex items-center space-x-2">
-            <span class="text-xl">🏆</span>
-            <h3 class="text-base font-serif font-black text-[#e9c349] tracking-tight">Leaderboard</h3>
-          </div>
-          <button type="button"
-                  (click)="closeLeaderboard()"
-                  class="text-slate-400 hover:text-white transition-colors cursor-pointer text-lg p-1">
-            ✕
-          </button>
-        </div>
-
-        <div class="space-y-2 text-xs">
-          <!-- Rank 1 -->
-          <div class="flex items-center justify-between p-2 rounded-xl bg-amber-950/30 border border-amber-400/40">
-            <div class="flex items-center space-x-2.5">
-              <span class="text-base">🥇</span>
-              <div>
-                <div class="font-bold text-slate-100">CardMaster</div>
-                <div class="text-[10px] text-amber-300 font-medium">Grandmaster</div>
-              </div>
-            </div>
-            <span class="font-black text-[#f5c518]">1,420 pts</span>
-          </div>
-
-          <!-- Rank 2 -->
-          <div class="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/10">
-            <div class="flex items-center space-x-2.5">
-              <span class="text-base">🥈</span>
-              <div>
-                <div class="font-bold text-slate-200">AceSpade</div>
-                <div class="text-[10px] text-slate-400">Elite</div>
-              </div>
-            </div>
-            <span class="font-bold text-slate-200">980 pts</span>
-          </div>
-
-          <!-- Rank 3 -->
-          <div class="flex items-center justify-between p-2 rounded-xl bg-white/[0.03] border border-white/10">
-            <div class="flex items-center space-x-2.5">
-              <span class="text-base">🥉</span>
-              <div>
-                <div class="font-bold text-slate-200">DonkeyKing</div>
-                <div class="text-[10px] text-amber-600">Veteran</div>
-              </div>
-            </div>
-            <span class="font-bold text-amber-500">750 pts</span>
-          </div>
-
-          <!-- You -->
-          <div class="flex items-center justify-between p-2 rounded-xl bg-emerald-950/40 border border-emerald-500/40 mt-3">
-            <div class="flex items-center space-x-2.5">
-              <span class="text-xs font-bold text-emerald-400">#4</span>
-              <div>
-                <div class="font-bold text-emerald-300">{{ displayName() }} (You)</div>
-                <div class="text-[10px] text-slate-400">{{ userRank() }}</div>
-              </div>
-            </div>
-            <span class="font-bold text-emerald-300">320 pts</span>
-          </div>
-        </div>
-
-        <button type="button"
-                (click)="closeLeaderboard()"
-                class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs cursor-pointer">
-          Close
         </button>
       </div>
     </div>

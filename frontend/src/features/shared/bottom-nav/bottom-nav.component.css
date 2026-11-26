@@ -1,0 +1,7 @@
+/* Bottom Navigation Bar */
+.bottom-nav-bar {
+  background: linear-gradient(180deg, rgba(8, 20, 12, 0.96) 0%, rgba(3, 10, 6, 0.99) 100%);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(233, 195, 73, 0.18);
+  box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
+}

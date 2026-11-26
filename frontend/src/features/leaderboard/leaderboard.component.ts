@@ -10,13 +10,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { HomeIconComponent } from '../shared/icon/home-icon.component';
-import { GamepadIconComponent } from '../shared/icon/gamepad-icon.component';
-import { LeadboardIconComponent } from '../shared/icon/leadboard-icon.component';
-import { UserIconComponent } from '../shared/icon/user-icon.component';
 import { CrownIconComponent } from '../shared/icon/crown-icon.component';
 import { InfoIconComponent } from '../shared/icon/info-icon.component';
 import { LeaderboardAvatarComponent } from './components/leaderboard-avatar/leaderboard-avatar.component';
+import { BottomNavComponent } from '../shared/bottom-nav/bottom-nav.component';
 import { LeaderboardService } from './services/leaderboard.service';
 import { AuthService } from '../../core/services/auth.service';
 import type {
@@ -30,13 +27,10 @@ import type {
   standalone: true,
   imports: [
     CommonModule,
-    HomeIconComponent,
-    GamepadIconComponent,
-    LeadboardIconComponent,
-    UserIconComponent,
     CrownIconComponent,
     InfoIconComponent,
     LeaderboardAvatarComponent,
+    BottomNavComponent,
   ],
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.css'],

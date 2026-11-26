@@ -2,11 +2,8 @@ import { Component, ChangeDetectionStrategy, input, output, inject, signal, comp
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HomeProfileMetaComponent } from '../home-profile-meta/home-profile-meta.component';
-import { HomeIconComponent } from '../../../shared/icon/home-icon.component';
-import { BookOpenIconComponent } from '../../../shared/icon/book-open-icon.component';
-import { LeadboardIconComponent } from '../../../shared/icon/leadboard-icon.component';
-import { UserIconComponent } from '../../../shared/icon/user-icon.component';
 import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.component';
+import { BottomNavComponent } from '../../../shared/bottom-nav/bottom-nav.component';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
@@ -15,11 +12,8 @@ import { AuthService } from '../../../../core/services/auth.service';
   imports: [
     CommonModule,
     HomeProfileMetaComponent,
-    HomeIconComponent,
-    BookOpenIconComponent,
-    LeadboardIconComponent,
-    UserIconComponent,
-    ChevronsRightComponent
+    ChevronsRightComponent,
+    BottomNavComponent
   ],
   templateUrl: './guest-profile.component.html',
   styleUrls: ['./guest-profile.component.css'],
@@ -30,12 +24,6 @@ export class GuestProfileComponent {
   readonly authService = inject(AuthService);
 
   readonly isSigningIn = signal<boolean>(false);
-
-  /** Active navigation tab (defaults to 'profile') */
-  readonly activeTab = signal<'home' | 'rules' | 'leaderboard' | 'profile'>('profile');
-
-  /** Whether the leaderboard modal is open */
-  readonly showLeaderboardModal = signal<boolean>(false);
 
   /** Player display name (defaults to 'Guest Player') */
   readonly playerName = input<string>('Guest Player');
@@ -69,7 +57,6 @@ export class GuestProfileComponent {
   readonly continueWithEmail = output<void>();
 
   setActiveTab(tab: 'home' | 'rules' | 'leaderboard' | 'profile'): void {
-    this.activeTab.set(tab);
     if (tab === 'home') {
       this.router.navigate(['/']);
     } else if (tab === 'rules') {
@@ -81,11 +68,6 @@ export class GuestProfileComponent {
         this.router.navigate(['/profile']);
       }
     }
-  }
-
-  closeLeaderboard(): void {
-    this.showLeaderboardModal.set(false);
-    this.activeTab.set('profile');
   }
 
   onPlayAsGuest(): void {

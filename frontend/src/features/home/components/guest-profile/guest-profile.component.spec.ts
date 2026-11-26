@@ -130,31 +130,10 @@ describe('GuestProfileComponent', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/game']);
   });
 
-  it('should render the bottom navigation pane with Profile as active tab', () => {
+  it('should render the bottom navigation component', () => {
     const el = fixture.nativeElement as HTMLElement;
-    const navEl = el.querySelector('nav.bottom-nav-bar');
+    const navEl = el.querySelector('app-bottom-nav');
     expect(navEl).not.toBeNull();
-
-    expect(navEl?.textContent).toContain('Home');
-    expect(navEl?.textContent).toContain('Rules');
-    expect(navEl?.textContent).toContain('Leaderboard');
-    expect(navEl?.textContent).toContain('Profile');
-    expect(component.activeTab()).toBe('profile');
-  });
-
-  it('should navigate to home when Home tab is clicked in bottom navigation', () => {
-    component.setActiveTab('home');
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
-  });
-
-  it('should navigate to rules when Rules tab is clicked in bottom navigation', () => {
-    component.setActiveTab('rules');
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/how-to-play']);
-  });
-
-  it('should navigate to leaderboard when Leaderboard tab is clicked in bottom navigation', () => {
-    component.setActiveTab('leaderboard');
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/leaderboard']);
   });
 
   it('should respect custom playerName and avatarSrc inputs', () => {

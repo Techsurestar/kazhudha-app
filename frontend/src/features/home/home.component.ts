@@ -1,20 +1,16 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectionStrategy, PLATFORM_ID, Inject, signal, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { HomeIconComponent } from '../shared/icon/home-icon.component';
-import { BookOpenIconComponent } from '../shared/icon/book-open-icon.component';
-import { LeadboardIconComponent } from '../shared/icon/leadboard-icon.component';
-import { UserIconComponent } from '../shared/icon/user-icon.component';
 import { ChevronsRightComponent } from '../shared/icon/chevrons-right.component';
 import { HomeProfileMetaComponent } from './components/home-profile-meta/home-profile-meta.component';
+import { BottomNavComponent } from '../shared/bottom-nav/bottom-nav.component';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, HomeIconComponent, BookOpenIconComponent, 
-            LeadboardIconComponent, UserIconComponent, ChevronsRightComponent,
-            HomeProfileMetaComponent ],
+  imports: [CommonModule, RouterLink, ChevronsRightComponent,
+            HomeProfileMetaComponent, BottomNavComponent ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -22,9 +18,6 @@ import { AuthService } from '../../core/services/auth.service';
 export class HomeComponent implements AfterViewInit, OnDestroy {
   @ViewChild('heroCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  readonly activeTab = signal<'home' | 'rules' | 'leaderboard' | 'profile'>('home');
-  readonly showLeaderboardModal = signal<boolean>(false);
-  readonly showProfileModal = signal<boolean>(false);
   readonly isSigningIn = signal<boolean>(false);
   readonly signInError = signal<string | null>(null);
 
@@ -40,29 +33,22 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     private router: Router
   ) {}
 
+  openProfile(): void {
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/profile']);
+    } else {
+      this.router.navigate(['/guest-profile']);
+    }
+  }
+
   setActiveTab(tab: 'home' | 'rules' | 'leaderboard' | 'profile'): void {
-    this.activeTab.set(tab);
     if (tab === 'rules') {
       this.router.navigate(['/how-to-play']);
     } else if (tab === 'leaderboard') {
       this.router.navigate(['/leaderboard']);
     } else if (tab === 'profile') {
-      if (this.authService.isAuthenticated()) {
-        this.router.navigate(['/profile']);
-      } else {
-        this.router.navigate(['/guest-profile']);
-      }
+      this.openProfile();
     }
-  }
-
-  closeLeaderboard(): void {
-    this.showLeaderboardModal.set(false);
-    this.activeTab.set('home');
-  }
-
-  closeProfile(): void {
-    this.showProfileModal.set(false);
-    this.activeTab.set('home');
   }
 
   async continueWithGoogle(): Promise<void> {

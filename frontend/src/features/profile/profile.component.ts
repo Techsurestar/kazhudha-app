@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { HomeIconComponent } from '../shared/icon/home-icon.component';
-import { LeadboardIconComponent } from '../shared/icon/leadboard-icon.component';
-import { UserIconComponent } from '../shared/icon/user-icon.component';
+import { BottomNavComponent } from '../shared/bottom-nav/bottom-nav.component';
 
 export interface ProfileStat {
   iconType: 'goldTrophy' | 'greenTrophy' | 'target' | 'coins';
@@ -46,9 +44,7 @@ import { resolveAvatarUrl } from '../../core/utils/avatar.util';
   imports: [
     CommonModule,
     FormsModule,
-    HomeIconComponent,
-    LeadboardIconComponent,
-    UserIconComponent
+    BottomNavComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
@@ -62,7 +58,6 @@ export class ProfileComponent implements OnInit {
   readonly activeTab = signal<'home' | 'play' | 'leaderboard' | 'profile'>('profile');
 
   /** Modals state */
-  readonly showLeaderboardModal = signal<boolean>(false);
   readonly showEditNameModal = signal<boolean>(false);
   readonly showAvatarsModal = signal<boolean>(false);
   readonly showStatsModal = signal<boolean>(false);
@@ -264,11 +259,6 @@ export class ProfileComponent implements OnInit {
         this.router.navigate(['/guest-profile']);
       }
     }
-  }
-
-  closeLeaderboard(): void {
-    this.showLeaderboardModal.set(false);
-    this.activeTab.set('profile');
   }
 
   // Name editing
