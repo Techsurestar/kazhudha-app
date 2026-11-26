@@ -77,13 +77,14 @@ describe('CardTableComponent', () => {
     expect(cards?.length).toBe(3);
   });
 
-  it('should render the human hand component', () => {
+  it('should render the human hand component and control Skip Game visibility', () => {
     const el: HTMLElement = fixture.nativeElement;
     const humanHand = el.querySelector('app-human-hand');
     expect(humanHand).not.toBeNull();
 
-    // When cards are empty, Skip Game button is rendered
-    expect(humanHand?.querySelector('.skip-game-btn')).not.toBeNull();
+    // When cards are empty initially before deal, Skip Game button is NOT rendered
+    expect(component.canSkip()).toBe(false);
+    expect(humanHand?.querySelector('.skip-game-btn')).toBeNull();
 
     // When cards are populated, card elements match humanCards count
     component.humanCards.set([
@@ -94,6 +95,15 @@ describe('CardTableComponent', () => {
 
     const cardElements = humanHand?.querySelectorAll('app-card');
     expect(cardElements?.length).toBe(2);
+    expect(humanHand?.querySelector('.skip-game-btn')).toBeNull();
+
+    // When game has dealt and human has shed all cards (empty hand during game), Skip Game button IS rendered
+    component.hasDealt.set(true);
+    component.humanCards.set([]);
+    fixture.detectChanges();
+
+    expect(component.canSkip()).toBe(true);
+    expect(humanHand?.querySelector('.skip-game-btn')).not.toBeNull();
   });
 
   it('should render the bottom action bar with Hint button', () => {

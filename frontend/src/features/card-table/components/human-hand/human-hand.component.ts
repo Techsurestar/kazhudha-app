@@ -34,6 +34,9 @@ export class HumanHandComponent {
   readonly isCurrentTurn = input<boolean>(true);
   readonly disabled = input<boolean>(false);
 
+  /** Whether the Skip Game button can be displayed when hand is empty */
+  readonly canSkip = input<boolean>(true);
+
   /** Emitted when the user taps/clicks a playable card */
   readonly cardPlay = output<HandCard>();
 

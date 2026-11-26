@@ -82,6 +82,7 @@
         [player]="humanPlayer()"
         [cards]="humanCards()"
         [disabled]="isDealing() || isReplaying() || currentTurnPlayerId() !== 'human'"
+        [canSkip]="canSkip()"
         (cardPlay)="onCardPlayed($event)"
         (skipGame)="onSkipGame()">
       </app-human-hand>

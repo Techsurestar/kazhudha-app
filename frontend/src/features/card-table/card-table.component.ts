@@ -65,6 +65,9 @@ export class CardTableComponent implements AfterViewInit {
   /** Whether a 52-card deal animation is actively in progress */
   readonly isDealing = signal<boolean>(false);
 
+  /** Whether the cards have finished being dealt for the active round */
+  readonly hasDealt = signal<boolean>(false);
+
   /** Whether event animations (bot plays, vettu flash, escapes) are actively running */
   readonly isReplaying = signal<boolean>(false);
 
@@ -122,6 +125,16 @@ export class CardTableComponent implements AfterViewInit {
 
   /** Kazhudha player ID for the round if applicable */
   readonly kazhudhaPlayerId = computed(() => this.gameState()?.kazhudhaPlayerId || null);
+
+  /** Whether the human player has finished cards and can skip remaining bot turns */
+  readonly canSkip = computed<boolean>(() => {
+    return (
+      !this.isDealing() &&
+      this.hasDealt() &&
+      this.humanCards().length === 0 &&
+      !this.showGameResultModal()
+    );
+  });
 
   /** Players list for scoreboard */
   readonly playersList = computed<GameResultPlayer[]>(() => [
@@ -512,6 +525,7 @@ export class CardTableComponent implements AfterViewInit {
     }
 
     // Reset table state for new deal
+    this.hasDealt.set(false);
     this.centerCards.set([]);
     this.humanCards.set([]);
     this.eventQueue = [];
@@ -535,6 +549,7 @@ export class CardTableComponent implements AfterViewInit {
     } catch (err) {
       console.error('Failed to start game via backend:', err);
       this.isDealing.set(false);
+      this.hasDealt.set(false);
       return;
     }
 
@@ -591,6 +606,7 @@ export class CardTableComponent implements AfterViewInit {
     });
 
     this.isDealing.set(false);
+    this.hasDealt.set(true);
 
     // Process initial turn and any bot plays if bot started with Ace of Spades
     this.processNewState(initialState);

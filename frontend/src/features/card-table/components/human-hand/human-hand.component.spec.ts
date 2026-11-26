@@ -140,4 +140,15 @@ describe('HumanHandComponent', () => {
 
     expect(skipped).toBe(true);
   });
+
+  it('should not show Skip Game button when canSkip is false even if cards array is empty', () => {
+    fixture.componentRef.setInput('cards', []);
+    fixture.componentRef.setInput('canSkip', false);
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.textContent).not.toContain('Skip Game');
+    const skipButton = el.querySelector('button.skip-game-btn');
+    expect(skipButton).toBeNull();
+  });
 });
