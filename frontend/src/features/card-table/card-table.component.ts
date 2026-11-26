@@ -110,6 +110,8 @@ export class CardTableComponent implements AfterViewInit {
 
   /** Order of players who have successfully escaped (shed all cards) */
   readonly escapedOrder = signal<string[]>([]);
+  /** Players who shed their last card during the active trick, pending confirmation upon trick resolution */
+  pendingEscapes: string[] = [];
 
   /** Whether the game result modal is visible */
   readonly showGameResultModal = signal<boolean>(false);
@@ -284,6 +286,22 @@ export class CardTableComponent implements AfterViewInit {
     return null;
   }
 
+  confirmEscape(playerId: string): void {
+    if (!this.escapedOrder().includes(playerId)) {
+      this.escapedOrder.update(order => [...order, playerId]);
+      this.showToast(`🎉 ${this.getPlayerName(playerId)} escaped!`);
+    }
+  }
+
+  commitPendingEscapes(): void {
+    if (this.pendingEscapes.length === 0) return;
+    const escapes = [...this.pendingEscapes];
+    this.pendingEscapes = [];
+    for (const playerId of escapes) {
+      this.confirmEscape(playerId);
+    }
+  }
+
   getSuitSymbol(suit: string): string {
     switch (suit) {
       case 'SPADES': return '♠';
@@ -369,12 +387,21 @@ export class CardTableComponent implements AfterViewInit {
       this.visualCardCounts.set(finalCounts);
 
       for (const bot of finalState.otherPlayers) {
-        if (bot.hasGottenAway && !this.escapedOrder().includes(bot.id)) {
+        const isInActiveTrick = finalState.tablePile.some(pc => pc.playerId === bot.id);
+        if (
+          bot.hasGottenAway &&
+          !isInActiveTrick &&
+          !this.pendingEscapes.includes(bot.id) &&
+          !this.escapedOrder().includes(bot.id)
+        ) {
           this.escapedOrder.update(order => [...order, bot.id]);
         }
       }
+      const humanInActiveTrick = finalState.tablePile.some(pc => pc.playerId === 'human');
       if (
         finalState.humanHand.length === 0 &&
+        !humanInActiveTrick &&
+        !this.pendingEscapes.includes('human') &&
         finalState.kazhudhaPlayerId !== 'human' &&
         !this.escapedOrder().includes('human')
       ) {
@@ -408,6 +435,7 @@ export class CardTableComponent implements AfterViewInit {
     this.centerCards.set([]);
     this.humanCards.set([]);
     this.eventQueue = [];
+    this.pendingEscapes = [];
     this.isReplaying.set(false);
     this.toastMessage.set(null);
     this.toastBadgeText.set('');
@@ -438,6 +466,7 @@ export class CardTableComponent implements AfterViewInit {
     // Reset escape sequence if new tournament or empty escape state
     if (!initialState.gameOver) {
       this.escapedOrder.set([]);
+      this.pendingEscapes = [];
     }
 
     // Stack full 52-card deck in center
@@ -519,6 +548,12 @@ export class CardTableComponent implements AfterViewInit {
       human: Math.max(0, (counts['human'] || 0) - 1)
     }));
 
+    if (this.humanCards().length === 0) {
+      if (!this.pendingEscapes.includes('human') && !this.escapedOrder().includes('human')) {
+        this.pendingEscapes.push('human');
+      }
+    }
+
     // Trigger flight animation from bottom to table center and await its landing (linear slow motion)
     await this.flightLayer()?.triggerFlight({
       id: 'play-human-' + Date.now(),
@@ -558,6 +593,7 @@ export class CardTableComponent implements AfterViewInit {
       if (this.isDestroyed) return;
       this.centerCards.set([]);
       this.updateActiveTrickPlayerCount();
+      this.commitPendingEscapes();
       await new Promise(r => setTimeout(r, 200));
     }
 
@@ -657,6 +693,7 @@ export class CardTableComponent implements AfterViewInit {
         }
         this.centerCards.set([]);
         this.updateActiveTrickPlayerCount();
+        this.commitPendingEscapes();
       } else {
         this.centerCards.set(
           finalState.tablePile.map(pc => ({
@@ -670,11 +707,24 @@ export class CardTableComponent implements AfterViewInit {
 
       // Check for escaped players
       for (const bot of finalState.otherPlayers) {
-        if (bot.hasGottenAway && !this.escapedOrder().includes(bot.id)) {
+        const isInActiveTrick = finalState.tablePile.some(pc => pc.playerId === bot.id);
+        if (
+          bot.hasGottenAway &&
+          !isInActiveTrick &&
+          !this.pendingEscapes.includes(bot.id) &&
+          !this.escapedOrder().includes(bot.id)
+        ) {
           this.escapedOrder.update(order => [...order, bot.id]);
         }
       }
-      if (finalState.humanHand.length === 0 && finalState.kazhudhaPlayerId !== 'human' && !this.escapedOrder().includes('human')) {
+      const humanInActiveTrick = finalState.tablePile.some(pc => pc.playerId === 'human');
+      if (
+        finalState.humanHand.length === 0 &&
+        !humanInActiveTrick &&
+        !this.pendingEscapes.includes('human') &&
+        finalState.kazhudhaPlayerId !== 'human' &&
+        !this.escapedOrder().includes('human')
+      ) {
         this.escapedOrder.update(order => [...order, 'human']);
       }
 
@@ -722,6 +772,7 @@ export class CardTableComponent implements AfterViewInit {
           if (this.isDestroyed) return;
           this.centerCards.set([]);
           this.updateActiveTrickPlayerCount();
+          this.commitPendingEscapes();
           await new Promise(r => setTimeout(r, 200));
         }
 
@@ -774,6 +825,7 @@ export class CardTableComponent implements AfterViewInit {
           if (this.isDestroyed) return;
           this.centerCards.set([]);
           this.updateActiveTrickPlayerCount();
+          this.commitPendingEscapes();
           await new Promise(r => setTimeout(r, 200));
         } else {
           await new Promise(r => setTimeout(r, 250));
@@ -861,6 +913,7 @@ export class CardTableComponent implements AfterViewInit {
         }));
         // Remove from escaped if penalized
         this.escapedOrder.update(order => order.filter(id => id !== penalizedPlayerId));
+        this.pendingEscapes = this.pendingEscapes.filter(id => id !== penalizedPlayerId);
       }
 
       // Trigger Vettu flash and message banner
@@ -876,6 +929,7 @@ export class CardTableComponent implements AfterViewInit {
 
       this.centerCards.set([]);
       this.updateActiveTrickPlayerCount();
+      this.commitPendingEscapes();
       this.isVettuFlashing.set(false);
       this.vettuAlertMessage.set(null);
 
@@ -887,10 +941,14 @@ export class CardTableComponent implements AfterViewInit {
         [event.playerId]: 0
       }));
 
-      if (!this.escapedOrder().includes(event.playerId)) {
-        this.escapedOrder.update(order => [...order, event.playerId]);
+      if (this.centerCards().length > 0) {
+        // Trick is still in progress: defer escape confirmation until trick resolves
+        if (!this.pendingEscapes.includes(event.playerId) && !this.escapedOrder().includes(event.playerId)) {
+          this.pendingEscapes.push(event.playerId);
+        }
+      } else {
+        this.confirmEscape(event.playerId);
       }
-      this.showToast(`🎉 ${this.getPlayerName(event.playerId)} escaped!`);
 
       await new Promise(r => setTimeout(r, 400));
       this.runNextEvent(finalState);

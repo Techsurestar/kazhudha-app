@@ -415,7 +415,7 @@ describe('CardTableComponent', () => {
     const fakeState: any = {
       sessionId: 'test',
       currentTurnPlayerId: 'human',
-      humanHand: [],
+      humanHand: [{ rank: '3', suit: 'SPADES' }],
       otherPlayers: [
         { id: 'bot1', name: 'Jenny', handSize: 0, hasGottenAway: true },
         { id: 'bot2', name: 'Leo', handSize: 0, hasGottenAway: true },
@@ -446,15 +446,19 @@ describe('CardTableComponent', () => {
     await vi.advanceTimersByTimeAsync(200);
     expect(component.centerCards().length).toBe(1);
 
-    // Bot 1 plays + escapes
+    // Bot 1 plays + escapes (deferred while trick is active)
     await vi.advanceTimersByTimeAsync(1200);
     expect(component.centerCards().length).toBe(2);
-    expect(component.escapedOrder()).toContain('bot1');
+    expect(component.pendingEscapes).toContain('bot1');
+    expect(component.escapedOrder()).not.toContain('bot1');
+    expect(component.getRankChip('bot1')).toBeNull();
 
     // Bot 2 plays + escapes (Trick must NOT clear prematurely here despite 2 escapes!)
     await vi.advanceTimersByTimeAsync(1200);
     expect(component.centerCards().length).toBe(3);
-    expect(component.escapedOrder()).toContain('bot2');
+    expect(component.pendingEscapes).toContain('bot2');
+    expect(component.escapedOrder()).not.toContain('bot2');
+    expect(component.getRankChip('bot2')).toBeNull();
 
     // Bot 3 plays 4th card (Now all 4 active players for this trick have played)
     await vi.advanceTimersByTimeAsync(1200);
@@ -467,8 +471,73 @@ describe('CardTableComponent', () => {
     // Center cards must now be cleanly cleared
     expect(component.centerCards().length).toBe(0);
 
+    // After trick resolves, both escaped players are confirmed in escapedOrder
+    expect(component.escapedOrder()).toEqual(['bot1', 'bot2']);
+    expect(component.pendingEscapes.length).toBe(0);
+    expect(component.getRankChip('bot1')).toEqual({ label: '1st', type: 'gold' });
+    expect(component.getRankChip('bot2')).toEqual({ label: '2nd', type: 'silver' });
+
     // Active players count for the next trick should now reflect the 2 escaped players
     expect(component.getActivePlayersCount()).toBe(2);
+
+    vi.useRealTimers();
+  });
+
+  it('should not display position chip when a bot receives vettu on their last card', async () => {
+    vi.useFakeTimers();
+
+    const flightSpy = vi.fn().mockResolvedValue(undefined);
+    (component as any).flightLayer = () => ({ triggerFlight: flightSpy });
+
+    const fakeState: any = {
+      sessionId: 'test',
+      currentTurnPlayerId: 'bot1',
+      humanHand: [{ rank: '3', suit: 'SPADES' }],
+      otherPlayers: [
+        { id: 'bot1', name: 'Jenny', handSize: 2, hasGottenAway: false },
+        { id: 'bot2', name: 'Leo', handSize: 3, hasGottenAway: false },
+        { id: 'bot3', name: 'Sofia', handSize: 4, hasGottenAway: false }
+      ],
+      tablePile: [],
+      kazhudhaPlayerId: null,
+      gameOver: false,
+      events: []
+    };
+
+    component.centerCards.set([]);
+    component.escapedOrder.set([]);
+    component.pendingEscapes = [];
+
+    (component as any).eventQueue = [
+      // 1. Bot 1 leads King of Spades (shedding last card)
+      { eventType: 'PLAY', playerId: 'bot1', card: { rank: 'KING', suit: 'SPADES' } },
+      { eventType: 'ESCAPE', playerId: 'bot1', card: null, description: 'Jenny escaped!' },
+      // 2. Bot 2 plays 4 of Hearts (Vettu strike! Cutting the trick)
+      { eventType: 'VETTU', playerId: 'bot2', card: { rank: '4', suit: 'HEARTS' } }
+    ];
+
+    const runPromise = (component as any).runNextEvent(fakeState);
+
+    // Bot 1 plays King of Spades + escape event arrives
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(component.centerCards().length).toBe(1);
+    // Position chip MUST NOT be displayed before Vettu is applied!
+    expect(component.escapedOrder()).not.toContain('bot1');
+    expect(component.getRankChip('bot1')).toBeNull();
+    expect(component.pendingEscapes).toContain('bot1');
+
+    // Bot 2 executes Vettu strike (Vettu flight + banner pause 1600ms)
+    await vi.advanceTimersByTimeAsync(3000);
+    await runPromise;
+
+    // Vettu has cleared the pile and penalized Bot 1 (highest card of lead suit SPADES)
+    expect(component.centerCards().length).toBe(0);
+    // Bot 1 took the penalty pile, so Bot 1 NEVER escaped and position chip was never awarded
+    expect(component.escapedOrder()).not.toContain('bot1');
+    expect(component.getRankChip('bot1')).toBeNull();
+    expect(component.pendingEscapes).not.toContain('bot1');
+    // Bot 1's card count increased by the pile size (2 cards)
+    expect(component.visualCardCounts()['bot1']).toBe(2);
 
     vi.useRealTimers();
   });
