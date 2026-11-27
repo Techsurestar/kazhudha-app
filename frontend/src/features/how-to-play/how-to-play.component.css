@@ -1,6 +1,10 @@
 :host {
   display: block;
-  min-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   background-color: #031c0e;
   color: #f1f5f9;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;

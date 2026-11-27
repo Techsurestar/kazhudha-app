@@ -1,8 +1,11 @@
 :host {
   display: block;
   background-color: #053919;
-  overflow-x: hidden;
-  min-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   position: relative;
   font-family: 'Inter', sans-serif;
 }

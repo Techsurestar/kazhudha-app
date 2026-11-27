@@ -4,4 +4,5 @@
   backdrop-filter: blur(16px);
   border-top: 1px solid rgba(233, 195, 73, 0.18);
   box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.7);
+  padding-bottom: max(0.625rem, env(safe-area-inset-bottom, 0.625rem));
 }

@@ -1,4 +1,4 @@
-<div class="felt-texture h-[100dvh] max-h-[100dvh] text-slate-100 flex flex-col justify-between selection:bg-[#e9c349]/30 overflow-hidden relative">
+<div class="felt-texture h-full max-h-[100dvh] text-slate-100 flex flex-col justify-between selection:bg-[#e9c349]/30 overflow-hidden relative">
 
   <!-- Outer Centering Container (Mobile App Frame on Desktop, Full Viewport on Mobile) -->
   <div class="w-full max-w-md mx-auto h-full flex flex-col justify-between relative z-10 overflow-hidden">
@@ -31,8 +31,8 @@
         (profileClick)="openProfile()" />
     </section>
 
-    <!-- Main Content Area (Vertically Centered in Screen) -->
-    <main class="flex-1 flex flex-col items-center justify-center text-center px-4 my-auto min-h-0 py-2">
+    <!-- Main Content Area (Vertically Centered in Screen, Scrollable Internally if Needed) -->
+    <main class="flex-1 flex flex-col items-center justify-center text-center px-4 my-auto min-h-0 py-2 overflow-y-auto no-scrollbar">
       <!-- App Logo with Floating Animation & Glow -->
       <div class="relative py-1 sm:py-2 flex items-center justify-center flex-shrink-0 select-none">
         <img src="assets/app-logo.png"

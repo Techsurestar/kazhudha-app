@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background-color: #053919;
+  -webkit-tap-highlight-color: transparent;
+}
+
+app-root {
+  display: block;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Global No-Scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 @keyframes slideFromTop {
   0% {
     transform: translateY(-200px) scale(0.6);
