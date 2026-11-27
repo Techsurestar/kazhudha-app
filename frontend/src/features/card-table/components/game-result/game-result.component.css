@@ -1,3 +1,7 @@
+:host {
+  font-family: 'Inter', sans-serif;
+}
+
 .felt-modal-surface {
   background-color: #062312;
   background-image: 

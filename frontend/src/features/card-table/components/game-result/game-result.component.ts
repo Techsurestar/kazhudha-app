@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import type { HandResult } from '../../../../core/services/game-state.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { ChevronsRightComponent } from '../../../shared/icon/chevrons-right.component';
+import { GameplayIconComponent } from '../../../shared/icon/gameplay-icon.component';
 import { ButtonComponent } from '../../../shared/button/button.component';
 import { HomeIconComponent } from '../../../shared/icon/home-icon.component';
 
@@ -23,7 +23,7 @@ export type AccumulatedRewards = HandReward;
 @Component({
   selector: 'app-game-result',
   standalone: true,
-  imports: [CommonModule, ChevronsRightComponent, ButtonComponent, HomeIconComponent],
+  imports: [CommonModule, GameplayIconComponent, ButtonComponent, HomeIconComponent],
   templateUrl: './game-result.component.html',
   styleUrls: ['./game-result.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -193,25 +193,6 @@ export class GameResultComponent {
     }
     return { gamePoints, xp, coins };
   });
-
-  /**
-   * Authentic coin/chip styles matching the casino table theme:
-   * 20: Gold coin with inner border and bold text
-   * 15: Silver coin with inner border and bold text
-   * 10: Crimson/Red coin with inner border and white text
-   * 0: Sapphire/Navy Blue coin with inner border and white text
-   */
-  getScoreChipClass(score: number): string {
-    const base = 'w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-black shadow-md border-2 transition-transform duration-200 ';
-    if (score === 20) {
-      return base + 'bg-gradient-to-b from-amber-200 via-yellow-400 to-amber-600 border-yellow-200 text-slate-950 shadow-yellow-500/30';
-    } else if (score === 15) {
-      return base + 'bg-gradient-to-b from-slate-100 via-zinc-300 to-slate-400 border-slate-200 text-slate-950 shadow-slate-400/30';
-    } else if (score === 10) {
-      return base + 'bg-gradient-to-b from-rose-500 via-red-600 to-rose-900 border-rose-300 text-white shadow-red-700/30';
-    }
-    return base + 'bg-gradient-to-b from-blue-500 via-indigo-700 to-slate-900 border-indigo-400/80 text-white shadow-indigo-600/20';
-  }
 
   handleRestart(): void {
     this.restart.emit();

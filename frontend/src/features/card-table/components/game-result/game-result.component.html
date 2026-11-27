@@ -22,7 +22,7 @@
       @if (isHumanWinner()) {
         <svg class="w-full max-w-[340px] sm:max-w-[400px] h-10 sm:h-12 drop-shadow-[0_0_15px_rgba(233,195,73,0.45)] mb-1" viewBox="0 0 400 40" xmlns="http://www.w3.org/2000/svg">
           <!-- CONGRATULATIONS Typography -->
-          <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="'Times New Roman', serif" font-weight="900" font-size="28" fill="url(#gold-grad)" letter-spacing="3" filter="url(#glow)">
+          <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-weight="900" font-size="20" fill="url(#gold-grad)" letter-spacing="3" filter="url(#glow)">
             CONGRATULATIONS
           </text>
         </svg>
@@ -30,9 +30,9 @@
 
       <!-- Winner Announcement Pill Banner -->
       <div class="relative px-6 sm:px-8 py-2 rounded-full bg-gradient-to-r from-black/80 via-[#0d2a17]/90 to-black/80 border-2 border-amber-400/80 shadow-[0_0_15px_rgba(234,179,8,0.35)] mt-1">
-        <h2 class="text-sm sm:text-base font-extrabold tracking-widest text-[#fde047] uppercase font-sans text-center gold-text-glow">
+        <h2 class="text-sm sm:text-base tracking-widest text-[#fde047] uppercase text-center gold-text-glow">
           @if (tournamentOver()) {
-            {{ getTournamentWinnerName() }} won the tournament!
+            {{ getTournamentWinnerName() }} won the match!
           } @else {
             {{ getCurrentHandWinnerName() }} won hand {{ getCurrentHandNumber() }}
           }
@@ -54,19 +54,15 @@
       <!-- Scrollable Hand History Items -->
       <div class="max-h-[160px] sm:max-h-[190px] overflow-y-auto space-y-1.5 pr-1 custom-scrollbar">
         @for (hand of hands(); track hand.handNumber) {
-          <div class="grid grid-cols-5 gap-1 text-center items-center py-1.5 px-1 bg-black/40 rounded-xl border border-white/[0.04] hover:border-amber-400/30 transition-all duration-200">
+          <div class="grid grid-cols-5 gap-1 text-center items-center py-0.5 px-1 bg-black/40 rounded-xl border border-white/[0.04] hover:border-amber-400/30 transition-all duration-200">
             <!-- Hand Number Badge -->
-            <div class="flex justify-center">
-              <span class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-black bg-black/60 text-[#fde047] border border-amber-400/40 shadow-inner">
-                #{{ hand.handNumber }}
-              </span>
+            <div class="text-slate-300 text-sm">
+              #{{ hand.handNumber }}
             </div>
-            <!-- Player Score Chips -->
+            <!-- Player Scores -->
             @for (player of playerList(); track player.id) {
-              <div class="flex justify-center">
-                <span [class]="getScoreChipClass(getPlayerHandScore(hand, player.id))">
-                  {{ getPlayerHandScore(hand, player.id) }}
-                </span>
+              <div class="text-slate-300 text-sm">
+                {{ getPlayerHandScore(hand, player.id) }}
               </div>
             }
           </div>
@@ -74,7 +70,7 @@
       </div>
 
       <!-- Pinned Total Row Card -->
-      <div class="grid grid-cols-5 gap-1 text-center items-center py-2.5 px-1 mt-2.5 bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-amber-500/20 rounded-xl border border-amber-400/50 shadow-md text-white font-black text-xs sm:text-sm">
+      <div class="grid grid-cols-5 gap-1 text-center items-center py-1 px-2 mt-2.5 bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-amber-500/20 rounded-xl border border-amber-400/50 shadow-md text-white font-black text-xs sm:text-sm">
         <div class="flex justify-center">
           <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#fde047] bg-black/60 px-2 py-1 rounded-md border border-amber-400/30">
             TOTAL
@@ -94,7 +90,7 @@
       <div class="rewards-accumulated-card w-full relative mt-2 mb-3.5 pt-2.5">
         <!-- Header Ribbon Pill -->
         <div class="absolute -top-1 left-1/2 -translate-x-1/2 z-10 flex items-center">
-          <div class="w-44 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow-md border border-yellow-200">
+          <div class="w-44 px-3.5 py-1 rounded-full bg-gradient-to-r from-black/80 via-[#0d2a17]/90 to-black/80 border-2 border-amber-400/80 shadow-[0_0_15px_rgba(234,179,8,0.35)] text-[#fde047] font-black text-[10px] uppercase tracking-wider">
             @if (tournamentOver()) {
               Rewards earned
             } @else {
@@ -111,9 +107,9 @@
             <div class="flex items-center space-x-1 mb-2.5">
               <!-- Game points -->
                 <img src="/assets/points.webp" alt="Game points"
-                      class="w-8 h-8 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                      class="w-5 h-5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
                 />
-              <span class="text-xl sm:text-2xl font-black text-[#fef08a] gold-text-glow">
+              <span class="text-l font-black text-[#fef08a] gold-text-glow">
                 {{ accumulatedRewards().gamePoints }}
               </span>
             </div>
@@ -127,9 +123,9 @@
             <div class="flex items-center space-x-1 mb-1">
               <!-- XP badge -->
               <img src="/assets/xp_shield.webp" alt="XP Shield"
-                      class="w-10 h-10 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                      class="w-7 h-7 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
               />
-              <span class="text-xl sm:text-2xl font-black text-[#fef08a] gold-text-glow">
+              <span class="text-l font-black text-[#fef08a] gold-text-glow">
                 +{{ accumulatedRewards().xp }}
               </span>
             </div>
@@ -143,9 +139,9 @@
             <div class="flex items-center space-x-1 mb-1">
               <!-- Stack of Coins SVG -->
               <img src="/assets/mini-coin-bundle.webp" alt="Coins"
-                      class="w-10 h-10 sm:w-6.5 sm:h-6.5 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                      class="w-7 h-7 object-contain flex-shrink-0 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] select-none pointer-events-none"
                 />
-              <span class="text-xl sm:text-2xl font-black text-[#fef08a] gold-text-glow">
+              <span class="text-l font-black text-[#fef08a] gold-text-glow">
                 +{{ accumulatedRewards().coins }}
               </span>
             </div>
@@ -190,24 +186,18 @@
             <span>Home</span>
           </app-button>
 
-          <!-- Start New Tournament Button (on the right side) -->
-          <button
-            type="button"
-            (click)="handleRestart()"
-            class="gold-gradient-btn w-full text-slate-950 font-black text-xs sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-1.5 sm:space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
-            <span class="truncate">Start New Tournament</span>
-            <chevrons-right-icon [size]="20" />
-          </button>
+          <!-- Start New Match Button (on the right side) -->
+          <app-button (click)="handleRestart()">
+            <gameplay-icon [size]="20" />
+            <span>New Match</span>
+          </app-button>
         </div>
       } @else {
         <!-- Single Full-Width Play Next Hand Button -->
-        <button
-          type="button"
-          (click)="handleRestart()"
-          class="gold-gradient-btn w-full text-slate-950 font-black text-md sm:text-base py-3 sm:py-3.5 rounded-xl shadow-xl flex items-center justify-center space-x-2 tracking-wider transition-all transform active:scale-[0.98] cursor-pointer focus:outline-none">
-          <span>Play next hand</span>
-          <chevrons-right-icon [size]="20" />
-        </button>
+        <app-button (click)="handleRestart()">
+            <gameplay-icon [size]="20" />
+            <span>Play next hand</span>
+        </app-button>
       }
     </div>
 

@@ -314,32 +314,6 @@ describe('GameResultComponent', () => {
     });
   });
 
-  describe('score chip classes', () => {
-    it('should return amber/gold styling for 20 points', () => {
-      const cls = component.getScoreChipClass(20);
-      expect(cls).toContain('from-amber-200');
-      expect(cls).toContain('via-yellow-400');
-    });
-
-    it('should return silver/slate styling for 15 points', () => {
-      const cls = component.getScoreChipClass(15);
-      expect(cls).toContain('from-slate-100');
-      expect(cls).toContain('via-zinc-300');
-    });
-
-    it('should return crimson/red styling for 10 points', () => {
-      const cls = component.getScoreChipClass(10);
-      expect(cls).toContain('from-rose-500');
-      expect(cls).toContain('via-red-600');
-    });
-
-    it('should return sapphire/blue styling for 0 points', () => {
-      const cls0 = component.getScoreChipClass(0);
-      expect(cls0).toContain('from-blue-500');
-      expect(cls0).toContain('via-indigo-700');
-    });
-  });
-
   describe('template rendering', () => {
     it('should render CONGRATULATIONS header when human wins hand', () => {
       fixture.componentRef.setInput('hands', [mockHands[0]]);
