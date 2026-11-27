@@ -269,158 +269,91 @@ describe('HumanHandComponent', () => {
     });
   });
 
-  describe('Dev timer switch (dev purpose)', () => {
-    it('should render dev timer switch when in dev mode', () => {
-      fixture.componentRef.setInput('isDev', true);
+  describe('isDev flag (dev purpose timer off)', () => {
+    it('should run countdown timer normally when isDev is false (default)', () => {
+      vi.useFakeTimers();
+      fixture.componentRef.setInput('isCurrentTurn', true);
+      fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      const switchEl = fixture.nativeElement.querySelector('[data-testid="dev-timer-switch"]');
-      expect(switchEl).not.toBeNull();
-      expect(switchEl.getAttribute('role')).toBe('switch');
-      expect(switchEl.getAttribute('aria-checked')).toBe('true');
-      expect(switchEl.textContent).toContain('DEV');
-      expect(switchEl.textContent).toContain('ON');
+      expect(component.isDev()).toBe(false);
+      expect(component.remainingSeconds()).toBe(20);
+      const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
+      expect(timerBadge).not.toBeNull();
+      expect(timerBadge?.textContent).toContain('20s');
     });
 
-    it('should NOT render dev timer switch when isDev is false (production mode)', () => {
-      fixture.componentRef.setInput('isDev', false);
-      fixture.detectChanges();
-
-      const switchEl = fixture.nativeElement.querySelector('[data-testid="dev-timer-switch"]');
-      expect(switchEl).toBeNull();
-    });
-
-    it('should toggle timer off and stop active countdown when clicked', () => {
+    it('should turn the timer off when isDev is true', () => {
       vi.useFakeTimers();
       let timeUpEmitted = false;
       component.timeUp.subscribe(() => {
         timeUpEmitted = true;
       });
 
+      fixture.componentRef.setInput('isDev', true);
       fixture.componentRef.setInput('isCurrentTurn', true);
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(20);
-      expect(component.isTimerOff()).toBe(false);
-
-      const switchEl: HTMLElement = fixture.nativeElement.querySelector('[data-testid="dev-timer-switch"]');
-      expect(switchEl).not.toBeNull();
-      switchEl.click();
-      fixture.detectChanges();
-
-      expect(component.devTimerOff()).toBe(true);
-      expect(component.isTimerOff()).toBe(true);
-      expect(switchEl.getAttribute('aria-checked')).toBe('false');
-      expect(switchEl.textContent).toContain('OFF');
+      expect(component.isDev()).toBe(true);
       expect(component.remainingSeconds()).toBeNull();
+      const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
+      expect(timerBadge).toBeNull();
 
-      // Advancing time should not trigger timeUp because timer is off
+      // Advancing time past 20s should not emit timeUp because timer is off
       vi.advanceTimersByTime(25000);
       fixture.detectChanges();
       expect(timeUpEmitted).toBe(false);
     });
 
-    it('should restart timer when switch is toggled back ON during active turn', () => {
+    it('should stop active timer when isDev changes dynamically from false to true', () => {
       vi.useFakeTimers();
+      let timeUpEmitted = false;
+      component.timeUp.subscribe(() => {
+        timeUpEmitted = true;
+      });
+
+      fixture.componentRef.setInput('isDev', false);
       fixture.componentRef.setInput('isCurrentTurn', true);
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      const switchEl: HTMLElement = fixture.nativeElement.querySelector('[data-testid="dev-timer-switch"]');
-
-      // Turn OFF
-      switchEl.click();
-      fixture.detectChanges();
-      expect(component.isTimerOff()).toBe(true);
-      expect(component.remainingSeconds()).toBeNull();
-
-      // Turn back ON
-      switchEl.click();
-      fixture.detectChanges();
-      expect(component.isTimerOff()).toBe(false);
       expect(component.remainingSeconds()).toBe(20);
 
-      // Countdown advances normally
-      vi.advanceTimersByTime(5000);
-      fixture.detectChanges();
-      expect(component.remainingSeconds()).toBe(15);
-    });
-
-    it('should toggle timer off using keyboard Enter or Space', () => {
+      // Turn on isDev (set timer off)
       fixture.componentRef.setInput('isDev', true);
       fixture.detectChanges();
 
-      const switchEl: HTMLElement = fixture.nativeElement.querySelector('[data-testid="dev-timer-switch"]');
-      expect(component.isTimerOff()).toBe(false);
-
-      // Trigger Enter key
-      switchEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-      fixture.detectChanges();
-      expect(component.isTimerOff()).toBe(true);
-
-      // Trigger Space key
-      switchEl.dispatchEvent(new KeyboardEvent('keydown', { key: ' ' }));
-      fixture.detectChanges();
-      expect(component.isTimerOff()).toBe(false);
-    });
-
-    it('should prevent timer from starting when devTimerOff input is initially true', () => {
-      vi.useFakeTimers();
-      fixture.componentRef.setInput('devTimerOff', true);
-      fixture.componentRef.setInput('isCurrentTurn', true);
-      fixture.componentRef.setInput('disabled', false);
-      fixture.detectChanges();
-
-      expect(component.isTimerOff()).toBe(true);
       expect(component.remainingSeconds()).toBeNull();
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge).toBeNull();
+
+      vi.advanceTimersByTime(25000);
+      fixture.detectChanges();
+      expect(timeUpEmitted).toBe(false);
     });
 
-    it('should support timerOff input alias to set timer off', () => {
+    it('should start timer when isDev changes dynamically from true to false during active turn', () => {
       vi.useFakeTimers();
-      fixture.componentRef.setInput('timerOff', true);
+      fixture.componentRef.setInput('isDev', true);
       fixture.componentRef.setInput('isCurrentTurn', true);
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      expect(component.isTimerOff()).toBe(true);
-      expect(component.remainingSeconds()).toBeNull();
-    });
-
-    it('should support setTimerOff method', () => {
-      vi.useFakeTimers();
-      fixture.componentRef.setInput('isCurrentTurn', true);
-      fixture.componentRef.setInput('disabled', false);
-      fixture.detectChanges();
-
-      expect(component.remainingSeconds()).toBe(20);
-
-      component.setTimerOff(true);
-      fixture.detectChanges();
-
-      expect(component.isTimerOff()).toBe(true);
       expect(component.remainingSeconds()).toBeNull();
 
-      component.setTimerOff(false);
-      fixture.detectChanges();
-
-      expect(component.isTimerOff()).toBe(false);
-      expect(component.remainingSeconds()).toBe(20);
-    });
-
-    it('should ignore dev timer switch in production mode even if devTimerOff is set', () => {
-      vi.useFakeTimers();
+      // Turn off isDev (timer enabled)
       fixture.componentRef.setInput('isDev', false);
-      fixture.componentRef.setInput('devTimerOff', true);
-      fixture.componentRef.setInput('isCurrentTurn', true);
-      fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      // In production mode, isTimerOff remains false and timer runs normally
-      expect(component.isTimerOff()).toBe(false);
       expect(component.remainingSeconds()).toBe(20);
+      const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
+      expect(timerBadge).not.toBeNull();
+      expect(timerBadge?.textContent).toContain('20s');
+
+      vi.advanceTimersByTime(5000);
+      fixture.detectChanges();
+      expect(component.remainingSeconds()).toBe(15);
     });
   });
 });

@@ -35,51 +35,19 @@
       </div>
     </div>
 
-    <!-- Right Controls: Dev Timer Switch (Dev Only) + Turn Countdown Timer Badge -->
-    <div class="flex items-center space-x-2">
-      <!-- Dev Timer Switch (Only rendered for dev purpose) -->
-      @if (isDev()) {
-        <div
-          role="switch"
-          tabindex="0"
-          [attr.aria-checked]="!isTimerOff()"
-          aria-label="Dev timer switch"
-          data-testid="dev-timer-switch"
-          (click)="toggleDevTimer()"
-          (keydown.enter)="toggleDevTimer()"
-          (keydown.space)="$event.preventDefault(); toggleDevTimer()"
-          class="dev-timer-switch flex items-center space-x-1.5 px-2 py-1 rounded-full border text-[11px] font-semibold transition-all duration-200 cursor-pointer select-none"
-          [class.dev-timer-switch-on]="!isTimerOff()"
-          [class.dev-timer-switch-off]="isTimerOff()"
-          [title]="isTimerOff() ? 'Dev Timer: OFF (Click to turn ON)' : 'Dev Timer: ON (Click to turn OFF)'">
-          <span class="dev-badge text-[9px] font-bold px-1 py-0.5 rounded uppercase tracking-wider">DEV</span>
-          <span class="hidden sm:inline">Timer</span>
-          <!-- Switch Track and Knob -->
-          <span class="switch-track relative inline-flex h-3.5 w-6 items-center rounded-full transition-colors duration-200">
-            <span
-              class="switch-thumb inline-block h-2.5 w-2.5 transform rounded-full bg-white transition-transform duration-200"
-              [class.translate-x-3]="!isTimerOff()"
-              [class.translate-x-0.5]="isTimerOff()">
-            </span>
-          </span>
-          <span class="font-bold text-[10px] w-5 text-center">{{ isTimerOff() ? 'OFF' : 'ON' }}</span>
-        </div>
-      }
-
-      <!-- Turn Countdown Timer Badge -->
-      @if (effectiveIsTurn() && !disabled() && remainingSeconds() !== null) {
-        <div
-          class="turn-timer-badge flex items-center space-x-1.5 px-3 py-1.5 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 select-none"
-          [class]="timerColorClass()"
-          aria-label="Turn timer">
-          <svg class="w-4 h-4 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <span class="font-black text-xs sm:text-sm tabular-nums tracking-wider">{{ remainingSeconds() }}s</span>
-        </div>
-      }
-    </div>
+    <!-- Turn Countdown Timer Badge -->
+    @if (effectiveIsTurn() && !disabled() && remainingSeconds() !== null) {
+      <div
+        class="turn-timer-badge flex items-center space-x-1.5 px-3 py-1.5 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 select-none"
+        [class]="timerColorClass()"
+        aria-label="Turn timer">
+        <svg class="w-4 h-4 stroke-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="font-black text-xs sm:text-sm tabular-nums tracking-wider">{{ remainingSeconds() }}s</span>
+      </div>
+    }
   </div>
 
   <!-- Playable Hand Fan -->

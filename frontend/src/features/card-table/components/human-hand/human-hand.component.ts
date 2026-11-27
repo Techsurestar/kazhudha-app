@@ -1,4 +1,4 @@
-import { Component, input, output, model, computed, signal, effect, untracked, OnDestroy, isDevMode } from '@angular/core';
+import { Component, input, output, computed, signal, effect, untracked, OnDestroy } from '@angular/core';
 import { CardComponent } from '../../../shared/card/card.component';
 
 export interface HandCard {
@@ -40,20 +40,8 @@ export class HumanHandComponent implements OnDestroy {
   /** Duration of the turn countdown in seconds (default 20 seconds) */
   readonly timerDuration = input<number>(20);
 
-  /** Whether the component is in dev mode (defaults to Angular isDevMode()) */
-  readonly isDev = input<boolean>(isDevMode());
-
-  /** Switch to set turn timer off (dev purpose) */
-  readonly devTimerOff = model<boolean>(false);
-
-  /** Optional input alias to set timer off */
-  readonly timerOff = input<boolean | undefined>(undefined);
-
-  /** Whether the turn timer is currently turned off for dev */
-  readonly isTimerOff = computed(() => {
-    if (!this.isDev()) return false;
-    return this.devTimerOff() || (this.timerOff() ?? false);
-  });
+  /** Dev flag to set the turn countdown timer off (dev purpose) */
+  readonly isDev = input<boolean>(true);
 
   /** Emitted when the user taps/clicks a playable card */
   readonly cardPlay = output<HandCard>();
@@ -101,8 +89,8 @@ export class HumanHandComponent implements OnDestroy {
     effect(() => {
       const isTurn = this.effectiveIsTurn();
       const isDisabled = this.disabled();
-      const timerOff = this.isTimerOff();
-      const isActive = isTurn && !isDisabled && !timerOff;
+      const isDev = this.isDev();
+      const isActive = isTurn && !isDisabled && !isDev;
 
       untracked(() => {
         if (isActive) {
@@ -120,23 +108,8 @@ export class HumanHandComponent implements OnDestroy {
     this.stopTimer();
   }
 
-  /** Toggles dev timer on/off */
-  toggleDevTimer(): void {
-    this.devTimerOff.update((val) => !val);
-  }
-
-  /** Alias for toggling timer off/on */
-  toggleTimerOff(): void {
-    this.toggleDevTimer();
-  }
-
-  /** Explicitly sets timer off state for dev */
-  setTimerOff(off: boolean): void {
-    this.devTimerOff.set(off);
-  }
-
   startTimer(): void {
-    if (this.isTimerOff()) {
+    if (this.isDev()) {
       this.clearTimerInterval();
       this.remainingSeconds.set(null);
       return;
