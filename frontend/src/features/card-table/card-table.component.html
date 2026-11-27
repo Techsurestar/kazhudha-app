@@ -124,4 +124,17 @@
     </app-game-result>
   }
 
+  <!-- ========================================== -->
+  <!-- 4. CUSTOM 3D CARD LOADER OVERLAY           -->
+  <!-- ========================================== -->
+  @if (isLoading()) {
+    <div class="custom-loader-overlay absolute inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
+      <app-custom-loader
+        [text]="loadingText()"
+        [scale]="0.7"
+        [showFelt]="true"
+      />
+    </div>
+  }
+
 </div>

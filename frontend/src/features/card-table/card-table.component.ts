@@ -1,5 +1,5 @@
 import { Component, signal, computed, viewChild, input, AfterViewInit, inject, DestroyRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { GameStateService, Card, PlayedCard, GameViewDTO, GameEvent } from '../../core/services/game-state.service';
 import { AdBannerComponent } from '../shared/ad-banner/ad-banner.component';
 import { OpponentSeatComponent, RankChip } from './components/opponent-seat/opponent-seat.component';
@@ -8,6 +8,7 @@ import { CenterTrickPileComponent, TrickCard } from './components/center-trick-p
 import { ActionBarComponent } from './components/action-bar/action-bar.component';
 import { CardFlightLayerComponent, FlightItem } from './components/card-flight-layer/card-flight-layer.component';
 import { GameResultComponent, GameResultPlayer } from './components/game-result/game-result.component';
+import { CustomLoaderComponent } from '../shared/custom-loader/custom-loader.component';
 import { AuthService } from '../../core/services/auth.service';
 
 export interface PlayerSeatState {
@@ -35,7 +36,8 @@ export interface PlayedCardItem {
     CenterTrickPileComponent,
     ActionBarComponent,
     CardFlightLayerComponent,
-    GameResultComponent
+    GameResultComponent,
+    CustomLoaderComponent
   ],
   templateUrl: './card-table.component.html',
   styleUrls: ['./card-table.component.css']
@@ -44,6 +46,7 @@ export class CardTableComponent implements AfterViewInit {
   private readonly gameStateService = inject(GameStateService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute, { optional: true });
   private readonly destroyRef = inject(DestroyRef);
   private isDestroyed = false;
 
@@ -54,6 +57,15 @@ export class CardTableComponent implements AfterViewInit {
 
   /** Whether to automatically start dealing cards on page load (defaults to true) */
   readonly autoDeal = input<boolean>(true);
+
+  /** Whether the custom 3D card loader overlay is actively displayed */
+  readonly isLoading = signal<boolean>(false);
+
+  /** Loading message displayed beneath the animated cards */
+  readonly loadingText = signal<string>('Shuffling deck...');
+
+  /** Minimum display duration for the shuffle loader in ms (defaults to 2000ms) */
+  readonly shuffleDelayMs = input<number>(2000);
 
   /** Height in pixels allocated for the top ad banner (between 50px and 60px) */
   readonly adSlotHeight = 54;
@@ -201,7 +213,13 @@ export class CardTableComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    if (this.route?.snapshot?.queryParamMap?.get('loader') === 'true') {
+      this.isLoading.set(true);
+      return;
+    }
+
     if (this.autoDeal()) {
+      this.isLoading.set(true);
       setTimeout(() => {
         if (!this.isDestroyed) {
           this.startNewGameDeal();
@@ -435,10 +453,25 @@ export class CardTableComponent implements AfterViewInit {
     this.startNewGameDeal(isTournamentComplete);
   }
 
+  /**
+   * Triggers the custom loader overlay for preview or manual shuffling.
+   */
+  triggerLoader(durationMs: number = 3000, text: string = 'Shuffling deck...'): void {
+    this.loadingText.set(text);
+    this.isLoading.set(true);
+    setTimeout(() => {
+      if (!this.isDestroyed) {
+        this.isLoading.set(false);
+      }
+    }, durationMs);
+  }
+
   async startNewGameDeal(isFreshSession: boolean = false): Promise<void> {
     if (this.isDealing() || this.isDestroyed) return;
 
     this.isDealing.set(true);
+    this.isLoading.set(true);
+    this.loadingText.set('Shuffling deck...');
 
     if (isFreshSession) {
       this.sessionId = 'session_' + Date.now();
@@ -471,11 +504,20 @@ export class CardTableComponent implements AfterViewInit {
     } catch (err) {
       console.error('Failed to start game via backend:', err);
       this.isDealing.set(false);
+      this.isLoading.set(false);
       this.hasDealt.set(false);
       return;
     }
 
     if (this.isDestroyed) return;
+
+    const delay = this.autoDeal() ? this.shuffleDelayMs() : 0;
+    if (delay > 0) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    if (this.isDestroyed) return;
+
+    this.isLoading.set(false);
 
     // Reset escape sequence if new tournament or empty escape state
     if (!initialState.gameOver) {

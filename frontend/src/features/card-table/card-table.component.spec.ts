@@ -666,4 +666,44 @@ describe('CardTableComponent', () => {
       expect(routerSpy.navigate).toHaveBeenCalledWith(['/match-abandoned']);
     });
   });
+
+  describe('Custom 3D Card Loader integration', () => {
+    it('should not display custom loader overlay when isLoading is false', () => {
+      component.isLoading.set(false);
+      fixture.detectChanges();
+
+      const overlay = fixture.nativeElement.querySelector('.custom-loader-overlay');
+      expect(overlay).toBeNull();
+      const loader = fixture.nativeElement.querySelector('app-custom-loader');
+      expect(loader).toBeNull();
+    });
+
+    it('should display custom loader overlay and app-custom-loader when isLoading is true', () => {
+      component.isLoading.set(true);
+      component.loadingText.set('Shuffling cards for match...');
+      fixture.detectChanges();
+
+      const overlay = fixture.nativeElement.querySelector('.custom-loader-overlay');
+      expect(overlay).not.toBeNull();
+
+      const loader = fixture.nativeElement.querySelector('app-custom-loader');
+      expect(loader).not.toBeNull();
+      expect(loader?.textContent).toContain('Shuffling cards for match...');
+    });
+
+    it('should support manual triggerLoader with custom duration and caption', () => {
+      vi.useFakeTimers();
+      component.triggerLoader(2500, 'Dealing new hand...');
+      fixture.detectChanges();
+
+      expect(component.isLoading()).toBe(true);
+      expect(component.loadingText()).toBe('Dealing new hand...');
+
+      vi.advanceTimersByTime(2500);
+      fixture.detectChanges();
+
+      expect(component.isLoading()).toBe(false);
+      vi.useRealTimers();
+    });
+  });
 });

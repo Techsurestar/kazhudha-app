@@ -1,0 +1,75 @@
+<div class="custom-loader-wrapper" [class.fullscreen]="fullScreen()">
+  <div class="felt-stage" [class.has-felt]="showFelt()">
+    <!-- Animated Cards Grid/Row (Perspective Container) -->
+    <div class="cards-track" [style.transform]="'scale(' + scale() + ')'">
+      @for (card of cardList(); track card.id; let idx = $index) {
+        <div class="card-holder" [style.animation-delay]="(0.5 + idx * 0.5) + 's'">
+          <!-- Card Back (180deg flipped with casino gloss gradient) -->
+          <div class="back">
+            <div class="back-inner-pattern"></div>
+          </div>
+
+          <!-- Card Front Face -->
+          <div class="card" [ngClass]="[card.rankClass, card.suitClass]">
+            <!-- Top-Left Corner Index (Rank + Suit Icon) -->
+            <div class="card-corner top-left">
+              <span class="rank-text">{{ card.rankDisplay }}</span>
+              <suit-icon
+                [suit]="card.suit"
+                size="w-3 h-3"
+                [color]="card.isRed ? '#e11d48' : '#0f172a'"
+              />
+            </div>
+
+            <!-- Center Graphic (Ace / Court Figures / Number Pips) -->
+            <div class="card-center">
+              @if (card.rank === 'A') {
+                <suit-icon
+                  [suit]="card.suit"
+                  size="w-10 h-10 sm:w-11 sm:h-11"
+                  [color]="card.isRed ? '#e11d48' : '#0f172a'"
+                />
+              } @else if (card.isCourt) {
+                <div class="court-graphic" [class.court-red]="card.isRed">
+                  <span class="court-letter">{{ card.rankDisplay }}</span>
+                  <suit-icon
+                    [suit]="card.suit"
+                    size="w-5 h-5"
+                    [color]="card.isRed ? '#e11d48' : '#0f172a'"
+                  />
+                </div>
+              } @else {
+                <div class="pip-grid pip-10">
+                  @for (p of [1,2,3,4,5,6,7,8,9,10]; track $index) {
+                    <suit-icon
+                      [suit]="card.suit"
+                      size="w-2.5 h-2.5"
+                      [color]="card.isRed ? '#e11d48' : '#0f172a'"
+                    />
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Bottom-Right Corner Index (Inverted 180deg) -->
+            <div class="card-corner bottom-right">
+              <span class="rank-text">{{ card.rankDisplay }}</span>
+              <suit-icon
+                [suit]="card.suit"
+                size="w-3 h-3"
+                [color]="card.isRed ? '#e11d48' : '#0f172a'"
+              />
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Optional Loading Message -->
+    @if (text()) {
+      <div class="loader-caption">
+        <span class="loader-text">{{ text() }}</span>
+      </div>
+    }
+  </div>
+</div>

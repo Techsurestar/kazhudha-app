@@ -157,54 +157,54 @@ describe('HumanHandComponent', () => {
     expect(skipButton).toBeNull();
   });
 
-  describe('Turn countdown timer (20 seconds)', () => {
-    it('should start countdown from 20 seconds when active turn and disabled is false', () => {
+  describe('Turn countdown timer (60 seconds)', () => {
+    it('should start countdown from 60 seconds when active turn and disabled is false', () => {
       vi.useFakeTimers();
       fixture.componentRef.setInput('isCurrentTurn', true);
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(20);
+      expect(component.remainingSeconds()).toBe(60);
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge).not.toBeNull();
-      expect(timerBadge?.textContent).toContain('20s');
+      expect(timerBadge?.textContent).toContain('60s');
       expect(timerBadge?.classList.contains('timer-normal')).toBe(true);
     });
 
-    it('should display orange color when time is between 10 and 5 seconds', () => {
+    it('should display orange color when time is between 30 and 15 seconds', () => {
       vi.useFakeTimers();
       fixture.componentRef.setInput('isCurrentTurn', true);
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      // 10s elapsed -> 10s remaining (threshold)
-      vi.advanceTimersByTime(10000);
+      // 30s elapsed -> 30s remaining (threshold)
+      vi.advanceTimersByTime(30000);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(10);
+      expect(component.remainingSeconds()).toBe(30);
       expect(component.timerColorClass()).toBe('timer-orange');
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge?.classList.contains('timer-orange')).toBe(true);
 
-      // Advance to 5s remaining
-      vi.advanceTimersByTime(5000);
+      // Advance to 15s remaining
+      vi.advanceTimersByTime(15000);
       fixture.detectChanges();
-      expect(component.remainingSeconds()).toBe(5);
+      expect(component.remainingSeconds()).toBe(15);
       expect(component.timerColorClass()).toBe('timer-orange');
       expect(timerBadge?.classList.contains('timer-orange')).toBe(true);
     });
 
-    it('should display red color when time goes below 5 seconds', () => {
+    it('should display red color when time goes below 15 seconds', () => {
       vi.useFakeTimers();
       fixture.componentRef.setInput('isCurrentTurn', true);
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      // Advance 16s -> 4s remaining (< 5)
-      vi.advanceTimersByTime(16000);
+      // Advance 46s -> 14s remaining (< 15)
+      vi.advanceTimersByTime(46000);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(4);
+      expect(component.remainingSeconds()).toBe(14);
       expect(component.timerColorClass()).toBe('timer-red');
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge?.classList.contains('timer-red')).toBe(true);
@@ -221,8 +221,8 @@ describe('HumanHandComponent', () => {
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      // Advance full 20 seconds
-      vi.advanceTimersByTime(20000);
+      // Advance full 60 seconds
+      vi.advanceTimersByTime(60000);
       fixture.detectChanges();
 
       expect(component.remainingSeconds()).toBe(0);
@@ -236,7 +236,7 @@ describe('HumanHandComponent', () => {
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(20);
+      expect(component.remainingSeconds()).toBe(60);
       const cardButtons = fixture.nativeElement.querySelectorAll('button');
       cardButtons[0].click();
 
@@ -250,7 +250,7 @@ describe('HumanHandComponent', () => {
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(20);
+      expect(component.remainingSeconds()).toBe(60);
       const skipButton = fixture.nativeElement.querySelector('button.skip-game-btn') as HTMLButtonElement;
       skipButton.click();
 
@@ -277,10 +277,10 @@ describe('HumanHandComponent', () => {
       fixture.detectChanges();
 
       expect(component.isDev()).toBe(false);
-      expect(component.remainingSeconds()).toBe(20);
+      expect(component.remainingSeconds()).toBe(60);
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge).not.toBeNull();
-      expect(timerBadge?.textContent).toContain('20s');
+      expect(timerBadge?.textContent).toContain('60s');
     });
 
     it('should turn the timer off when isDev is true', () => {
@@ -300,8 +300,8 @@ describe('HumanHandComponent', () => {
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge).toBeNull();
 
-      // Advancing time past 20s should not emit timeUp because timer is off
-      vi.advanceTimersByTime(25000);
+      // Advancing time past 60s should not emit timeUp because timer is off
+      vi.advanceTimersByTime(65000);
       fixture.detectChanges();
       expect(timeUpEmitted).toBe(false);
     });
@@ -318,7 +318,7 @@ describe('HumanHandComponent', () => {
       fixture.componentRef.setInput('disabled', false);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(20);
+      expect(component.remainingSeconds()).toBe(60);
 
       // Turn on isDev (set timer off)
       fixture.componentRef.setInput('isDev', true);
@@ -328,7 +328,7 @@ describe('HumanHandComponent', () => {
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge).toBeNull();
 
-      vi.advanceTimersByTime(25000);
+      vi.advanceTimersByTime(65000);
       fixture.detectChanges();
       expect(timeUpEmitted).toBe(false);
     });
@@ -346,14 +346,14 @@ describe('HumanHandComponent', () => {
       fixture.componentRef.setInput('isDev', false);
       fixture.detectChanges();
 
-      expect(component.remainingSeconds()).toBe(20);
+      expect(component.remainingSeconds()).toBe(60);
       const timerBadge = fixture.nativeElement.querySelector('.turn-timer-badge');
       expect(timerBadge).not.toBeNull();
-      expect(timerBadge?.textContent).toContain('20s');
+      expect(timerBadge?.textContent).toContain('60s');
 
       vi.advanceTimersByTime(5000);
       fixture.detectChanges();
-      expect(component.remainingSeconds()).toBe(15);
+      expect(component.remainingSeconds()).toBe(55);
     });
   });
 });
