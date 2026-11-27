@@ -140,3 +140,49 @@
     transform: scale(1.08);
   }
 }
+
+/* ==================================================== */
+/* Dev Timer Switch (Dev Purpose)                      */
+/* ==================================================== */
+.dev-timer-switch {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.dev-timer-switch:hover {
+  filter: brightness(1.15);
+}
+
+.dev-timer-switch:active {
+  transform: scale(0.96);
+}
+
+.dev-timer-switch-on {
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #34d399;
+}
+
+.dev-timer-switch-on .dev-badge {
+  background: rgba(16, 185, 129, 0.25);
+  color: #6ee7b7;
+}
+
+.dev-timer-switch-on .switch-track {
+  background-color: #10b981;
+}
+
+.dev-timer-switch-off {
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #fbbf24;
+}
+
+.dev-timer-switch-off .dev-badge {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fcd34d;
+}
+
+.dev-timer-switch-off .switch-track {
+  background-color: #64748b;
+}
