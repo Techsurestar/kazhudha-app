@@ -37,11 +37,11 @@ export class HumanHandComponent implements OnDestroy {
   /** Whether the Skip Game button can be displayed when hand is empty */
   readonly canSkip = input<boolean>(true);
 
-  /** Duration of the turn countdown in seconds (default 20 seconds) */
-  readonly timerDuration = input<number>(20);
+  /** Duration of the turn countdown in seconds (default 60 seconds) */
+  readonly timerDuration = input<number>(60);
 
   /** Dev flag to set the turn countdown timer off (dev purpose) */
-  readonly isDev = input<boolean>(true);
+  readonly isDev = input<boolean>(false);
 
   /** Emitted when the user taps/clicks a playable card */
   readonly cardPlay = output<HandCard>();
@@ -64,8 +64,8 @@ export class HumanHandComponent implements OnDestroy {
   readonly timerColorClass = computed(() => {
     const sec = this.remainingSeconds();
     if (sec === null) return '';
-    if (sec < 5) return 'timer-red';
-    if (sec <= 10) return 'timer-orange';
+    if (sec < 15) return 'timer-red';
+    if (sec <= 30) return 'timer-orange';
     return 'timer-normal';
   });
 

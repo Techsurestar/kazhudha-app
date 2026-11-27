@@ -37,6 +37,9 @@
 
     <!-- Turn Countdown Timer Badge -->
     @if (effectiveIsTurn() && !disabled() && remainingSeconds() !== null) {
+      <div class="text-[9px] font-extrabold px-2.5 rounded-full border tracking-wide uppercase shadow-md transition-all duration-300 bg-amber-500/10 text-amber-400 border-amber-500/30 animate-pulse">
+          Your Turn
+      </div>
       <div
         class="turn-timer-badge flex items-center space-x-1.5 px-3 py-1.5 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 select-none"
         [class]="timerColorClass()"
